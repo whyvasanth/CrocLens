@@ -43,6 +43,10 @@ export function useDashboardData(): DashboardDataState {
 
         setData({ portfolio, assets, actionPlan });
       } catch (err) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
         if (err instanceof DOMException && err.name === "AbortError") {
           return;
         }
@@ -68,4 +72,3 @@ export function useDashboardData(): DashboardDataState {
     refetch
   };
 }
-
