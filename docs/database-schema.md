@@ -2,7 +2,17 @@
 
 ## Current Status
 
-Phase 0 defines the planned database shape. The actual PostgreSQL schema will be implemented in Phase 4.
+Phase 4 implements the first database schema foundation.
+
+Implemented files:
+
+- `apps/api/app/models/entities.py`
+- `apps/api/app/db/base.py`
+- `apps/api/app/db/session.py`
+- `apps/api/alembic.ini`
+- `apps/api/alembic/versions/20260505_0001_initial_schema.py`
+
+No live PostgreSQL instance is required yet. The schema and migration are ready for a future PostgreSQL database.
 
 ## Database Goal
 
@@ -21,6 +31,8 @@ It needs to represent:
 - AI outputs
 
 ## Planned Tables
+
+Phase 4 implements all planned tables listed below.
 
 ### users
 
@@ -127,6 +139,14 @@ Migration:
 
 - A versioned database change that can be applied consistently across environments.
 
+Alembic:
+
+- The migration tool used to apply versioned schema changes.
+
+SQLAlchemy model:
+
+- A Python class that maps to a database table.
+
 ## Why This Schema Supports Cross-Asset Wealth
 
 CrocLens separates generic concepts from asset-specific concepts.
@@ -147,3 +167,116 @@ Specific:
 
 This lets the product compare different asset types while still storing details that only apply to certain assets.
 
+## Relationship Map
+
+```text
+users
+  -> user_profiles
+  -> portfolios
+      -> holdings
+          -> tax_lots
+      -> assets
+          -> market_prices
+          -> asset_scores
+  -> liabilities
+  -> real_estate_properties
+  -> retirement_accounts
+  -> decision_journal_entries
+  -> action_plans
+  -> agent_outputs
+  -> watchlist_items
+      -> assets
+
+news_articles are stored separately and can be linked later by symbols or impact analysis.
+```
+
+## Design Choices
+
+### One Assets Table
+
+CrocLens uses one `assets` table for common asset metadata.
+
+Why:
+
+- Stocks, ETFs, mutual funds, crypto, bonds, and cash all need names, symbols, types, and source metadata.
+- A shared table makes cross-asset comparison easier.
+
+Tradeoff:
+
+- Some asset types need extra fields. Those can be added in specialized tables later.
+
+### Separate Holdings and Assets
+
+`assets` describes what something is.
+
+`holdings` describes what a user owns.
+
+Example:
+
+- Asset: VOO, Vanguard S&P 500 ETF
+- Holding: Maya owns 20 shares of VOO in her taxable account
+
+### Liabilities Are Separate
+
+Liabilities are not assets with negative values.
+
+Why:
+
+- Debt needs fields like interest rate, minimum payment, and due day.
+- Treating debt separately makes payoff planning easier.
+
+### Agent Outputs Are Stored
+
+AI outputs are stored in `agent_outputs`.
+
+Why:
+
+- We need to audit what the AI said.
+- We need confidence, limitations, sources, and safety status.
+- Future evaluation metrics can inspect stored outputs.
+
+### Scores Are Versioned by Date
+
+`asset_scores` stores score date and methodology version.
+
+Why:
+
+- Scoring formulas will change as the product improves.
+- We need to know which formula produced a score.
+
+## Index Strategy
+
+Indexes were added where queries are likely:
+
+- User lookup by email
+- Portfolio lookup by user
+- Holdings by portfolio and asset
+- Assets by type and symbol
+- Market prices by asset and date
+- Decision journal entries by review date
+- Agent outputs by user and agent
+- Watchlist items by user
+
+Indexes make reads faster but slow writes slightly. For MVP, we only add indexes that match obvious access patterns.
+
+## Migration Strategy
+
+Phase 4 adds one initial Alembic migration:
+
+```text
+20260505_0001_initial_schema.py
+```
+
+Later phases should add new migration files instead of editing this migration after it has been merged.
+
+To run migrations later:
+
+```bash
+alembic -c apps/api/alembic.ini upgrade head
+```
+
+## PostgreSQL Notes
+
+The Phase 4 model uses string UUID-style primary keys for MVP portability.
+
+Production PostgreSQL could later use native `UUID` columns. That is a good improvement once the local development database setup is stable.

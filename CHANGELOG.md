@@ -21,9 +21,13 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 3 FastAPI backend skeleton under `apps/api`.
 - Added health, portfolio summary, assets, action plan, and AI assistant mock endpoints.
 - Added Pydantic request/response schemas, mock service layer, CORS setup for local frontend development, and backend API smoke tests.
+- Added Phase 4 SQLAlchemy database models for cross-asset wealth tracking.
+- Added Alembic initial migration for users, profiles, portfolios, holdings, assets, liabilities, real estate, retirement accounts, journal entries, action plans, agent outputs, market prices, news articles, watchlist items, tax lots, and asset scores.
+- Added schema tests and expanded database documentation.
 
 ### Notes
 
 - The frontend uses static mock data only.
 - The backend uses static mock data only.
 - Database persistence is not implemented yet.
+- A live PostgreSQL database is not required yet; Phase 4 defines the schema and migration foundation.

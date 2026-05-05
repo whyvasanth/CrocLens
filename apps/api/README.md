@@ -43,3 +43,33 @@ python -m pytest apps/api
 - `POST /api/v1/action-plans/generate`
 - `POST /api/v1/ai/assistant`
 
+## Database Schema
+
+Phase 4 adds SQLAlchemy models and an Alembic initial migration.
+
+The schema is defined in:
+
+```text
+apps/api/app/models/entities.py
+```
+
+The initial migration is:
+
+```text
+apps/api/alembic/versions/20260505_0001_initial_schema.py
+```
+
+Set a PostgreSQL connection string when you are ready to run migrations:
+
+```bash
+set DATABASE_URL=postgresql+psycopg://croclens:croclens@localhost:5432/croclens
+```
+
+Then run from the repo root:
+
+```bash
+alembic -c apps/api/alembic.ini upgrade head
+```
+
+No live database is required for Phase 4 tests.
+

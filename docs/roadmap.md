@@ -123,6 +123,10 @@ Goal:
 
 - Add the PostgreSQL schema that supports cross-asset wealth tracking.
 
+Status:
+
+- Implemented with SQLAlchemy models and an Alembic initial migration.
+
 Tables:
 
 - users

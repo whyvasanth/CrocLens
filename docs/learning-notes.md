@@ -96,3 +96,29 @@ Key terms:
 Practice idea:
 
 - Add one new mock endpoint idea for liabilities, then write the response fields it should return.
+
+## Phase 4: Database Design
+
+What we learned:
+
+- A relational database stores related data in tables connected by keys.
+- SQLAlchemy models let Python code describe database tables.
+- Alembic migrations version database changes so every environment can apply the same schema.
+- Primary keys uniquely identify rows.
+- Foreign keys connect rows across tables.
+- Indexes make common queries faster, but should be chosen intentionally.
+- Assets and holdings should be separate because an asset describes what something is, while a holding describes what a user owns.
+
+Key terms:
+
+- Table: a structured collection of rows.
+- Row: one record in a table.
+- Primary key: the unique ID for one row.
+- Foreign key: a column that points to a row in another table.
+- Index: a database structure that speeds up lookup queries.
+- Migration: a versioned schema change.
+- ORM: object-relational mapper, a tool that maps Python classes to database tables.
+
+Practice idea:
+
+- Pick one table and explain which user workflow will create a row in that table.

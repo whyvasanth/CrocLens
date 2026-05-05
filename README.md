@@ -113,14 +113,14 @@ Completed phases:
 - Phase 0: Product and system design foundation
 - Phase 1: Static frontend dashboard
 - Phase 2: Frontend pages and navigation
+- Phase 3: Backend API skeleton
 
 Current phase:
 
-- Phase 3: Backend API skeleton
+- Phase 4: Database schema
 
 Next phases:
 
-- Phase 4: PostgreSQL database design
 - Phase 5: Frontend-backend integration
 - Phase 6: Portfolio and cross-asset logic
 - Phase 7 and beyond: Asset detail pages, onboarding, AI assistant, agents, data pipelines, security, testing, metrics, and deployment
@@ -159,6 +159,7 @@ Avoid wording:
 
 Phase 1 and Phase 2 added the first runnable frontend app under `apps/web`.
 Phase 3 adds the first runnable backend API under `apps/api`.
+Phase 4 adds the SQLAlchemy database models and Alembic migration foundation.
 
 Install dependencies:
 
@@ -217,6 +218,19 @@ Current backend endpoints:
 - `GET /api/v1/action-plans`
 - `POST /api/v1/action-plans/generate`
 - `POST /api/v1/ai/assistant`
+
+Database schema:
+
+```text
+apps/api/app/models/entities.py
+apps/api/alembic/versions/20260505_0001_initial_schema.py
+```
+
+Run schema-related tests:
+
+```bash
+.venv\Scripts\python.exe -m pytest apps/api
+```
 
 ## Git Workflow
 
