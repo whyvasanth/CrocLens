@@ -2,13 +2,17 @@
 
 import { AppShell } from "@/components/dashboard/app-shell";
 import { ActionPlanCard } from "@/components/dashboard/action-plan-card";
+import { ApiStatusBanner } from "@/components/dashboard/api-status-banner";
 import { CrossAssetComparisonCard } from "@/components/dashboard/cross-asset-comparison-card";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { MarketSnapshot } from "@/components/dashboard/market-snapshot";
 import { PortfolioChart } from "@/components/dashboard/portfolio-chart";
 import { RetirementCard, TaxInsightCard } from "@/components/dashboard/insight-cards";
+import { useDashboardData } from "@/hooks/use-dashboard-data";
 
 export function DashboardShell() {
+  const { data, error, isLoading, refetch } = useDashboardData();
+
   return (
     <AppShell>
       {({ openGuide, openSidebar }) => (
@@ -19,13 +23,17 @@ export function DashboardShell() {
             onMenuClick={openSidebar}
             title="Good morning, Maya"
           />
+          <ApiStatusBanner error={error} isLoading={isLoading} onRetry={refetch} />
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.9fr)]">
-            <PortfolioChart />
+            <PortfolioChart
+              isLoading={isLoading}
+              portfolio={data?.portfolio ?? null}
+            />
             <MarketSnapshot />
           </div>
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.9fr)]">
-            <CrossAssetComparisonCard />
-            <ActionPlanCard />
+            <CrossAssetComparisonCard assets={data?.assets ?? []} isLoading={isLoading} />
+            <ActionPlanCard actionPlan={data?.actionPlan ?? null} isLoading={isLoading} />
           </div>
           <div className="grid gap-5 lg:grid-cols-2">
             <TaxInsightCard />

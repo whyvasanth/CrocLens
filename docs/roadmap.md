@@ -160,6 +160,10 @@ Goal:
 
 - Replace frontend mock data with API calls.
 
+Status:
+
+- Implemented for dashboard portfolio summary, tracked assets, and action plan data using the FastAPI mock API.
+
 Topics:
 
 - API client layer

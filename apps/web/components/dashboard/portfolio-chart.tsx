@@ -10,15 +10,26 @@ import {
   YAxis
 } from "recharts";
 import { portfolioHistory } from "@/lib/mock-dashboard-data";
-import { formatCompactCurrency } from "@/lib/formatters";
+import { formatCompactCurrency, formatCurrency } from "@/lib/formatters";
 import { Card, Pill, SectionTitle } from "@/components/dashboard/ui";
+import type { PortfolioSummaryResponse } from "@/types/api";
 
-export function PortfolioChart() {
+interface PortfolioChartProps {
+  isLoading: boolean;
+  portfolio: PortfolioSummaryResponse | null;
+}
+
+export function PortfolioChart({ isLoading, portfolio }: PortfolioChartProps) {
+  const netWorth = portfolio?.net_worth ?? 214_800;
+  const totalAssets = portfolio?.total_assets ?? 329_400;
+  const totalLiabilities = portfolio?.total_liabilities ?? 114_600;
+  const sourceLabel = portfolio?.sources[0]?.freshness ?? "Static mock data";
+
   return (
     <Card>
       <SectionTitle
         eyebrow="Portfolio overview"
-        title="Total value"
+        title="Net worth"
         action={
           <div className="hidden gap-2 text-xs font-semibold text-stone-600 sm:flex">
             {["1M", "3M", "6M", "YTD", "1Y", "All"].map((label) => (
@@ -32,11 +43,22 @@ export function PortfolioChart() {
           </div>
         }
       />
-      <div className="mb-2 flex flex-wrap items-end gap-3">
-        <p className="text-4xl font-bold text-croc-ink">$214,800</p>
-        <Pill tone="green">+2.1% this month</Pill>
-      </div>
-      <p className="mb-4 text-sm font-semibold text-croc-moss">+$4,200 estimated change</p>
+      {isLoading ? (
+        <div className="mb-5 space-y-3">
+          <div className="h-10 w-48 animate-pulse rounded-md bg-stone-100" />
+          <div className="h-7 w-36 animate-pulse rounded-md bg-stone-100" />
+        </div>
+      ) : (
+        <>
+          <div className="mb-2 flex flex-wrap items-end gap-3">
+            <p className="text-4xl font-bold text-croc-ink">{formatCurrency(netWorth)}</p>
+            <Pill tone="green">API-backed</Pill>
+          </div>
+          <p className="mb-4 text-sm font-semibold text-croc-moss">
+            {formatCurrency(totalAssets)} assets minus {formatCurrency(totalLiabilities)} liabilities
+          </p>
+        </>
+      )}
       <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={portfolioHistory} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
@@ -79,7 +101,10 @@ export function PortfolioChart() {
         </ResponsiveContainer>
       </div>
       <p className="mt-3 text-sm leading-6 text-stone-600">
-        Beginner note: total value shows your tracked assets before subtracting liabilities.
+        Beginner note: net worth is what you own minus what you owe.
+      </p>
+      <p className="mt-2 text-xs text-stone-500">
+        Source: {sourceLabel}. Trend line is still sample history until the backend adds time-series data.
       </p>
     </Card>
   );

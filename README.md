@@ -114,14 +114,14 @@ Completed phases:
 - Phase 1: Static frontend dashboard
 - Phase 2: Frontend pages and navigation
 - Phase 3: Backend API skeleton
+- Phase 4: Database schema
 
 Current phase:
 
-- Phase 4: Database schema
+- Phase 5: Frontend-backend integration
 
 Next phases:
 
-- Phase 5: Frontend-backend integration
 - Phase 6: Portfolio and cross-asset logic
 - Phase 7 and beyond: Asset detail pages, onboarding, AI assistant, agents, data pipelines, security, testing, metrics, and deployment
 
@@ -160,6 +160,7 @@ Avoid wording:
 Phase 1 and Phase 2 added the first runnable frontend app under `apps/web`.
 Phase 3 adds the first runnable backend API under `apps/api`.
 Phase 4 adds the SQLAlchemy database models and Alembic migration foundation.
+Phase 5 connects the dashboard to the FastAPI mock API.
 
 Install dependencies:
 
@@ -179,7 +180,13 @@ Open:
 http://localhost:3000/dashboard
 ```
 
-The app currently uses static mock data only. Backend and database work begin in later phases.
+The dashboard fetches portfolio summary, assets, and action plan data from the backend API. Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
+
+Optional frontend API override:
+
+```bash
+set NEXT_PUBLIC_CROCLENS_API_URL=http://127.0.0.1:8000
+```
 
 Current frontend routes:
 

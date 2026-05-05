@@ -25,6 +25,24 @@ GraphQL is not needed for the MVP.
 
 ## Implemented Phase 3 Endpoints
 
+Phase 5 frontend integration currently uses:
+
+- `GET /api/v1/portfolio/summary`
+- `GET /api/v1/assets`
+- `GET /api/v1/action-plans`
+
+The frontend API base URL defaults to:
+
+```text
+http://127.0.0.1:8000
+```
+
+It can be overridden with:
+
+```text
+NEXT_PUBLIC_CROCLENS_API_URL
+```
+
 ### Health
 
 ```http

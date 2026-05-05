@@ -122,3 +122,27 @@ Key terms:
 Practice idea:
 
 - Pick one table and explain which user workflow will create a row in that table.
+
+## Phase 5: Frontend-Backend Integration
+
+What we learned:
+
+- A frontend API client centralizes how the UI talks to the backend.
+- TypeScript response types mirror backend Pydantic response models.
+- Loading states tell users that data is being fetched.
+- Error states tell users what went wrong and how to recover.
+- Client-server integration should preserve clear data contracts instead of scattering fetch calls through every component.
+- Not every dashboard card needs to be API-backed at once; integration can move one contract at a time.
+
+Key terms:
+
+- API client: a small module that wraps HTTP calls to the backend.
+- Data contract: the agreed request/response shape between frontend and backend.
+- Loading state: UI shown while a request is in progress.
+- Error state: UI shown when a request fails.
+- Retry: letting the user or UI try the request again.
+- Environment variable: configuration passed into the app without hardcoding values.
+
+Practice idea:
+
+- Add one more frontend API call to a placeholder page, such as loading `/api/v1/assets` on the Portfolio page.

@@ -24,10 +24,13 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 4 SQLAlchemy database models for cross-asset wealth tracking.
 - Added Alembic initial migration for users, profiles, portfolios, holdings, assets, liabilities, real estate, retirement accounts, journal entries, action plans, agent outputs, market prices, news articles, watchlist items, tax lots, and asset scores.
 - Added schema tests and expanded database documentation.
+- Added Phase 5 frontend API client and dashboard data hook.
+- Connected dashboard portfolio summary, tracked assets, and action plan cards to FastAPI mock endpoints.
+- Added frontend loading, connected, and error states for backend API data.
 
 ### Notes
 
-- The frontend uses static mock data only.
 - The backend uses static mock data only.
 - Database persistence is not implemented yet.
 - A live PostgreSQL database is not required yet; Phase 4 defines the schema and migration foundation.
+- Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
