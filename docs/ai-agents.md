@@ -15,6 +15,36 @@ The safe build order is:
 
 This keeps the product understandable and testable before adding more AI complexity.
 
+## Phase 9 Assistant v1
+
+Phase 9 implements the first real assistant structure without calling an external LLM.
+
+Implemented pieces:
+
+- Rule-based intent routing
+- Prompt context builder
+- Prompt versioning
+- Safety checks for direct trading and guaranteed-return wording
+- Structured assistant response fields
+- Croc Guide frontend integration
+
+The current prompt version is:
+
+```text
+assistant_v1_rule_based_2026_05_05
+```
+
+The assistant can route:
+
+- Portfolio questions
+- Debt questions
+- Retirement questions
+- Tax questions
+- Market questions
+- Risk questions
+- Beginner education questions
+- Safety-sensitive questions
+
 ## AI Output Contract
 
 Every AI output should eventually follow a structure like this:
@@ -183,4 +213,3 @@ They also add complexity:
 - More observability needs
 
 That is why CrocLens starts with one simple assistant endpoint first.
-

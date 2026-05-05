@@ -1,20 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { clsx } from "clsx";
 import {
   Bell,
   ChevronRight,
   Lightbulb,
+  Loader2,
   MoreHorizontal,
   Send,
   ShieldCheck,
   Star,
   X
 } from "lucide-react";
+import { askAssistant } from "@/lib/api-client";
 import { guideInsights, portfolioSummary } from "@/lib/mock-dashboard-data";
 import { CrocMascot } from "@/components/dashboard/croc-mascot";
 import { Pill } from "@/components/dashboard/ui";
+import type { AssistantResponse } from "@/types/api";
 
 const insightStyles = {
   green: {
@@ -40,6 +43,11 @@ interface CrocGuidePanelProps {
 }
 
 export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
+  const [question, setQuestion] = useState("How does debt affect my net worth?");
+  const [answer, setAnswer] = useState<AssistantResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     if (!isOpen) {
       return;
@@ -54,6 +62,32 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isOpen, onClose]);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedQuestion = question.trim();
+
+    if (trimmedQuestion.length < 3) {
+      setError("Ask CrocLens a question with at least three characters.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await askAssistant({
+        question: trimmedQuestion,
+        beginner_mode: true,
+        include_prompt_debug: false
+      });
+      setAnswer(response);
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Unable to reach Croc Guide.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -143,22 +177,70 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
               {portfolioSummary.limitation}
             </p>
           </div>
+
+          <div className="my-6 h-px bg-emerald-900/10" />
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-semibold text-croc-ink">Latest Croc answer</p>
+              {answer ? <Pill tone={answer.safety.passed ? "green" : "gold"}>{answer.intent}</Pill> : null}
+            </div>
+
+            {answer ? (
+              <article className="rounded-lg border border-emerald-900/10 bg-croc-cream p-4">
+                <div className="flex flex-wrap gap-2">
+                  <Pill tone="green">{answer.confidence} confidence</Pill>
+                  <Pill tone={answer.safety.passed ? "green" : "gold"}>
+                    {answer.safety.passed ? "Safety passed" : "Safety reframed"}
+                  </Pill>
+                </div>
+                <h3 className="mt-4 text-sm font-bold text-croc-ink">{answer.summary}</h3>
+                <p className="mt-2 text-sm leading-6 text-stone-600">{answer.beginner_explanation}</p>
+                <div className="mt-4 space-y-2">
+                  {answer.suggested_next_steps.map((step) => (
+                    <div className="flex gap-2" key={step}>
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-croc-moss" />
+                      <p className="text-xs leading-5 text-stone-600">{step}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs leading-5 text-stone-500">
+                  {answer.data_limitations[0]} {answer.safety_disclaimer}
+                </p>
+              </article>
+            ) : (
+              <div className="rounded-lg border border-emerald-900/10 bg-croc-cream p-4">
+                <p className="text-sm leading-6 text-stone-600">
+                  Ask about debt, retirement, risk, taxes, market moves, or how to read the dashboard.
+                </p>
+              </div>
+            )}
+
+            {error ? (
+              <p className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm leading-6 text-rose-800">
+                {error}
+              </p>
+            ) : null}
+          </div>
         </div>
 
-        <form className="flex gap-2 border-t border-emerald-900/10 bg-white p-4">
+        <form className="flex gap-2 border-t border-emerald-900/10 bg-white p-4" onSubmit={handleSubmit}>
           <input
             aria-label="Ask CrocLens"
             className="h-11 min-w-0 flex-1 rounded-lg border border-emerald-900/10 bg-white px-3 text-sm text-croc-ink placeholder:text-stone-500 focus:outline-none"
+            onChange={(event) => setQuestion(event.target.value)}
             placeholder="Ask me anything about your money..."
             suppressHydrationWarning
+            value={question}
           />
           <button
             aria-label="Send question"
+            disabled={isSubmitting}
             className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-croc-emerald text-white transition hover:bg-croc-moss"
             suppressHydrationWarning
-            type="button"
+            type="submit"
           >
-            <Send className="h-4 w-4" />
+            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           </button>
         </form>
       </aside>

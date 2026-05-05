@@ -261,6 +261,10 @@ Goal:
 
 - Add a simple safe assistant endpoint using rule-based or mock responses.
 
+Status:
+
+- Implemented with rule-based intent routing, LLM-ready prompt context, safety checks, Croc Guide frontend integration, and tests.
+
 Branch:
 
 - `phase-9-ai-assistant-v1`

@@ -1,6 +1,7 @@
 export type ConfidenceLevel = "low" | "medium" | "high";
 export type RiskLevel = "low" | "medium" | "high";
 export type AssetDetailCategory = "stock_etf" | "crypto" | "real_estate" | "debt" | "retirement";
+export type AssistantIntent = "portfolio" | "debt" | "retirement" | "tax" | "market" | "risk" | "education" | "safety";
 export type MetricTone = "green" | "gold" | "blue" | "coral" | "neutral";
 export type EmployerMatchStatus = "yes" | "no" | "not_sure" | "not_applicable";
 export type IncomeRange = "under_50k" | "50k_100k" | "100k_200k" | "over_200k" | "prefer_not";
@@ -164,6 +165,39 @@ export interface OnboardingOptionsResponse {
   time_horizon: TimeHorizon[];
   income_range: IncomeRange[];
   employer_match: EmployerMatchStatus[];
+}
+
+export interface AssistantRequest {
+  question: string;
+  beginner_mode: boolean;
+  include_prompt_debug?: boolean;
+}
+
+export interface AssistantPromptContext {
+  prompt_version: string;
+  intent: AssistantIntent;
+  system_rules: string[];
+  context_summary: string;
+  user_question: string;
+}
+
+export interface AssistantSafetyCheck {
+  passed: boolean;
+  flags: string[];
+  rewritten_question: string | null;
+}
+
+export interface AssistantResponse {
+  intent: AssistantIntent;
+  summary: string;
+  beginner_explanation: string;
+  suggested_next_steps: string[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  safety: AssistantSafetyCheck;
+  prompt_context: AssistantPromptContext | null;
+  safety_disclaimer: string;
 }
 
 export interface DashboardApiData {

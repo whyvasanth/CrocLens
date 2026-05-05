@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 ConfidenceLevel = Literal["low", "medium", "high"]
 TrendDirection = Literal["up", "down", "flat"]
 AssetDetailCategory = Literal["stock_etf", "crypto", "real_estate", "debt", "retirement"]
+AssistantIntent = Literal["portfolio", "debt", "retirement", "tax", "market", "risk", "education", "safety"]
 MetricTone = Literal["green", "gold", "blue", "coral", "neutral"]
 EmployerMatchStatus = Literal["yes", "no", "not_sure", "not_applicable"]
 IncomeRange = Literal["under_50k", "50k_100k", "100k_200k", "over_200k", "prefer_not"]
@@ -181,13 +182,31 @@ class ActionPlanResponse(BaseModel):
 class AssistantRequest(BaseModel):
     question: str = Field(min_length=3, max_length=500)
     beginner_mode: bool = True
+    include_prompt_debug: bool = False
+
+
+class AssistantPromptContext(BaseModel):
+    prompt_version: str
+    intent: AssistantIntent
+    system_rules: list[str]
+    context_summary: str
+    user_question: str
+
+
+class AssistantSafetyCheck(BaseModel):
+    passed: bool
+    flags: list[str]
+    rewritten_question: str | None = None
 
 
 class AssistantResponse(BaseModel):
+    intent: AssistantIntent
     summary: str
     beginner_explanation: str
     suggested_next_steps: list[str]
     confidence: ConfidenceLevel
     data_limitations: list[str]
     sources: list[SourceMetadata]
+    safety: AssistantSafetyCheck
+    prompt_context: AssistantPromptContext | None = None
     safety_disclaimer: str

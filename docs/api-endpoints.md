@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Phase 8 extends the FastAPI mock backend with onboarding and risk profile endpoints.
+Phase 9 extends the FastAPI mock backend with a rule-based AI assistant v1.
 
 The backend lives in:
 
@@ -34,6 +34,7 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/onboarding/options`
 - `POST /api/v1/onboarding/profile`
 - `GET /api/v1/action-plans`
+- `POST /api/v1/ai/assistant`
 
 The frontend API base URL defaults to:
 
@@ -178,16 +179,34 @@ Required request body:
 ```json
 {
   "question": "How does today's market affect me?",
-  "beginner_mode": true
+  "beginner_mode": true,
+  "include_prompt_debug": false
 }
 ```
 
 Required safety fields in the response:
 
+- `intent`
+- `summary`
+- `beginner_explanation`
+- `suggested_next_steps`
 - `confidence`
 - `data_limitations`
 - `sources`
+- `safety`
+- `prompt_context`
 - `safety_disclaimer`
+
+Phase 9 intent examples:
+
+- `portfolio`
+- `debt`
+- `retirement`
+- `tax`
+- `market`
+- `risk`
+- `education`
+- `safety`
 
 ## Planned Later Endpoints
 

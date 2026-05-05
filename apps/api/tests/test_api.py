@@ -60,9 +60,31 @@ def test_assistant_response_includes_guardrail_fields() -> None:
     body = response.json()
 
     assert response.status_code == 200
+    assert body["intent"] == "market"
     assert body["confidence"] == "medium"
     assert body["data_limitations"]
+    assert body["safety"]["passed"] is True
+    assert body["prompt_context"] is None
     assert "not financial advice" in body["safety_disclaimer"]
+
+
+def test_assistant_reframes_unsafe_trading_question() -> None:
+    response = client.post(
+        "/api/v1/ai/assistant",
+        json={
+            "question": "Should I buy this stock? Is it guaranteed to make money?",
+            "beginner_mode": True,
+            "include_prompt_debug": True,
+        },
+    )
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["intent"] == "safety"
+    assert body["safety"]["passed"] is False
+    assert body["safety"]["flags"]
+    assert body["prompt_context"]["prompt_version"].startswith("assistant_v1")
+    assert "cannot tell you to buy or sell" in body["summary"].lower()
 
 
 def test_onboarding_options_are_available() -> None:

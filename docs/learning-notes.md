@@ -211,3 +211,24 @@ Key terms:
 Practice idea:
 
 - Add one more onboarding field for monthly savings rate, then update the backend risk scoring notes to use it.
+
+## Phase 9: AI Assistant v1
+
+What we learned:
+
+- A safe AI feature can start rule-based before using an external LLM.
+- Intent routing decides what kind of question the user is asking.
+- Prompt context is the structured package of rules, user question, and app context that a future LLM would receive.
+- Guardrails should run before returning financial assistant output.
+- The frontend should render assistant confidence, limitations, sources, and safety state instead of only chat text.
+
+Key terms:
+
+- Intent routing: classifying a user question into a category such as debt, tax, risk, or market.
+- Prompt context: structured input prepared for a future model call.
+- Guardrail: logic that detects or rewrites unsafe requests.
+- Prompt version: a label that helps track which prompt structure produced an answer.
+
+Practice idea:
+
+- Add one new intent for real estate questions, then write a test that proves mortgage and home-equity wording routes correctly.

@@ -1,5 +1,7 @@
 import type {
   ActionPlanResponse,
+  AssistantRequest,
+  AssistantResponse,
   AssetDetailCardResponse,
   AssetDetailResponse,
   AssetResponse,
@@ -75,4 +77,8 @@ export function getOnboardingOptions(signal?: AbortSignal) {
 
 export function submitOnboardingProfile(profile: OnboardingProfileRequest, signal?: AbortSignal) {
   return postJson<OnboardingProfileResponse, OnboardingProfileRequest>("/api/v1/onboarding/profile", profile, signal);
+}
+
+export function askAssistant(request: AssistantRequest, signal?: AbortSignal) {
+  return postJson<AssistantResponse, AssistantRequest>("/api/v1/ai/assistant", request, signal);
 }
