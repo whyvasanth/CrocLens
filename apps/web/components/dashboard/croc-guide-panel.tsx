@@ -82,6 +82,7 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
             <button
               aria-label="More Croc Guide options"
               className="grid h-9 w-9 place-items-center rounded-lg hover:bg-stone-100"
+              suppressHydrationWarning
               type="button"
             >
               <MoreHorizontal className="h-4 w-4" />
@@ -90,6 +91,7 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
               aria-label="Close Croc Guide"
               className="grid h-9 w-9 place-items-center rounded-lg bg-stone-100 text-croc-ink hover:bg-stone-200"
               onClick={onClose}
+              suppressHydrationWarning
               type="button"
             >
               <X className="h-4 w-4" />
@@ -148,10 +150,12 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
             aria-label="Ask CrocLens"
             className="h-11 min-w-0 flex-1 rounded-lg border border-emerald-900/10 bg-white px-3 text-sm text-croc-ink placeholder:text-stone-500 focus:outline-none"
             placeholder="Ask me anything about your money..."
+            suppressHydrationWarning
           />
           <button
             aria-label="Send question"
             className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-croc-emerald text-white transition hover:bg-croc-moss"
+            suppressHydrationWarning
             type="button"
           >
             <Send className="h-4 w-4" />

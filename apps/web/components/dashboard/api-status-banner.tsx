@@ -32,6 +32,7 @@ export function ApiStatusBanner({ error, isLoading, onRetry }: ApiStatusBannerPr
         <button
           className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-white px-3 font-semibold text-rose-900"
           onClick={onRetry}
+          suppressHydrationWarning
           type="button"
         >
           <RefreshCw className="h-4 w-4" />
@@ -48,4 +49,3 @@ export function ApiStatusBanner({ error, isLoading, onRetry }: ApiStatusBannerPr
     </div>
   );
 }
-

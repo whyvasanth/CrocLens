@@ -20,6 +20,8 @@ export function DashboardHeader({
           aria-label="Open navigation"
           className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-emerald-900/10 bg-white lg:hidden"
           onClick={onMenuClick}
+          suppressHydrationWarning
+          type="button"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -36,6 +38,7 @@ export function DashboardHeader({
       <button
         className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-5 text-sm font-semibold text-white shadow-card transition hover:bg-croc-moss"
         onClick={onAskClick}
+        suppressHydrationWarning
         type="button"
       >
         <Sparkles className="h-4 w-4" />

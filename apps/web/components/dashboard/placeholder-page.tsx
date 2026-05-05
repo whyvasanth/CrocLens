@@ -54,6 +54,7 @@ export function PlaceholderPage({ config }: PlaceholderPageProps) {
                     <button
                       className="mt-4 inline-flex min-h-10 items-center gap-2 rounded-lg bg-croc-emerald px-4 text-sm font-semibold text-white"
                       onClick={openGuide}
+                      suppressHydrationWarning
                       type="button"
                     >
                       Ask Croc Guide
@@ -79,4 +80,3 @@ export function PlaceholderPage({ config }: PlaceholderPageProps) {
     </AppShell>
   );
 }
-

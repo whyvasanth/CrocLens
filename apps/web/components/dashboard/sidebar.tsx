@@ -43,6 +43,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             aria-label="Close navigation"
             className="grid h-10 w-10 place-items-center rounded-lg bg-white/10 lg:hidden"
             onClick={onClose}
+            suppressHydrationWarning
+            type="button"
           >
             <X className="h-5 w-5" />
           </button>
@@ -85,7 +87,11 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             </p>
           </div>
 
-          <button className="flex w-full items-center gap-3 rounded-lg border border-white/10 bg-white/10 p-3 text-left">
+          <button
+            className="flex w-full items-center gap-3 rounded-lg border border-white/10 bg-white/10 p-3 text-left"
+            suppressHydrationWarning
+            type="button"
+          >
             <span className="grid h-11 w-11 place-items-center rounded-lg bg-white text-sm font-bold text-croc-emerald">
               M
             </span>

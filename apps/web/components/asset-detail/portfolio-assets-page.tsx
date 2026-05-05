@@ -91,6 +91,7 @@ export function PortfolioAssetsPage() {
                 <button
                   className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-4 text-sm font-semibold text-white"
                   onClick={() => setRefreshKey((value) => value + 1)}
+                  suppressHydrationWarning
                   type="button"
                 >
                   <RefreshCcw className="h-4 w-4" />
