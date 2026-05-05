@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Phase 3 implements the first FastAPI backend skeleton with mock data only.
+Phase 7 extends the FastAPI mock backend with beginner-friendly asset detail endpoints.
 
 The backend lives in:
 
@@ -29,6 +29,8 @@ Phase 5 frontend integration currently uses:
 
 - `GET /api/v1/portfolio/summary`
 - `GET /api/v1/assets`
+- `GET /api/v1/assets/detail-cards`
+- `GET /api/v1/assets/{asset_id}/detail`
 - `GET /api/v1/action-plans`
 
 The frontend API base URL defaults to:
@@ -84,11 +86,28 @@ Each score includes:
 ```http
 GET /api/v1/assets
 GET /api/v1/assets/{asset_id}
+GET /api/v1/assets/detail-cards
+GET /api/v1/assets/{asset_id}/detail
 ```
 
 Purpose:
 
-- Return asset lists and asset detail data.
+- Return asset lists, portfolio detail cards, and full beginner-friendly detail pages.
+
+Phase 7 detail responses include:
+
+- `what_this_is`
+- `why_it_matters`
+- `risk_explanation`
+- `liquidity_explanation`
+- `tax_complexity_explanation`
+- `income_potential_explanation`
+- `what_to_watch`
+- `safe_next_steps`
+- `confidence`
+- `data_limitations`
+- `source`
+- `educational_disclaimer`
 
 ### Action Plans
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 import {
   Line,
   LineChart,
@@ -45,7 +46,7 @@ export function CrossAssetComparisonCard({ assets, isLoading }: CrossAssetCompar
       <SectionTitle
         eyebrow="Cross-asset comparison"
         title="API-backed tracked assets"
-        action={<a href="#" className="text-sm font-semibold text-croc-moss">View more</a>}
+        action={<Link href="/portfolio" className="text-sm font-semibold text-croc-moss">View more</Link>}
       />
       <div className="mb-4 flex gap-6 border-b border-emerald-900/10 text-sm font-semibold text-stone-500">
         {["Stocks", "ETFs", "Crypto", "Bonds"].map((tab) => (
@@ -77,7 +78,12 @@ export function CrossAssetComparisonCard({ assets, isLoading }: CrossAssetCompar
                   : formatCurrency(asset.current_price);
 
               return (
-                <article key={asset.id} className="rounded-lg border border-emerald-900/10 bg-white p-3">
+                <Link
+                  aria-label={`Open ${asset.name} detail page`}
+                  className="rounded-lg border border-emerald-900/10 bg-white p-3 transition hover:-translate-y-0.5 hover:border-croc-moss"
+                  href={`/assets/${asset.id}`}
+                  key={asset.id}
+                >
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <h3 className="font-bold text-croc-ink">{asset.symbol}</h3>
@@ -103,7 +109,7 @@ export function CrossAssetComparisonCard({ assets, isLoading }: CrossAssetCompar
                   </div>
                   <p className="mt-2 text-sm font-semibold text-croc-ink">{priceLabel}</p>
                   <p className="mt-1 text-xs text-stone-500">{asset.allocation_percent}% allocation</p>
-                </article>
+                </Link>
               );
             })}
       </div>

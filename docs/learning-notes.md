@@ -169,3 +169,24 @@ Key terms:
 Practice idea:
 
 - Change one asset-class weight in `portfolio_calculations.py`, run the tests, and explain which score changed.
+
+## Phase 7: Asset Detail Pages
+
+What we learned:
+
+- A detail page should be driven by an API contract, not hardcoded UI text.
+- Dynamic routes let one frontend page render many records, such as `/assets/asset_btc`.
+- Portfolio pages can become navigation surfaces that link users into deeper workflows.
+- Beginner-first finance products need plain-language sections for risk, liquidity, taxes, income potential, and what to watch.
+- Financial safety is part of the response model: confidence, data limitations, sources, and educational disclaimers travel with the data.
+
+Key terms:
+
+- Dynamic route: a URL pattern where part of the path is a variable, such as `[assetId]`.
+- Detail endpoint: an API endpoint that returns one rich record instead of a list.
+- Data contract: the response shape that backend and frontend agree to share.
+- Guardrail field: structured safety metadata such as disclaimers, limitations, and confidence.
+
+Practice idea:
+
+- Add a cash detail page to the Phase 7 sample data, then confirm it appears on `/portfolio` and opens from its own `/assets/...` route.

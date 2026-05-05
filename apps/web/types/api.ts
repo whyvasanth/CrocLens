@@ -1,5 +1,7 @@
 export type ConfidenceLevel = "low" | "medium" | "high";
 export type RiskLevel = "low" | "medium" | "high";
+export type AssetDetailCategory = "stock_etf" | "crypto" | "real_estate" | "debt" | "retirement";
+export type MetricTone = "green" | "gold" | "blue" | "coral" | "neutral";
 
 export interface SourceMetadata {
   name: string;
@@ -49,6 +51,51 @@ export interface AssetResponse {
   risk_level: RiskLevel;
   beginner_explanation: string;
   source: SourceMetadata;
+}
+
+export interface AssetDetailMetric {
+  label: string;
+  value: string;
+  explanation: string;
+  tone: MetricTone;
+}
+
+export interface AssetDetailCardResponse {
+  id: string;
+  symbol: string;
+  name: string;
+  category: AssetDetailCategory;
+  asset_type: string;
+  current_value: number;
+  risk_level: RiskLevel;
+  summary: string;
+}
+
+export interface AssetDetailResponse {
+  id: string;
+  symbol: string;
+  name: string;
+  category: AssetDetailCategory;
+  asset_type: string;
+  current_value: number;
+  allocation_percent: number;
+  risk_level: RiskLevel;
+  portfolio_role: string;
+  headline: string;
+  what_this_is: string;
+  why_it_matters: string;
+  risk_explanation: string;
+  liquidity_explanation: string;
+  tax_complexity_explanation: string;
+  income_potential_explanation: string;
+  what_to_watch: string[];
+  beginner_takeaway: string;
+  safe_next_steps: string[];
+  key_metrics: AssetDetailMetric[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  source: SourceMetadata;
+  educational_disclaimer: string;
 }
 
 export interface ActionPlanItemResponse {

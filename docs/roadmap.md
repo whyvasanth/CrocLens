@@ -217,6 +217,10 @@ Goal:
 
 - Add beginner-friendly detail pages for major asset types.
 
+Status:
+
+- Implemented with API-backed detail cards, dynamic Next.js detail routes, beginner explanations, and backend tests.
+
 Pages:
 
 - Stock/ETF

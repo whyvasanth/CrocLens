@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 ConfidenceLevel = Literal["low", "medium", "high"]
 TrendDirection = Literal["up", "down", "flat"]
+AssetDetailCategory = Literal["stock_etf", "crypto", "real_estate", "debt", "retirement"]
+MetricTone = Literal["green", "gold", "blue", "coral", "neutral"]
 
 
 class SourceMetadata(BaseModel):
@@ -61,6 +63,51 @@ class AssetResponse(BaseModel):
     risk_level: Literal["low", "medium", "high"]
     beginner_explanation: str
     source: SourceMetadata
+
+
+class AssetDetailMetric(BaseModel):
+    label: str
+    value: str
+    explanation: str
+    tone: MetricTone = "neutral"
+
+
+class AssetDetailCard(BaseModel):
+    id: str
+    symbol: str
+    name: str
+    category: AssetDetailCategory
+    asset_type: str
+    current_value: float = Field(ge=0)
+    risk_level: Literal["low", "medium", "high"]
+    summary: str
+
+
+class AssetDetailResponse(BaseModel):
+    id: str
+    symbol: str
+    name: str
+    category: AssetDetailCategory
+    asset_type: str
+    current_value: float = Field(ge=0)
+    allocation_percent: float = Field(ge=0, le=100)
+    risk_level: Literal["low", "medium", "high"]
+    portfolio_role: str
+    headline: str
+    what_this_is: str
+    why_it_matters: str
+    risk_explanation: str
+    liquidity_explanation: str
+    tax_complexity_explanation: str
+    income_potential_explanation: str
+    what_to_watch: list[str]
+    beginner_takeaway: str
+    safe_next_steps: list[str]
+    key_metrics: list[AssetDetailMetric]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    source: SourceMetadata
+    educational_disclaimer: str
 
 
 class ActionPlanItem(BaseModel):

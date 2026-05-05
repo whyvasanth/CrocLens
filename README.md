@@ -116,14 +116,15 @@ Completed phases:
 - Phase 3: Backend API skeleton
 - Phase 4: Database schema
 - Phase 5: Frontend-backend integration
+- Phase 6: Portfolio and cross-asset logic
 
 Current phase:
 
-- Phase 6: Portfolio and cross-asset logic
+- Phase 7: Asset detail pages
 
 Next phases:
 
-- Phase 7 and beyond: Asset detail pages, onboarding, AI assistant, agents, data pipelines, security, testing, metrics, and deployment
+- Phase 8 and beyond: Onboarding, AI assistant, agents, data pipelines, security, testing, metrics, and deployment
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -162,6 +163,7 @@ Phase 3 adds the first runnable backend API under `apps/api`.
 Phase 4 adds the SQLAlchemy database models and Alembic migration foundation.
 Phase 5 connects the dashboard to the FastAPI mock API.
 Phase 6 adds transparent portfolio and cross-asset scoring logic.
+Phase 7 adds API-backed beginner detail pages for stocks/ETFs, crypto, real estate, debt, and retirement accounts.
 
 Install dependencies:
 
@@ -200,6 +202,12 @@ Current frontend routes:
 - `/retirement`
 - `/tax-planner`
 - `/settings`
+- `/assets/asset_stock_bucket`
+- `/assets/asset_etf_bucket`
+- `/assets/asset_btc`
+- `/assets/asset_real_estate`
+- `/assets/liability_mortgage`
+- `/assets/asset_retirement`
 
 Run the API:
 
@@ -223,6 +231,8 @@ Current backend endpoints:
 - `GET /api/v1/portfolio/summary`
 - `GET /api/v1/assets`
 - `GET /api/v1/assets/{asset_id}`
+- `GET /api/v1/assets/detail-cards`
+- `GET /api/v1/assets/{asset_id}/detail`
 - `GET /api/v1/action-plans`
 - `POST /api/v1/action-plans/generate`
 - `POST /api/v1/ai/assistant`

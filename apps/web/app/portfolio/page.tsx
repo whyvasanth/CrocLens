@@ -1,7 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/placeholder-page";
-import { productPages } from "@/lib/page-config";
+import { PortfolioAssetsPage } from "@/components/asset-detail/portfolio-assets-page";
 
 export default function PortfolioPage() {
-  return <PlaceholderPage config={productPages.portfolio} />;
+  return <PortfolioAssetsPage />;
 }
-

@@ -30,6 +30,28 @@ def test_asset_not_found_returns_404() -> None:
     assert response.status_code == 404
 
 
+def test_asset_detail_cards_include_debt_example() -> None:
+    response = client.get("/api/v1/assets/detail-cards")
+    body = response.json()
+
+    assert response.status_code == 200
+    assert any(item["category"] == "debt" for item in body)
+    assert any(item["id"] == "asset_btc" for item in body)
+
+
+def test_asset_detail_includes_beginner_fields_and_guardrails() -> None:
+    response = client.get("/api/v1/assets/asset_btc/detail")
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["category"] == "crypto"
+    assert body["risk_level"] == "high"
+    assert body["what_to_watch"]
+    assert body["safe_next_steps"]
+    assert body["data_limitations"]
+    assert "not financial advice" in body["educational_disclaimer"]
+
+
 def test_assistant_response_includes_guardrail_fields() -> None:
     response = client.post(
         "/api/v1/ai/assistant",
