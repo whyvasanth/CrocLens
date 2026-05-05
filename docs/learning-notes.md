@@ -190,3 +190,24 @@ Key terms:
 Practice idea:
 
 - Add a cash detail page to the Phase 7 sample data, then confirm it appears on `/portfolio` and opens from its own `/assets/...` route.
+
+## Phase 8: User Onboarding and Risk Profile
+
+What we learned:
+
+- Onboarding is product context, not just a form.
+- Structured onboarding answers can later personalize dashboards, action plans, and AI prompts.
+- Risk profiles should be transparent heuristics in the MVP, not hidden black-box scores.
+- Frontend forms need typed request objects so the backend receives predictable data.
+- Financial onboarding should use safe educational wording and return confidence and limitations.
+
+Key terms:
+
+- Personalization context: user-provided information that changes what the product emphasizes.
+- Controlled form: a React form where component state owns each input value.
+- Heuristic risk score: a simple rule-based score that is easy to explain and audit.
+- Form validation: checking that submitted fields match allowed values and ranges.
+
+Practice idea:
+
+- Add one more onboarding field for monthly savings rate, then update the backend risk scoring notes to use it.

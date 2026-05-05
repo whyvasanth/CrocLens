@@ -2,6 +2,12 @@ export type ConfidenceLevel = "low" | "medium" | "high";
 export type RiskLevel = "low" | "medium" | "high";
 export type AssetDetailCategory = "stock_etf" | "crypto" | "real_estate" | "debt" | "retirement";
 export type MetricTone = "green" | "gold" | "blue" | "coral" | "neutral";
+export type EmployerMatchStatus = "yes" | "no" | "not_sure" | "not_applicable";
+export type IncomeRange = "under_50k" | "50k_100k" | "100k_200k" | "over_200k" | "prefer_not";
+export type InvestmentExperience = "new" | "some" | "experienced";
+export type PrimaryGoal = "learn" | "build_wealth" | "retirement" | "debt_payoff" | "home" | "emergency_fund";
+export type RiskToleranceInput = "low" | "medium" | "high";
+export type TimeHorizon = "short" | "medium" | "long";
 
 export interface SourceMetadata {
   name: string;
@@ -113,6 +119,51 @@ export interface ActionPlanResponse {
   confidence: ConfidenceLevel;
   data_limitations: string[];
   educational_disclaimer: string;
+}
+
+export interface ManualAssetEntry {
+  asset_class: string;
+  label: string;
+  estimated_value: number;
+}
+
+export interface OnboardingProfileRequest {
+  investment_experience: InvestmentExperience;
+  primary_goal: PrimaryGoal;
+  risk_tolerance: RiskToleranceInput;
+  time_horizon: TimeHorizon;
+  income_range: IncomeRange;
+  emergency_cash_months: number;
+  has_retirement_account: boolean;
+  employer_match: EmployerMatchStatus;
+  retirement_contribution_percent: number | null;
+  has_mortgage: boolean;
+  has_student_loans: boolean;
+  has_credit_card_debt: boolean;
+  has_high_interest_debt: boolean;
+  manual_assets: ManualAssetEntry[];
+}
+
+export interface OnboardingProfileResponse {
+  profile_id: string;
+  risk_profile: string;
+  risk_score: number;
+  summary: string;
+  personalization_notes: string[];
+  recommended_first_steps: string[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  source: SourceMetadata;
+  educational_disclaimer: string;
+}
+
+export interface OnboardingOptionsResponse {
+  investment_experience: InvestmentExperience[];
+  primary_goal: PrimaryGoal[];
+  risk_tolerance: RiskToleranceInput[];
+  time_horizon: TimeHorizon[];
+  income_range: IncomeRange[];
+  employer_match: EmployerMatchStatus[];
 }
 
 export interface DashboardApiData {

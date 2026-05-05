@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Phase 7 extends the FastAPI mock backend with beginner-friendly asset detail endpoints.
+Phase 8 extends the FastAPI mock backend with onboarding and risk profile endpoints.
 
 The backend lives in:
 
@@ -31,6 +31,8 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/assets`
 - `GET /api/v1/assets/detail-cards`
 - `GET /api/v1/assets/{asset_id}/detail`
+- `GET /api/v1/onboarding/options`
+- `POST /api/v1/onboarding/profile`
 - `GET /api/v1/action-plans`
 
 The frontend API base URL defaults to:
@@ -104,6 +106,47 @@ Phase 7 detail responses include:
 - `income_potential_explanation`
 - `what_to_watch`
 - `safe_next_steps`
+- `confidence`
+- `data_limitations`
+- `source`
+- `educational_disclaimer`
+
+### Onboarding
+
+```http
+GET /api/v1/onboarding/options
+POST /api/v1/onboarding/profile
+```
+
+Purpose:
+
+- Collect beginner goals, risk comfort, time horizon, income range, retirement context, debt context, and manual assets.
+- Return an educational risk profile that can personalize future dashboard, action plan, and AI assistant behavior.
+
+The profile request includes:
+
+- `investment_experience`
+- `primary_goal`
+- `risk_tolerance`
+- `time_horizon`
+- `income_range`
+- `emergency_cash_months`
+- `has_retirement_account`
+- `employer_match`
+- `retirement_contribution_percent`
+- `has_mortgage`
+- `has_student_loans`
+- `has_credit_card_debt`
+- `has_high_interest_debt`
+- `manual_assets`
+
+The profile response includes:
+
+- `risk_profile`
+- `risk_score`
+- `summary`
+- `personalization_notes`
+- `recommended_first_steps`
 - `confidence`
 - `data_limitations`
 - `source`

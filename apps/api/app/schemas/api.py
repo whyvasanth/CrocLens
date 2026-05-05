@@ -7,6 +7,12 @@ ConfidenceLevel = Literal["low", "medium", "high"]
 TrendDirection = Literal["up", "down", "flat"]
 AssetDetailCategory = Literal["stock_etf", "crypto", "real_estate", "debt", "retirement"]
 MetricTone = Literal["green", "gold", "blue", "coral", "neutral"]
+EmployerMatchStatus = Literal["yes", "no", "not_sure", "not_applicable"]
+IncomeRange = Literal["under_50k", "50k_100k", "100k_200k", "over_200k", "prefer_not"]
+InvestmentExperience = Literal["new", "some", "experienced"]
+PrimaryGoal = Literal["learn", "build_wealth", "retirement", "debt_payoff", "home", "emergency_fund"]
+RiskToleranceInput = Literal["low", "medium", "high"]
+TimeHorizon = Literal["short", "medium", "long"]
 
 
 class SourceMetadata(BaseModel):
@@ -108,6 +114,51 @@ class AssetDetailResponse(BaseModel):
     data_limitations: list[str]
     source: SourceMetadata
     educational_disclaimer: str
+
+
+class ManualAssetEntry(BaseModel):
+    asset_class: str = Field(min_length=2, max_length=40)
+    label: str = Field(min_length=2, max_length=80)
+    estimated_value: float = Field(ge=0)
+
+
+class OnboardingProfileRequest(BaseModel):
+    investment_experience: InvestmentExperience
+    primary_goal: PrimaryGoal
+    risk_tolerance: RiskToleranceInput
+    time_horizon: TimeHorizon
+    income_range: IncomeRange
+    emergency_cash_months: int = Field(ge=0, le=36)
+    has_retirement_account: bool
+    employer_match: EmployerMatchStatus
+    retirement_contribution_percent: float | None = Field(default=None, ge=0, le=100)
+    has_mortgage: bool
+    has_student_loans: bool
+    has_credit_card_debt: bool
+    has_high_interest_debt: bool
+    manual_assets: list[ManualAssetEntry] = Field(default_factory=list, max_length=12)
+
+
+class OnboardingProfileResponse(BaseModel):
+    profile_id: str
+    risk_profile: str
+    risk_score: int = Field(ge=0, le=100)
+    summary: str
+    personalization_notes: list[str]
+    recommended_first_steps: list[str]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    source: SourceMetadata
+    educational_disclaimer: str
+
+
+class OnboardingOptionsResponse(BaseModel):
+    investment_experience: list[str]
+    primary_goal: list[str]
+    risk_tolerance: list[str]
+    time_horizon: list[str]
+    income_range: list[str]
+    employer_match: list[str]
 
 
 class ActionPlanItem(BaseModel):

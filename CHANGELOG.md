@@ -34,6 +34,9 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 7 API-backed beginner asset detail pages for stocks/ETFs, crypto, real estate, debt, and retirement.
 - Added asset detail card and detail response contracts with confidence, limitations, source freshness, and safe next-step wording.
 - Replaced the Portfolio placeholder with a detail-ready item index and linked dashboard comparison cards to detail pages.
+- Added Phase 8 onboarding and risk profile flow.
+- Added onboarding API contracts, risk scoring service, and backend tests.
+- Added onboarding route, sidebar link, guided form, manual asset entry, and generated profile results.
 
 ### Notes
 
@@ -43,3 +46,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
 - Phase 6 scores are educational heuristics and are intentionally simple for auditability.
 - Phase 7 detail pages use static sample data and educational explanations, not personalized advice.
+- Phase 8 risk profiles are educational starting points, not personalized investment recommendations.

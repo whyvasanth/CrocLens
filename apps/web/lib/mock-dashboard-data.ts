@@ -11,6 +11,7 @@ import {
   Settings,
   ShieldCheck,
   Sparkles,
+  UserRound,
   WalletCards
 } from "lucide-react";
 import type {
@@ -28,6 +29,7 @@ import type {
 
 export const sidebarItems: SidebarItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: Home },
+  { label: "Onboarding", href: "/onboarding", icon: UserRound },
   { label: "Portfolio", href: "/portfolio", icon: WalletCards },
   { label: "Compare Assets", href: "/compare-assets", icon: ChartPie },
   { label: "Watchlist", href: "/watchlist", icon: Bell },

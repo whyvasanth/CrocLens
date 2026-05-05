@@ -117,14 +117,15 @@ Completed phases:
 - Phase 4: Database schema
 - Phase 5: Frontend-backend integration
 - Phase 6: Portfolio and cross-asset logic
+- Phase 7: Asset detail pages
 
 Current phase:
 
-- Phase 7: Asset detail pages
+- Phase 8: User onboarding and risk profile
 
 Next phases:
 
-- Phase 8 and beyond: Onboarding, AI assistant, agents, data pipelines, security, testing, metrics, and deployment
+- Phase 9 and beyond: AI assistant, agents, data pipelines, security, testing, metrics, and deployment
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -164,6 +165,7 @@ Phase 4 adds the SQLAlchemy database models and Alembic migration foundation.
 Phase 5 connects the dashboard to the FastAPI mock API.
 Phase 6 adds transparent portfolio and cross-asset scoring logic.
 Phase 7 adds API-backed beginner detail pages for stocks/ETFs, crypto, real estate, debt, and retirement accounts.
+Phase 8 adds an API-backed onboarding flow that turns goals, risk comfort, retirement, debt, and manual assets into a beginner risk profile.
 
 Install dependencies:
 
@@ -194,6 +196,7 @@ set NEXT_PUBLIC_CROCLENS_API_URL=http://127.0.0.1:8000
 Current frontend routes:
 
 - `/dashboard`
+- `/onboarding`
 - `/portfolio`
 - `/compare-assets`
 - `/watchlist`
@@ -233,6 +236,8 @@ Current backend endpoints:
 - `GET /api/v1/assets/{asset_id}`
 - `GET /api/v1/assets/detail-cards`
 - `GET /api/v1/assets/{asset_id}/detail`
+- `GET /api/v1/onboarding/options`
+- `POST /api/v1/onboarding/profile`
 - `GET /api/v1/action-plans`
 - `POST /api/v1/action-plans/generate`
 - `POST /api/v1/ai/assistant`

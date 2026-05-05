@@ -243,6 +243,10 @@ Goal:
 
 - Collect user goals, experience, risk tolerance, time horizon, and manual assets.
 
+Status:
+
+- Implemented with an API-backed onboarding form, manual asset entry, heuristic risk profile scoring, safe first steps, and tests.
+
 Branch:
 
 - `phase-8-onboarding-risk-profile`

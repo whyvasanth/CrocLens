@@ -63,3 +63,50 @@ def test_assistant_response_includes_guardrail_fields() -> None:
     assert body["confidence"] == "medium"
     assert body["data_limitations"]
     assert "not financial advice" in body["safety_disclaimer"]
+
+
+def test_onboarding_options_are_available() -> None:
+    response = client.get("/api/v1/onboarding/options")
+    body = response.json()
+
+    assert response.status_code == 200
+    assert "new" in body["investment_experience"]
+    assert "debt_payoff" in body["primary_goal"]
+
+
+def test_onboarding_profile_returns_risk_profile_and_guardrails() -> None:
+    response = client.post(
+        "/api/v1/onboarding/profile",
+        json={
+            "investment_experience": "new",
+            "primary_goal": "debt_payoff",
+            "risk_tolerance": "medium",
+            "time_horizon": "medium",
+            "income_range": "50k_100k",
+            "emergency_cash_months": 2,
+            "has_retirement_account": True,
+            "employer_match": "not_sure",
+            "retirement_contribution_percent": 4,
+            "has_mortgage": False,
+            "has_student_loans": True,
+            "has_credit_card_debt": True,
+            "has_high_interest_debt": True,
+            "manual_assets": [
+                {
+                    "asset_class": "Cash",
+                    "label": "Emergency savings",
+                    "estimated_value": 4500,
+                }
+            ],
+        },
+    )
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["risk_profile"] == "Cautious Beginner"
+    assert body["risk_score"] <= 40
+    assert body["recommended_first_steps"]
+    assert body["personalization_notes"]
+    assert body["confidence"] == "medium"
+    assert body["data_limitations"]
+    assert "not financial advice" in body["educational_disclaimer"]

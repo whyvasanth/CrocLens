@@ -3,6 +3,9 @@ import type {
   AssetDetailCardResponse,
   AssetDetailResponse,
   AssetResponse,
+  OnboardingOptionsResponse,
+  OnboardingProfileRequest,
+  OnboardingProfileResponse,
   PortfolioSummaryResponse
 } from "@/types/api";
 
@@ -22,6 +25,24 @@ async function requestJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   }
 
   return response.json() as Promise<T>;
+}
+
+async function postJson<TResponse, TRequest>(path: string, body: TRequest, signal?: AbortSignal): Promise<TResponse> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    method: "POST",
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+  }
+
+  return response.json() as Promise<TResponse>;
 }
 
 export function getApiBaseUrl() {
@@ -46,4 +67,12 @@ export function getAssetDetail(assetId: string, signal?: AbortSignal) {
 
 export function getActionPlan(signal?: AbortSignal) {
   return requestJson<ActionPlanResponse>("/api/v1/action-plans", signal);
+}
+
+export function getOnboardingOptions(signal?: AbortSignal) {
+  return requestJson<OnboardingOptionsResponse>("/api/v1/onboarding/options", signal);
+}
+
+export function submitOnboardingProfile(profile: OnboardingProfileRequest, signal?: AbortSignal) {
+  return postJson<OnboardingProfileResponse, OnboardingProfileRequest>("/api/v1/onboarding/profile", profile, signal);
 }

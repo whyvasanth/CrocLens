@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import action_plans, assistant, assets, health, portfolio
+from app.api.routes import action_plans, assistant, assets, health, onboarding, portfolio
 from app.core.config import settings
 
 
@@ -23,6 +23,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(portfolio.router, prefix=settings.api_prefix)
     app.include_router(assets.router, prefix=settings.api_prefix)
+    app.include_router(onboarding.router, prefix=settings.api_prefix)
     app.include_router(action_plans.router, prefix=settings.api_prefix)
     app.include_router(assistant.router, prefix=settings.api_prefix)
 
@@ -30,4 +31,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
