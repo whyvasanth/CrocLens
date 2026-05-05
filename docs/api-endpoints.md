@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Phase 9 extends the FastAPI mock backend with a rule-based AI assistant v1.
+Phase 10 extends the FastAPI mock backend with a lightweight agent registry and assistant trace.
 
 The backend lives in:
 
@@ -35,6 +35,7 @@ Phase 5 frontend integration currently uses:
 - `POST /api/v1/onboarding/profile`
 - `GET /api/v1/action-plans`
 - `POST /api/v1/ai/assistant`
+- `GET /api/v1/ai/agents`
 
 The frontend API base URL defaults to:
 
@@ -168,6 +169,7 @@ Purpose:
 
 ```http
 POST /api/v1/ai/assistant
+GET /api/v1/ai/agents
 ```
 
 Purpose:
@@ -194,8 +196,11 @@ Required safety fields in the response:
 - `data_limitations`
 - `sources`
 - `safety`
+- `agent_trace`
 - `prompt_context`
 - `safety_disclaimer`
+
+`GET /api/v1/ai/agents` returns the Phase 10 agent registry, including implemented and stubbed agents.
 
 Phase 9 intent examples:
 

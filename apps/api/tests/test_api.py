@@ -64,6 +64,12 @@ def test_assistant_response_includes_guardrail_fields() -> None:
     assert body["confidence"] == "medium"
     assert body["data_limitations"]
     assert body["safety"]["passed"] is True
+    assert [step["agent"] for step in body["agent_trace"]] == [
+        "intent_router",
+        "news_impact",
+        "action_plan",
+        "safety_compliance_guardrail",
+    ]
     assert body["prompt_context"] is None
     assert "not financial advice" in body["safety_disclaimer"]
 
@@ -83,8 +89,26 @@ def test_assistant_reframes_unsafe_trading_question() -> None:
     assert body["intent"] == "safety"
     assert body["safety"]["passed"] is False
     assert body["safety"]["flags"]
+    assert [step["agent"] for step in body["agent_trace"]] == [
+        "intent_router",
+        "safety_compliance_guardrail",
+    ]
     assert body["prompt_context"]["prompt_version"].startswith("assistant_v1")
     assert "cannot tell you to buy or sell" in body["summary"].lower()
+
+
+def test_agent_registry_lists_expected_agents() -> None:
+    response = client.get("/api/v1/ai/agents")
+    body = response.json()
+    agent_names = {agent["agent"] for agent in body["agents"]}
+
+    assert response.status_code == 200
+    assert "intent_router" in agent_names
+    assert "portfolio_analyst" in agent_names
+    assert "debt_liability_coach" in agent_names
+    assert "safety_compliance_guardrail" in agent_names
+    assert len(body["agents"]) == 13
+    assert body["orchestration_note"]
 
 
 def test_onboarding_options_are_available() -> None:

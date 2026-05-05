@@ -7,6 +7,22 @@ ConfidenceLevel = Literal["low", "medium", "high"]
 TrendDirection = Literal["up", "down", "flat"]
 AssetDetailCategory = Literal["stock_etf", "crypto", "real_estate", "debt", "retirement"]
 AssistantIntent = Literal["portfolio", "debt", "retirement", "tax", "market", "risk", "education", "safety"]
+AgentRole = Literal[
+    "intent_router",
+    "portfolio_analyst",
+    "cross_asset_comparison",
+    "stock_etf_research",
+    "crypto_research",
+    "real_estate_insight",
+    "news_impact",
+    "tax_aware",
+    "retirement_planner",
+    "debt_liability_coach",
+    "action_plan",
+    "decision_journal_feedback",
+    "safety_compliance_guardrail",
+]
+AgentStatus = Literal["planned", "used", "skipped"]
 MetricTone = Literal["green", "gold", "blue", "coral", "neutral"]
 EmployerMatchStatus = Literal["yes", "no", "not_sure", "not_applicable"]
 IncomeRange = Literal["under_50k", "50k_100k", "100k_200k", "over_200k", "prefer_not"]
@@ -199,6 +215,28 @@ class AssistantSafetyCheck(BaseModel):
     rewritten_question: str | None = None
 
 
+class AgentTraceStep(BaseModel):
+    agent: AgentRole
+    title: str
+    status: AgentStatus
+    input_summary: str
+    output_summary: str
+    tools_used: list[str] = Field(default_factory=list)
+
+
+class AgentRegistryItem(BaseModel):
+    agent: AgentRole
+    title: str
+    purpose: str
+    uses_tools: bool
+    current_status: Literal["implemented", "stubbed"]
+
+
+class AgentRegistryResponse(BaseModel):
+    agents: list[AgentRegistryItem]
+    orchestration_note: str
+
+
 class AssistantResponse(BaseModel):
     intent: AssistantIntent
     summary: str
@@ -208,5 +246,6 @@ class AssistantResponse(BaseModel):
     data_limitations: list[str]
     sources: list[SourceMetadata]
     safety: AssistantSafetyCheck
+    agent_trace: list[AgentTraceStep] = Field(default_factory=list)
     prompt_context: AssistantPromptContext | None = None
     safety_disclaimer: str

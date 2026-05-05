@@ -232,3 +232,25 @@ Key terms:
 Practice idea:
 
 - Add one new intent for real estate questions, then write a test that proves mortgage and home-equity wording routes correctly.
+
+## Phase 10: Multi-Agent Architecture
+
+What we learned:
+
+- Multi-agent architecture is mainly about decomposing work into clear roles and traceable handoffs.
+- A deterministic orchestrator is a good first step before adding LangGraph or model-backed agents.
+- Agent state should be explicit: user question, intent, specialist output, action-plan output, and safety review.
+- Tool use should be visible in traces so engineers and users can audit how an answer was produced.
+- Stubbed agents are useful when they clarify future architecture without pretending the feature is complete.
+
+Key terms:
+
+- Orchestrator: the coordinator that decides which agents run and in what order.
+- Agent registry: the list of available agents, their roles, and implementation status.
+- Agent trace: an ordered explanation of which agents handled a request.
+- Handoff: passing state or output from one agent to another.
+- Tool use: when an agent reads structured data, such as portfolio summary or liability summary.
+
+Practice idea:
+
+- Add a real estate intent mapping that routes home-equity questions to the Real Estate Insight Agent, then show that trace in Croc Guide.

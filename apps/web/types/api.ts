@@ -2,6 +2,21 @@ export type ConfidenceLevel = "low" | "medium" | "high";
 export type RiskLevel = "low" | "medium" | "high";
 export type AssetDetailCategory = "stock_etf" | "crypto" | "real_estate" | "debt" | "retirement";
 export type AssistantIntent = "portfolio" | "debt" | "retirement" | "tax" | "market" | "risk" | "education" | "safety";
+export type AgentRole =
+  | "intent_router"
+  | "portfolio_analyst"
+  | "cross_asset_comparison"
+  | "stock_etf_research"
+  | "crypto_research"
+  | "real_estate_insight"
+  | "news_impact"
+  | "tax_aware"
+  | "retirement_planner"
+  | "debt_liability_coach"
+  | "action_plan"
+  | "decision_journal_feedback"
+  | "safety_compliance_guardrail";
+export type AgentStatus = "planned" | "used" | "skipped";
 export type MetricTone = "green" | "gold" | "blue" | "coral" | "neutral";
 export type EmployerMatchStatus = "yes" | "no" | "not_sure" | "not_applicable";
 export type IncomeRange = "under_50k" | "50k_100k" | "100k_200k" | "over_200k" | "prefer_not";
@@ -187,6 +202,28 @@ export interface AssistantSafetyCheck {
   rewritten_question: string | null;
 }
 
+export interface AgentTraceStep {
+  agent: AgentRole;
+  title: string;
+  status: AgentStatus;
+  input_summary: string;
+  output_summary: string;
+  tools_used: string[];
+}
+
+export interface AgentRegistryItem {
+  agent: AgentRole;
+  title: string;
+  purpose: string;
+  uses_tools: boolean;
+  current_status: "implemented" | "stubbed";
+}
+
+export interface AgentRegistryResponse {
+  agents: AgentRegistryItem[];
+  orchestration_note: string;
+}
+
 export interface AssistantResponse {
   intent: AssistantIntent;
   summary: string;
@@ -196,6 +233,7 @@ export interface AssistantResponse {
   data_limitations: string[];
   sources: SourceMetadata[];
   safety: AssistantSafetyCheck;
+  agent_trace: AgentTraceStep[];
   prompt_context: AssistantPromptContext | null;
   safety_disclaimer: string;
 }

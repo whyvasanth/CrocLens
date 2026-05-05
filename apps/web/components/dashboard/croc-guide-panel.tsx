@@ -216,6 +216,36 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
               </div>
             )}
 
+            {answer?.agent_trace.length ? (
+              <div className="rounded-lg border border-emerald-900/10 bg-white p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold text-croc-ink">Agent trace</p>
+                  <Pill tone="blue">{answer.agent_trace.length} steps</Pill>
+                </div>
+                <div className="space-y-3">
+                  {answer.agent_trace.map((step, index) => (
+                    <div className="flex gap-3" key={`${step.agent}-${index}`}>
+                      <span className="mt-1 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-croc-mint text-xs font-bold text-croc-moss">
+                        {index + 1}
+                      </span>
+                      <div className="min-w-0 flex-1 border-b border-emerald-900/10 pb-3 last:border-0 last:pb-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-xs font-bold text-croc-ink">{step.title}</p>
+                          <Pill tone={step.status === "used" ? "green" : "neutral"}>{step.status}</Pill>
+                        </div>
+                        <p className="mt-1 text-xs leading-5 text-stone-600">{step.output_summary}</p>
+                        {step.tools_used.length ? (
+                          <p className="mt-1 text-[11px] leading-4 text-stone-500">
+                            Tools: {step.tools_used.join(", ")}
+                          </p>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
             {error ? (
               <p className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm leading-6 text-rose-800">
                 {error}

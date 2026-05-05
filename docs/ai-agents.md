@@ -45,6 +45,50 @@ The assistant can route:
 - Beginner education questions
 - Safety-sensitive questions
 
+## Phase 10 Lightweight Orchestrator
+
+Phase 10 adds deterministic multi-agent orchestration.
+
+Current flow:
+
+```text
+User question
+  -> Intent Router Agent
+  -> Specialist Agent
+  -> Action Plan Agent
+  -> Safety/Compliance Guardrail Agent
+  -> Croc Guide response with agent trace
+```
+
+For safety-sensitive questions, the flow skips the specialist and goes directly from the Intent Router Agent to the Safety/Compliance Guardrail Agent.
+
+Implemented agents:
+
+- Intent Router Agent
+- Portfolio Analyst Agent
+- News Impact Agent
+- Tax-Aware Agent
+- Retirement Planner Agent
+- Debt/Liability Coach Agent
+- Action Plan Agent
+- Safety/Compliance Guardrail Agent
+
+Stubbed agents:
+
+- Cross-Asset Comparison Agent
+- Stock/ETF Research Agent
+- Crypto Research Agent
+- Real Estate Insight Agent
+- Decision Journal Feedback Agent
+
+Why deterministic first:
+
+- Easier to test
+- No model cost
+- No hidden LLM behavior
+- Clear trace output
+- Same contract can later be implemented with LangGraph nodes
+
 ## AI Output Contract
 
 Every AI output should eventually follow a structure like this:

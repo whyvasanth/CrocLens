@@ -1,5 +1,6 @@
 import type {
   ActionPlanResponse,
+  AgentRegistryResponse,
   AssistantRequest,
   AssistantResponse,
   AssetDetailCardResponse,
@@ -81,4 +82,8 @@ export function submitOnboardingProfile(profile: OnboardingProfileRequest, signa
 
 export function askAssistant(request: AssistantRequest, signal?: AbortSignal) {
   return postJson<AssistantResponse, AssistantRequest>("/api/v1/ai/assistant", request, signal);
+}
+
+export function getAgentRegistry(signal?: AbortSignal) {
+  return requestJson<AgentRegistryResponse>("/api/v1/ai/agents", signal);
 }

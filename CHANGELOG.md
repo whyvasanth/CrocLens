@@ -40,6 +40,9 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 9 AI assistant v1 rule-based intent routing and safety checks.
 - Added LLM-ready assistant prompt context structure and prompt versioning.
 - Connected the Croc Guide drawer to the assistant API with loading, error, and structured answer states.
+- Added Phase 10 lightweight multi-agent orchestrator and agent registry endpoint.
+- Added assistant agent trace steps for intent routing, specialist handling, action planning, and safety review.
+- Updated Croc Guide to show the agent trace behind each assistant answer.
 
 ### Notes
 
@@ -51,3 +54,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Phase 7 detail pages use static sample data and educational explanations, not personalized advice.
 - Phase 8 risk profiles are educational starting points, not personalized investment recommendations.
 - Phase 9 assistant responses are rule-based and educational; no external LLM is called yet.
+- Phase 10 agent orchestration is deterministic; LangGraph or model-backed nodes can be introduced later.

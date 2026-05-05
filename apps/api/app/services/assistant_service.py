@@ -7,6 +7,7 @@ from app.schemas.api import (
     AssistantResponse,
     AssistantSafetyCheck,
 )
+from app.services.agent_orchestrator import build_agent_trace
 from app.services.mock_data import EDUCATIONAL_DISCLAIMER, MOCK_SOURCE, get_portfolio_summary
 
 PROMPT_VERSION = "assistant_v1_rule_based_2026_05_05"
@@ -234,6 +235,12 @@ def answer_question(request: AssistantRequest) -> AssistantResponse:
         data_limitations=limitations,
         sources=[MOCK_SOURCE],
         safety=safety,
+        agent_trace=build_agent_trace(
+            intent=intent,
+            question=question,
+            answer_summary=intent_answer.summary,
+            safety=safety,
+        ),
         prompt_context=prompt_context if request.include_prompt_debug else None,
         safety_disclaimer=EDUCATIONAL_DISCLAIMER,
     )
