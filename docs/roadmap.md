@@ -97,6 +97,10 @@ Goal:
 
 - Create the FastAPI backend with mock endpoints.
 
+Status:
+
+- Implemented under `apps/api` with FastAPI routers, Pydantic schemas, mock services, and smoke tests.
+
 Endpoints:
 
 - Health check

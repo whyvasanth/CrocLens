@@ -112,14 +112,14 @@ Completed phases:
 
 - Phase 0: Product and system design foundation
 - Phase 1: Static frontend dashboard
+- Phase 2: Frontend pages and navigation
 
 Current phase:
 
-- Phase 2: Frontend pages and navigation
+- Phase 3: Backend API skeleton
 
 Next phases:
 
-- Phase 3: FastAPI backend skeleton
 - Phase 4: PostgreSQL database design
 - Phase 5: Frontend-backend integration
 - Phase 6: Portfolio and cross-asset logic
@@ -157,7 +157,8 @@ Avoid wording:
 
 ## Local Status
 
-Phase 1 adds the first runnable frontend app under `apps/web`.
+Phase 1 and Phase 2 added the first runnable frontend app under `apps/web`.
+Phase 3 adds the first runnable backend API under `apps/api`.
 
 Install dependencies:
 
@@ -190,6 +191,32 @@ Current frontend routes:
 - `/retirement`
 - `/tax-planner`
 - `/settings`
+
+Run the API:
+
+```bash
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r apps/api/requirements.txt
+python -m uvicorn app.main:app --reload --app-dir apps/api --host 127.0.0.1 --port 8000
+```
+
+Open:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Current backend endpoints:
+
+- `GET /health`
+- `GET /api/v1/portfolio/summary`
+- `GET /api/v1/assets`
+- `GET /api/v1/assets/{asset_id}`
+- `GET /api/v1/action-plans`
+- `POST /api/v1/action-plans/generate`
+- `POST /api/v1/ai/assistant`
 
 ## Git Workflow
 

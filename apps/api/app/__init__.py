@@ -1,0 +1,2 @@
+"""CrocLens FastAPI application package."""
+

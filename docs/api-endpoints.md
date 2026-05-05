@@ -2,7 +2,13 @@
 
 ## Current Status
 
-Phase 0 defines the planned API surface. The FastAPI backend will be implemented in Phase 3.
+Phase 3 implements the first FastAPI backend skeleton with mock data only.
+
+The backend lives in:
+
+```text
+apps/api
+```
 
 ## API Style
 
@@ -17,7 +23,7 @@ Why REST first:
 
 GraphQL is not needed for the MVP.
 
-## Planned MVP Endpoints
+## Implemented Phase 3 Endpoints
 
 ### Health
 
@@ -32,7 +38,7 @@ Purpose:
 ### Portfolio Summary
 
 ```http
-GET /portfolio/summary
+GET /api/v1/portfolio/summary
 ```
 
 Purpose:
@@ -42,45 +48,52 @@ Purpose:
 ### Assets
 
 ```http
-GET /assets
-GET /assets/{asset_id}
+GET /api/v1/assets
+GET /api/v1/assets/{asset_id}
 ```
 
 Purpose:
 
 - Return asset lists and asset detail data.
 
-### Liabilities
-
-```http
-GET /liabilities
-GET /liabilities/{liability_id}
-```
-
-Purpose:
-
-- Return debt and liability details.
-
 ### Action Plans
 
 ```http
-GET /action-plans
-POST /action-plans/generate
+GET /api/v1/action-plans
+POST /api/v1/action-plans/generate
 ```
 
 Purpose:
 
-- Return educational action plans and generate new plans from user data.
+- Return educational action plans and generate a mock plan from sample data.
 
 ### AI Assistant
 
 ```http
-POST /ai/assistant
+POST /api/v1/ai/assistant
 ```
 
 Purpose:
 
 - Accept a user question and return a safe structured assistant response.
+
+Required request body:
+
+```json
+{
+  "question": "How does today's market affect me?",
+  "beginner_mode": true
+}
+```
+
+Required safety fields in the response:
+
+- `confidence`
+- `data_limitations`
+- `sources`
+- `safety_disclaimer`
+
+## Planned Later Endpoints
 
 ### Watchlist
 
@@ -103,6 +116,17 @@ POST /journal
 Purpose:
 
 - Store user decisions and review notes.
+
+### Liabilities
+
+```http
+GET /api/v1/liabilities
+GET /api/v1/liabilities/{liability_id}
+```
+
+Purpose:
+
+- Return debt and liability details.
 
 ## API Design Rules
 
@@ -127,4 +151,3 @@ Status codes:
 - `404` for missing records.
 - `422` for validation errors.
 - `500` only for unexpected server failures.
-

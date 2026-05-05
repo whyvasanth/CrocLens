@@ -72,3 +72,27 @@ Key terms:
 Practice idea:
 
 - Pick one placeholder page and write the API endpoint you think it will need in a later phase.
+
+## Phase 3: Backend API Skeleton
+
+What we learned:
+
+- FastAPI lets us define HTTP endpoints with Python functions.
+- Pydantic models act as API contracts by validating request and response shapes.
+- Routers keep API areas separated, such as portfolio, assets, action plans, and AI.
+- Service functions keep business/mock logic out of route handlers.
+- Mock APIs help the frontend and backend agree on contracts before the database exists.
+- AI responses should include safety fields from the first backend version.
+
+Key terms:
+
+- Endpoint: a URL plus HTTP method, such as `GET /health`.
+- Request model: the expected shape of incoming JSON.
+- Response model: the expected shape of outgoing JSON.
+- Validation: checking that data matches the expected type and rules.
+- Status code: a numeric HTTP result such as `200`, `404`, or `422`.
+- Router: a group of related endpoints.
+
+Practice idea:
+
+- Add one new mock endpoint idea for liabilities, then write the response fields it should return.

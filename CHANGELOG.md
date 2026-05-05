@@ -18,8 +18,12 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 2 frontend routes for Dashboard, Portfolio, Compare Assets, Watchlist, Action Plans, Journal, Retirement, Tax Planner, and Settings.
 - Added shared app shell for sidebar, main content, and Croc Guide drawer.
 - Added placeholder page configuration and beginner-friendly placeholder content for future vertical slices.
+- Added Phase 3 FastAPI backend skeleton under `apps/api`.
+- Added health, portfolio summary, assets, action plan, and AI assistant mock endpoints.
+- Added Pydantic request/response schemas, mock service layer, CORS setup for local frontend development, and backend API smoke tests.
 
 ### Notes
 
 - The frontend uses static mock data only.
-- Backend and database layers are not implemented yet.
+- The backend uses static mock data only.
+- Database persistence is not implemented yet.
