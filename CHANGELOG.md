@@ -15,6 +15,9 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added dark emerald sidebar, dashboard header, portfolio chart, allocation card, market snapshot, action plan card, tax insight, retirement progress, risk meter, and Croc Guide assistant panel.
 - Added typed mock dashboard data and frontend utility formatters.
 - Refined Phase 1 dashboard layout so Croc Guide opens as a side drawer from the Ask CrocLens button instead of taking permanent dashboard space.
+- Added Phase 2 frontend routes for Dashboard, Portfolio, Compare Assets, Watchlist, Action Plans, Journal, Retirement, Tax Planner, and Settings.
+- Added shared app shell for sidebar, main content, and Croc Guide drawer.
+- Added placeholder page configuration and beginner-friendly placeholder content for future vertical slices.
 
 ### Notes
 

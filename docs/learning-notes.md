@@ -50,3 +50,25 @@ Key terms:
 Practice idea:
 
 - Add one new mock metric card, then decide whether it belongs in the existing metric row or a separate card.
+
+## Phase 2: Frontend Pages and Navigation
+
+What we learned:
+
+- Next.js App Router maps folders under `app` to URL routes.
+- A shared app shell prevents duplicated sidebar and assistant-drawer code across pages.
+- Placeholder pages are useful when they clarify future product intent instead of pretending features are finished.
+- Navigation should use real links, active states, and route-aware behavior.
+- Route structure is a product architecture decision because URLs shape how users and engineers understand the app.
+
+Key terms:
+
+- Route: a URL path that renders a page.
+- Redirect: automatically sending one URL to another, such as `/` to `/dashboard`.
+- App shell: reusable layout chrome around pages, such as sidebar, main surface, and assistant drawer.
+- Active state: visual feedback showing which page the user is on.
+- Placeholder page: a deliberately incomplete page that explains what will be built later.
+
+Practice idea:
+
+- Pick one placeholder page and write the API endpoint you think it will need in a later phase.

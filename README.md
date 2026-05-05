@@ -111,14 +111,14 @@ CrocLens/
 Completed phases:
 
 - Phase 0: Product and system design foundation
+- Phase 1: Static frontend dashboard
 
 Current phase:
 
-- Phase 1: Static frontend dashboard
+- Phase 2: Frontend pages and navigation
 
 Next phases:
 
-- Phase 2: Frontend pages and navigation
 - Phase 3: FastAPI backend skeleton
 - Phase 4: PostgreSQL database design
 - Phase 5: Frontend-backend integration
@@ -174,10 +174,22 @@ npm run dev:web
 Open:
 
 ```text
-http://localhost:3000
+http://localhost:3000/dashboard
 ```
 
 The app currently uses static mock data only. Backend and database work begin in later phases.
+
+Current frontend routes:
+
+- `/dashboard`
+- `/portfolio`
+- `/compare-assets`
+- `/watchlist`
+- `/action-plans`
+- `/journal`
+- `/retirement`
+- `/tax-planner`
+- `/settings`
 
 ## Git Workflow
 

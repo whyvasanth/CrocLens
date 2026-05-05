@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronDown, HelpCircle, LogOut, X } from "lucide-react";
 import { clsx } from "clsx";
 import { sidebarItems } from "@/lib/mock-dashboard-data";
@@ -10,6 +12,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const pathname = usePathname();
+
   return (
     <>
       <div
@@ -26,7 +30,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
       >
         <div className="flex items-center justify-between">
-          <a href="#" className="flex items-center gap-3" aria-label="CrocLens dashboard">
+          <Link href="/dashboard" className="flex items-center gap-3" aria-label="CrocLens dashboard">
             <div className="grid h-12 w-12 place-items-center rounded-lg bg-croc-lime text-2xl">
               C
             </div>
@@ -34,7 +38,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <p className="text-xl font-bold">CrocLens</p>
               <p className="text-xs text-emerald-100">See your money clearly.</p>
             </div>
-          </a>
+          </Link>
           <button
             aria-label="Close navigation"
             className="grid h-10 w-10 place-items-center rounded-lg bg-white/10 lg:hidden"
@@ -47,21 +51,25 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         <nav className="mt-7 space-y-1" aria-label="Primary navigation">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
             return (
-              <a
+              <Link
                 key={item.label}
-                href="#"
+                href={item.href}
+                onClick={onClose}
                 className={clsx(
                   "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition",
-                  item.isActive
+                  isActive
                     ? "bg-emerald-400/90 text-white shadow-lg shadow-emerald-950/20"
                     : "text-emerald-50 hover:bg-white/10"
                 )}
               >
                 <Icon className="h-5 w-5" />
                 <span>{item.label}</span>
-              </a>
+              </Link>
             );
           })}
         </nav>

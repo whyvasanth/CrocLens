@@ -14,6 +14,7 @@ export type TrendDirection = "up" | "down" | "flat";
 
 export interface SidebarItem {
   label: string;
+  href: string;
   icon: LucideIcon;
   isActive?: boolean;
 }

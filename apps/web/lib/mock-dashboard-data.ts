@@ -27,15 +27,15 @@ import type {
 } from "@/types/dashboard";
 
 export const sidebarItems: SidebarItem[] = [
-  { label: "Dashboard", icon: Home, isActive: true },
-  { label: "Portfolio", icon: WalletCards },
-  { label: "Compare", icon: ChartPie },
-  { label: "Watchlist", icon: Bell },
-  { label: "Plans", icon: Sparkles },
-  { label: "Journal", icon: NotebookPen },
-  { label: "Retirement", icon: PiggyBank },
-  { label: "Tax Planner", icon: ShieldCheck },
-  { label: "Settings", icon: Settings }
+  { label: "Dashboard", href: "/dashboard", icon: Home },
+  { label: "Portfolio", href: "/portfolio", icon: WalletCards },
+  { label: "Compare Assets", href: "/compare-assets", icon: ChartPie },
+  { label: "Watchlist", href: "/watchlist", icon: Bell },
+  { label: "Action Plans", href: "/action-plans", icon: Sparkles },
+  { label: "Journal", href: "/journal", icon: NotebookPen },
+  { label: "Retirement", href: "/retirement", icon: PiggyBank },
+  { label: "Tax Planner", href: "/tax-planner", icon: ShieldCheck },
+  { label: "Settings", href: "/settings", icon: Settings }
 ];
 
 export const metricCards: MetricCard[] = [

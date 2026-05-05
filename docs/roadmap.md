@@ -67,6 +67,10 @@ Goal:
 
 - Add the main product routes and placeholder pages.
 
+Status:
+
+- Implemented with Next.js App Router pages, shared app shell, real sidebar links, and beginner-friendly placeholders.
+
 Pages:
 
 - Dashboard

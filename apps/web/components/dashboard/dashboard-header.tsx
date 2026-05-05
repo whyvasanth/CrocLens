@@ -1,11 +1,18 @@
 import { Menu, Sparkles } from "lucide-react";
 
 interface DashboardHeaderProps {
+  description: string;
   onAskClick: () => void;
   onMenuClick: () => void;
+  title: string;
 }
 
-export function DashboardHeader({ onAskClick, onMenuClick }: DashboardHeaderProps) {
+export function DashboardHeader({
+  description,
+  onAskClick,
+  onMenuClick,
+  title
+}: DashboardHeaderProps) {
   return (
     <header className="flex flex-col gap-4 rounded-lg border border-emerald-900/10 bg-white/75 p-4 shadow-card backdrop-blur md:flex-row md:items-center md:justify-between md:p-5">
       <div className="flex items-start gap-3">
@@ -18,10 +25,10 @@ export function DashboardHeader({ onAskClick, onMenuClick }: DashboardHeaderProp
         </button>
         <div>
           <h1 className="text-2xl font-bold text-croc-ink md:text-3xl">
-            Good morning, Maya
+            {title}
           </h1>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-stone-600">
-            Here is your whole-wealth snapshot and beginner-friendly money update for today.
+            {description}
           </p>
         </div>
       </div>
