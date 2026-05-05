@@ -1,0 +1,14 @@
+{
+  "name": "croclens",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace @croclens/web",
+    "build:web": "npm run build --workspace @croclens/web",
+    "typecheck:web": "npm run typecheck --workspace @croclens/web"
+  }
+}
+
