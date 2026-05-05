@@ -21,7 +21,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       />
       <aside
         className={clsx(
-          "fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-[radial-gradient(circle_at_top_left,#0b7a5c,#052f28_55%,#03231e)] px-5 py-5 text-white transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex w-72 flex-col overflow-y-auto bg-[radial-gradient(circle_at_top_left,#0b7a5c,#052f28_55%,#03231e)] px-5 py-5 text-white transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -44,7 +44,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="mt-8 space-y-1" aria-label="Primary navigation">
+        <nav className="mt-7 space-y-1" aria-label="Primary navigation">
           {sidebarItems.map((item) => {
             const Icon = item.icon;
 
@@ -53,7 +53,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 key={item.label}
                 href="#"
                 className={clsx(
-                  "flex min-h-12 items-center gap-3 rounded-lg px-3 text-sm font-medium transition",
+                  "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition",
                   item.isActive
                     ? "bg-emerald-400/90 text-white shadow-lg shadow-emerald-950/20"
                     : "text-emerald-50 hover:bg-white/10"

@@ -33,11 +33,11 @@ export function PortfolioChart() {
         }
       />
       <div className="mb-2 flex flex-wrap items-end gap-3">
-        <p className="text-3xl font-bold text-croc-ink">$214,800</p>
+        <p className="text-4xl font-bold text-croc-ink">$214,800</p>
         <Pill tone="green">+2.1% this month</Pill>
       </div>
       <p className="mb-4 text-sm font-semibold text-croc-moss">+$4,200 estimated change</p>
-      <div className="h-64">
+      <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={portfolioHistory} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>
             <defs>

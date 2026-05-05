@@ -14,6 +14,7 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 1 static Next.js dashboard under `apps/web`.
 - Added dark emerald sidebar, dashboard header, portfolio chart, allocation card, market snapshot, action plan card, tax insight, retirement progress, risk meter, and Croc Guide assistant panel.
 - Added typed mock dashboard data and frontend utility formatters.
+- Refined Phase 1 dashboard layout so Croc Guide opens as a side drawer from the Ask CrocLens button instead of taking permanent dashboard space.
 
 ### Notes
 

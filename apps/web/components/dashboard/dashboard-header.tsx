@@ -1,12 +1,13 @@
 import { Menu, Sparkles } from "lucide-react";
 
 interface DashboardHeaderProps {
+  onAskClick: () => void;
   onMenuClick: () => void;
 }
 
-export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
+export function DashboardHeader({ onAskClick, onMenuClick }: DashboardHeaderProps) {
   return (
-    <header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+    <header className="flex flex-col gap-4 rounded-lg border border-emerald-900/10 bg-white/75 p-4 shadow-card backdrop-blur md:flex-row md:items-center md:justify-between md:p-5">
       <div className="flex items-start gap-3">
         <button
           aria-label="Open navigation"
@@ -16,16 +17,20 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           <Menu className="h-5 w-5" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-croc-ink md:text-4xl">
-            Good morning, Maya!
+          <h1 className="text-2xl font-bold text-croc-ink md:text-3xl">
+            Good morning, Maya
           </h1>
-          <p className="mt-2 text-sm leading-6 text-stone-600 md:text-base">
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-stone-600">
             Here is your whole-wealth snapshot and beginner-friendly money update for today.
           </p>
         </div>
       </div>
 
-      <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-5 text-sm font-semibold text-white shadow-card transition hover:bg-croc-moss">
+      <button
+        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-5 text-sm font-semibold text-white shadow-card transition hover:bg-croc-moss"
+        onClick={onAskClick}
+        type="button"
+      >
         <Sparkles className="h-4 w-4" />
         Ask CrocLens
       </button>
