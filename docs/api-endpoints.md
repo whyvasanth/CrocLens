@@ -63,6 +63,22 @@ Purpose:
 
 - Return net worth, total assets, liabilities, allocation, and score summaries.
 
+Phase 6 adds calculated fields:
+
+- `total_assets`
+- `total_liabilities`
+- `net_worth`
+- `allocation`
+- `debt_impact`
+- `scores`
+
+Each score includes:
+
+- `label`
+- `value`
+- `explanation`
+- `formula`
+
 ### Assets
 
 ```http

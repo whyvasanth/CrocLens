@@ -1,16 +1,19 @@
 from app.schemas.api import (
     ActionPlanItem,
     ActionPlanResponse,
-    AllocationItem,
     AssetResponse,
     PortfolioSummaryResponse,
-    ScoreItem,
     SourceMetadata,
+)
+from app.services.portfolio_calculations import (
+    AssetPosition,
+    LiabilityPosition,
+    calculate_portfolio_summary,
 )
 
 MOCK_SOURCE = SourceMetadata(
     name="CrocLens sample data",
-    freshness="Static mock data for Phase 3",
+    freshness="Calculated from Phase 6 sample positions",
     as_of="2026-05-05",
 )
 
@@ -18,56 +21,91 @@ EDUCATIONAL_DISCLAIMER = "This is educational information, not financial advice.
 
 
 def get_portfolio_summary() -> PortfolioSummaryResponse:
-    total_assets = 329_400.0
-    total_liabilities = 114_600.0
+    calculation = calculate_portfolio_summary(
+        assets=get_sample_asset_positions(),
+        liabilities=get_sample_liability_positions(),
+    )
 
     return PortfolioSummaryResponse(
         user_name="Maya",
-        total_assets=total_assets,
-        total_liabilities=total_liabilities,
-        net_worth=total_assets - total_liabilities,
-        allocation=[
-            AllocationItem(asset_class="Stocks", percent=29, market_value=95_526),
-            AllocationItem(asset_class="ETFs", percent=24, market_value=79_056),
-            AllocationItem(asset_class="Real Estate", percent=22, market_value=72_468),
-            AllocationItem(asset_class="Retirement", percent=13, market_value=42_822),
-            AllocationItem(asset_class="Cash", percent=7, market_value=23_058),
-            AllocationItem(asset_class="Crypto", percent=5, market_value=16_470),
-        ],
-        scores=[
-            ScoreItem(
-                label="Risk",
-                value=64,
-                explanation="Moderate because stocks and crypto move more than cash or bonds.",
-            ),
-            ScoreItem(
-                label="Liquidity",
-                value=72,
-                explanation="Healthy because cash and tradable funds are available if needed.",
-            ),
-            ScoreItem(
-                label="Diversification",
-                value=78,
-                explanation="Good mix across public markets, cash, and real estate.",
-            ),
-        ],
+        total_assets=calculation.total_assets,
+        total_liabilities=calculation.total_liabilities,
+        net_worth=calculation.net_worth,
+        allocation=calculation.allocation,
+        debt_impact=calculation.debt_impact,
+        scores=calculation.scores,
         sources=[MOCK_SOURCE],
         educational_disclaimer=EDUCATIONAL_DISCLAIMER,
     )
 
 
+def get_sample_asset_positions() -> list[AssetPosition]:
+    return [
+        AssetPosition(asset_class="Stocks", market_value=95_526),
+        AssetPosition(asset_class="ETFs", market_value=79_056),
+        AssetPosition(asset_class="Real Estate", market_value=72_468),
+        AssetPosition(asset_class="Retirement", market_value=42_822),
+        AssetPosition(asset_class="Cash", market_value=23_058),
+        AssetPosition(asset_class="Crypto", market_value=16_470),
+    ]
+
+
+def get_sample_liability_positions() -> list[LiabilityPosition]:
+    return [
+        LiabilityPosition(liability_type="Mortgage", balance=106_000, interest_rate=0.061),
+        LiabilityPosition(liability_type="Student loan", balance=6_100, interest_rate=0.045),
+        LiabilityPosition(liability_type="Credit card", balance=2_500, interest_rate=0.199),
+    ]
+
+
 def list_assets() -> list[AssetResponse]:
     return [
         AssetResponse(
-            id="asset_voo",
-            symbol="VOO",
-            name="Vanguard S&P 500 ETF",
-            asset_type="ETF",
-            current_price=486.20,
-            market_value=44_200,
-            allocation_percent=13.4,
+            id="asset_stock_bucket",
+            symbol="STOCKS",
+            name="Stock holdings",
+            asset_type="Stocks",
+            current_price=None,
+            market_value=95_526,
+            allocation_percent=29,
             risk_level="medium",
-            beginner_explanation="An ETF is a basket of investments. This one tracks large U.S. companies.",
+            beginner_explanation="Stocks represent ownership in companies and can move up and down with markets.",
+            source=MOCK_SOURCE,
+        ),
+        AssetResponse(
+            id="asset_etf_bucket",
+            symbol="ETFS",
+            name="ETF holdings",
+            asset_type="ETFs",
+            current_price=None,
+            market_value=79_056,
+            allocation_percent=24,
+            risk_level="medium",
+            beginner_explanation="ETFs are baskets of investments that can make diversification easier.",
+            source=MOCK_SOURCE,
+        ),
+        AssetResponse(
+            id="asset_real_estate",
+            symbol="HOME",
+            name="Real estate equity",
+            asset_type="Real Estate",
+            current_price=None,
+            market_value=72_468,
+            allocation_percent=22,
+            risk_level="medium",
+            beginner_explanation="Real estate can build equity but is usually less liquid than public investments.",
+            source=MOCK_SOURCE,
+        ),
+        AssetResponse(
+            id="asset_retirement",
+            symbol="401K",
+            name="Retirement accounts",
+            asset_type="Retirement",
+            current_price=None,
+            market_value=42_822,
+            allocation_percent=13,
+            risk_level="medium",
+            beginner_explanation="Retirement accounts are long-term accounts with tax rules and contribution limits.",
             source=MOCK_SOURCE,
         ),
         AssetResponse(
@@ -130,4 +168,3 @@ def get_action_plan() -> ActionPlanResponse:
 
 def generate_action_plan() -> ActionPlanResponse:
     return get_action_plan()
-

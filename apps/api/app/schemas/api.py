@@ -25,10 +25,17 @@ class AllocationItem(BaseModel):
     market_value: float = Field(ge=0)
 
 
+class DebtImpact(BaseModel):
+    debt_to_asset_percent: float = Field(ge=0)
+    total_liabilities: float = Field(ge=0)
+    explanation: str
+
+
 class ScoreItem(BaseModel):
     label: str
     value: int = Field(ge=0, le=100)
     explanation: str
+    formula: str
 
 
 class PortfolioSummaryResponse(BaseModel):
@@ -37,6 +44,7 @@ class PortfolioSummaryResponse(BaseModel):
     total_liabilities: float = Field(ge=0)
     net_worth: float
     allocation: list[AllocationItem]
+    debt_impact: DebtImpact
     scores: list[ScoreItem]
     sources: list[SourceMetadata]
     educational_disclaimer: str
@@ -85,4 +93,3 @@ class AssistantResponse(BaseModel):
     data_limitations: list[str]
     sources: list[SourceMetadata]
     safety_disclaimer: str
-

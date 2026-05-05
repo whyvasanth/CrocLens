@@ -17,6 +17,13 @@ export interface ScoreItem {
   label: string;
   value: number;
   explanation: string;
+  formula: string;
+}
+
+export interface DebtImpact {
+  debt_to_asset_percent: number;
+  total_liabilities: number;
+  explanation: string;
 }
 
 export interface PortfolioSummaryResponse {
@@ -25,6 +32,7 @@ export interface PortfolioSummaryResponse {
   total_liabilities: number;
   net_worth: number;
   allocation: AllocationItem[];
+  debt_impact: DebtImpact;
   scores: ScoreItem[];
   sources: SourceMetadata[];
   educational_disclaimer: string;
@@ -65,4 +73,3 @@ export interface DashboardApiData {
   assets: AssetResponse[];
   portfolio: PortfolioSummaryResponse;
 }
-

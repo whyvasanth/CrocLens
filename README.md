@@ -115,14 +115,14 @@ Completed phases:
 - Phase 2: Frontend pages and navigation
 - Phase 3: Backend API skeleton
 - Phase 4: Database schema
+- Phase 5: Frontend-backend integration
 
 Current phase:
 
-- Phase 5: Frontend-backend integration
+- Phase 6: Portfolio and cross-asset logic
 
 Next phases:
 
-- Phase 6: Portfolio and cross-asset logic
 - Phase 7 and beyond: Asset detail pages, onboarding, AI assistant, agents, data pipelines, security, testing, metrics, and deployment
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
@@ -161,6 +161,7 @@ Phase 1 and Phase 2 added the first runnable frontend app under `apps/web`.
 Phase 3 adds the first runnable backend API under `apps/api`.
 Phase 4 adds the SQLAlchemy database models and Alembic migration foundation.
 Phase 5 connects the dashboard to the FastAPI mock API.
+Phase 6 adds transparent portfolio and cross-asset scoring logic.
 
 Install dependencies:
 
@@ -237,6 +238,12 @@ Run schema-related tests:
 
 ```bash
 .venv\Scripts\python.exe -m pytest apps/api
+```
+
+Portfolio calculation docs:
+
+```text
+docs/portfolio-calculations.md
 ```
 
 ## Git Workflow

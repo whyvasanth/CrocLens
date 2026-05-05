@@ -146,3 +146,26 @@ Key terms:
 Practice idea:
 
 - Add one more frontend API call to a placeholder page, such as loading `/api/v1/assets` on the Portfolio page.
+
+## Phase 6: Portfolio and Cross-Asset Logic
+
+What we learned:
+
+- Business logic should live in testable service functions, not route handlers.
+- Transparent formulas are easier to explain, debug, and improve.
+- Weighted averages are useful when larger holdings should influence a score more than smaller holdings.
+- Diversification needs a different formula because it depends on concentration and number of asset classes.
+- Not every score is good/bad. Tax complexity is a signal that more tracking may be needed.
+- Frontend scorecards should show explanations and formulas when the product is beginner-first.
+
+Key terms:
+
+- Business logic: the rules that calculate product behavior.
+- Weighted average: an average where larger or more important items count more.
+- Heuristic: a practical rule of thumb, not a perfect model.
+- Concentration: when one asset or asset class is a large share of the portfolio.
+- Auditability: being able to explain how a result was produced.
+
+Practice idea:
+
+- Change one asset-class weight in `portfolio_calculations.py`, run the tests, and explain which score changed.

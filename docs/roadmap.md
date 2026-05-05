@@ -185,6 +185,10 @@ Goal:
 
 - Implement transparent wealth and risk calculations.
 
+Status:
+
+- Implemented as a tested backend calculation service and API-backed dashboard scorecard.
+
 Calculations:
 
 - Net worth

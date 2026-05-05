@@ -27,6 +27,10 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 5 frontend API client and dashboard data hook.
 - Connected dashboard portfolio summary, tracked assets, and action plan cards to FastAPI mock endpoints.
 - Added frontend loading, connected, and error states for backend API data.
+- Added Phase 6 transparent portfolio and cross-asset calculation service.
+- Added calculated net worth, total assets, total liabilities, allocation, debt impact, and cross-asset score formulas.
+- Added backend calculation tests and dashboard scorecard rendering from API data.
+- Added portfolio calculation documentation.
 
 ### Notes
 
@@ -34,3 +38,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Database persistence is not implemented yet.
 - A live PostgreSQL database is not required yet; Phase 4 defines the schema and migration foundation.
 - Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
+- Phase 6 scores are educational heuristics and are intentionally simple for auditability.

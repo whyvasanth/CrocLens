@@ -18,6 +18,9 @@ def test_portfolio_summary_has_safety_disclaimer() -> None:
 
     assert response.status_code == 200
     assert body["net_worth"] == 214800.0
+    assert body["debt_impact"]["debt_to_asset_percent"] == 34.79
+    assert len(body["scores"]) == 6
+    assert all(score["formula"] for score in body["scores"])
     assert "not financial advice" in body["educational_disclaimer"]
 
 
@@ -38,4 +41,3 @@ def test_assistant_response_includes_guardrail_fields() -> None:
     assert body["confidence"] == "medium"
     assert body["data_limitations"]
     assert "not financial advice" in body["safety_disclaimer"]
-
