@@ -356,6 +356,49 @@ export interface RetirementPlanResponse {
   educational_disclaimer: string;
 }
 
+export type DecisionType =
+  | "buy"
+  | "sell"
+  | "hold"
+  | "watch"
+  | "rebalance"
+  | "debt_payoff"
+  | "retirement_contribution_change";
+
+export interface DecisionJournalEntryResponse {
+  id: string;
+  decision_type: DecisionType;
+  title: string;
+  asset_symbol: string | null;
+  reason: string;
+  expected_outcome: string;
+  risk_considered: string;
+  review_date: string;
+  created_at: string;
+  status: "open" | "reviewed";
+  feedback_summary: string;
+}
+
+export interface DecisionJournalCreateRequest {
+  decision_type: DecisionType;
+  title: string;
+  asset_symbol: string | null;
+  reason: string;
+  expected_outcome: string;
+  risk_considered: string;
+  review_date: string;
+}
+
+export interface DecisionJournalResponse {
+  entries: DecisionJournalEntryResponse[];
+  feedback_prompts: string[];
+  beginner_summary: string;
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  educational_disclaimer: string;
+}
+
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];

@@ -42,6 +42,8 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
 - `GET /api/v1/retirement/plan`
+- `GET /api/v1/journal/entries`
+- `POST /api/v1/journal/entries`
 - `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 The frontend API base URL defaults to:
@@ -291,6 +293,19 @@ Purpose:
 - Explain employer 401(k) match.
 - Compare contribution scenarios.
 - Include projection assumptions and limitations.
+
+### Decision Journal
+
+```http
+GET /api/v1/journal/entries
+POST /api/v1/journal/entries
+```
+
+Purpose:
+
+- Return sample decision journal entries.
+- Accept a new decision entry preview.
+- Return rule-based process feedback.
 
 ## Planned Later Endpoints
 

@@ -176,6 +176,7 @@ Phase 11 adds a sample market data ingestion pipeline, data quality checks, fres
 Phase 12 adds a market news impact workflow that maps sample headlines to affected holdings with safe educational wording.
 Phase 13 adds an educational tax-aware module with sample tax lots, unrealized gain/loss, holding-period labels, and wash-sale warning language.
 Phase 14 adds a retirement planner with sample accounts, employer match explanation, and contribution scenarios.
+Phase 15 adds a decision journal workflow with sample entries, entry creation, and rule-based feedback.
 
 Install dependencies:
 
@@ -259,6 +260,8 @@ Current backend endpoints:
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
 - `GET /api/v1/retirement/plan`
+- `GET /api/v1/journal/entries`
+- `POST /api/v1/journal/entries`
 
 Assistant v1 supports:
 

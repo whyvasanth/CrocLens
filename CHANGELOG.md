@@ -53,6 +53,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Replaced the Tax Planner placeholder with an API-backed educational tax insights page.
 - Added Phase 14 retirement planner with sample retirement accounts, employer match explanation, contribution scenarios, tests, and documentation.
 - Replaced the Retirement placeholder with an API-backed planner page.
+- Added Phase 15 decision journal workflow with sample entries, entry creation, rule-based feedback, tests, and documentation.
+- Replaced the Journal placeholder with an API-backed journal page.
 
 ### Notes
 

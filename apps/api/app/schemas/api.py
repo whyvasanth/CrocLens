@@ -40,6 +40,15 @@ PipelineRunStatus = Literal["completed", "completed_with_warnings", "failed"]
 ImpactDirection = Literal["positive", "negative", "mixed", "neutral"]
 ImpactLevel = Literal["low", "medium", "high"]
 HoldingTerm = Literal["short_term", "long_term"]
+DecisionType = Literal[
+    "buy",
+    "sell",
+    "hold",
+    "watch",
+    "rebalance",
+    "debt_payoff",
+    "retirement_contribution_change",
+]
 
 
 class SourceMetadata(BaseModel):
@@ -443,6 +452,40 @@ class RetirementPlanResponse(BaseModel):
     scenarios: list[RetirementScenarioResponse]
     beginner_summary: str
     suggested_reviews: list[str]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    educational_disclaimer: str
+
+
+class DecisionJournalEntryResponse(BaseModel):
+    id: str
+    decision_type: DecisionType
+    title: str
+    asset_symbol: str | None = None
+    reason: str
+    expected_outcome: str
+    risk_considered: str
+    review_date: str
+    created_at: str
+    status: Literal["open", "reviewed"]
+    feedback_summary: str
+
+
+class DecisionJournalCreateRequest(BaseModel):
+    decision_type: DecisionType
+    title: str = Field(min_length=3, max_length=120)
+    asset_symbol: str | None = Field(default=None, max_length=20)
+    reason: str = Field(min_length=10, max_length=500)
+    expected_outcome: str = Field(min_length=10, max_length=500)
+    risk_considered: str = Field(min_length=10, max_length=500)
+    review_date: str
+
+
+class DecisionJournalResponse(BaseModel):
+    entries: list[DecisionJournalEntryResponse]
+    feedback_prompts: list[str]
+    beginner_summary: str
     confidence: ConfidenceLevel
     data_limitations: list[str]
     sources: list[SourceMetadata]

@@ -185,6 +185,33 @@ def test_retirement_plan_includes_match_and_scenarios() -> None:
     assert "not guaranteed" in body["data_limitations"][-1].lower()
 
 
+def test_decision_journal_lists_entries_and_creates_feedback() -> None:
+    list_response = client.get("/api/v1/journal/entries")
+    list_body = list_response.json()
+
+    assert list_response.status_code == 200
+    assert list_body["entries"]
+    assert list_body["feedback_prompts"]
+
+    create_response = client.post(
+        "/api/v1/journal/entries",
+        json={
+            "decision_type": "watch",
+            "title": "Watch a bond ETF before deciding",
+            "asset_symbol": "AGG",
+            "reason": "I want to understand how bond funds behave when rates move.",
+            "expected_outcome": "Learn whether the ETF fits my time horizon and risk comfort.",
+            "risk_considered": "Bond prices can fall when rates rise, and taxes or fees may matter.",
+            "review_date": "2026-08-01",
+        },
+    )
+    create_body = create_response.json()
+
+    assert create_response.status_code == 200
+    assert create_body["asset_symbol"] == "AGG"
+    assert create_body["feedback_summary"]
+
+
 def test_onboarding_options_are_available() -> None:
     response = client.get("/api/v1/onboarding/options")
     body = response.json()

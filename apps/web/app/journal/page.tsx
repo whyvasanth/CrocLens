@@ -1,7 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/placeholder-page";
-import { productPages } from "@/lib/page-config";
+import { DecisionJournalPage } from "@/components/features/decision-journal-page";
 
 export default function JournalPage() {
-  return <PlaceholderPage config={productPages.journal} />;
+  return <DecisionJournalPage />;
 }
-

@@ -6,6 +6,9 @@ import type {
   AssetDetailCardResponse,
   AssetDetailResponse,
   AssetResponse,
+  DecisionJournalCreateRequest,
+  DecisionJournalEntryResponse,
+  DecisionJournalResponse,
   MarketNewsImpactResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
@@ -101,4 +104,12 @@ export function getTaxInsights(signal?: AbortSignal) {
 
 export function getRetirementPlan(signal?: AbortSignal) {
   return requestJson<RetirementPlanResponse>("/api/v1/retirement/plan", signal);
+}
+
+export function getDecisionJournal(signal?: AbortSignal) {
+  return requestJson<DecisionJournalResponse>("/api/v1/journal/entries", signal);
+}
+
+export function createDecisionJournalEntry(entry: DecisionJournalCreateRequest, signal?: AbortSignal) {
+  return postJson<DecisionJournalEntryResponse, DecisionJournalCreateRequest>("/api/v1/journal/entries", entry, signal);
 }

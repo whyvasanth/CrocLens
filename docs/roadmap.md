@@ -369,6 +369,10 @@ Goal:
 
 - Let users record financial decisions and review outcomes later.
 
+Status:
+
+- Implemented with sample decision entries, entry creation, rule-based feedback, API tests, and an API-backed Journal page.
+
 Branch:
 
 - `phase-15-decision-journal`

@@ -337,3 +337,23 @@ Key terms:
 Practice idea:
 
 - Add a 12% contribution scenario and compare it with the current scenario.
+
+## Phase 15: Decision Journal And Feedback Loop
+
+What we learned:
+
+- A decision journal captures reasoning before results are known.
+- Feedback should evaluate process quality, not predict outcomes.
+- Structured fields make future AI review more reliable than free-form notes alone.
+- Review dates create a learning loop.
+
+Key terms:
+
+- Decision type: the category of action being recorded.
+- Expected outcome: what the user thought might happen.
+- Risk considered: the downside or uncertainty named before acting.
+- Feedback loop: a system that helps users improve after review.
+
+Practice idea:
+
+- Add a reviewed journal entry with an actual outcome field.
