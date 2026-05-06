@@ -111,6 +111,39 @@ def test_agent_registry_lists_expected_agents() -> None:
     assert body["orchestration_note"]
 
 
+def test_data_pipeline_provider_registry_lists_sample_and_free_api() -> None:
+    response = client.get("/api/v1/data-pipeline/providers")
+    body = response.json()
+    provider_ids = {provider["id"] for provider in body}
+
+    assert response.status_code == 200
+    assert "croclens_sample_market_file" in provider_ids
+    assert "coingecko_simple_price" in provider_ids
+    assert any(provider["provider_type"] == "free_api" for provider in body)
+
+
+def test_sample_market_ingestion_endpoint_returns_freshness_and_limitations() -> None:
+    response = client.post("/api/v1/data-pipeline/market-data/sample-ingest")
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["status"] == "completed"
+    assert body["extracted_count"] == 6
+    assert body["freshness_report"]["status"] == "sample"
+    assert body["quality_issues"]
+    assert body["data_limitations"]
+    assert "not financial advice" in body["educational_disclaimer"]
+
+
+def test_latest_market_data_endpoint_returns_cross_asset_records() -> None:
+    response = client.get("/api/v1/data-pipeline/market-data/latest")
+    body = response.json()
+    symbols = {record["symbol"] for record in body}
+
+    assert response.status_code == 200
+    assert {"SP500", "BTC", "US10Y", "FHFA-HPI"}.issubset(symbols)
+
+
 def test_onboarding_options_are_available() -> None:
     response = client.get("/api/v1/onboarding/options")
     body = response.json()

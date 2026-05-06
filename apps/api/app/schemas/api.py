@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel, Field
@@ -30,6 +31,12 @@ InvestmentExperience = Literal["new", "some", "experienced"]
 PrimaryGoal = Literal["learn", "build_wealth", "retirement", "debt_payoff", "home", "emergency_fund"]
 RiskToleranceInput = Literal["low", "medium", "high"]
 TimeHorizon = Literal["short", "medium", "long"]
+DataProviderKind = Literal["manual", "sample_file", "free_api", "paid_optional"]
+DataQualitySeverity = Literal["info", "warning", "error"]
+FreshnessStatus = Literal["fresh", "stale", "sample", "unknown"]
+MarketAssetClass = Literal["stock", "etf", "crypto", "treasury", "macro", "real_estate"]
+MarketMetricType = Literal["price", "index_level", "yield", "rate", "housing_index"]
+PipelineRunStatus = Literal["completed", "completed_with_warnings", "failed"]
 
 
 class SourceMetadata(BaseModel):
@@ -249,3 +256,73 @@ class AssistantResponse(BaseModel):
     agent_trace: list[AgentTraceStep] = Field(default_factory=list)
     prompt_context: AssistantPromptContext | None = None
     safety_disclaimer: str
+
+
+class DataProviderResponse(BaseModel):
+    id: str
+    name: str
+    provider_type: DataProviderKind
+    asset_classes: list[str]
+    authentication: str
+    cost_model: str
+    current_use: str
+    notes: list[str]
+
+
+class DataQualityIssue(BaseModel):
+    severity: DataQualitySeverity
+    code: str
+    message: str
+    record_symbol: str | None = None
+
+
+class DataFreshnessReport(BaseModel):
+    status: FreshnessStatus
+    as_of: datetime
+    retrieved_at: datetime
+    explanation: str
+
+
+class MarketObservation(BaseModel):
+    symbol: str = Field(min_length=1, max_length=32)
+    name: str = Field(min_length=2, max_length=120)
+    asset_class: MarketAssetClass
+    metric_type: MarketMetricType
+    value: float = Field(ge=0)
+    unit: str = Field(min_length=1, max_length=40)
+    currency: str | None = Field(default=None, max_length=8)
+    change_percent: float | None = None
+    trend: TrendDirection
+    as_of: datetime
+    retrieved_at: datetime
+    source: SourceMetadata
+    source_url: str | None = None
+    data_limitations: list[str]
+
+
+class SampleMarketDataFile(BaseModel):
+    dataset_id: str
+    generated_for: str
+    source_name: str
+    source_url: str | None = None
+    provider_type: DataProviderKind
+    as_of: datetime
+    retrieved_at: datetime
+    records: list[MarketObservation]
+
+
+class MarketDataIngestionResponse(BaseModel):
+    pipeline_name: str
+    dataset_id: str
+    provider: DataProviderResponse
+    status: PipelineRunStatus
+    extracted_count: int = Field(ge=0)
+    accepted_count: int = Field(ge=0)
+    rejected_count: int = Field(ge=0)
+    freshness_report: DataFreshnessReport
+    quality_issues: list[DataQualityIssue]
+    records: list[MarketObservation]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    educational_disclaimer: str

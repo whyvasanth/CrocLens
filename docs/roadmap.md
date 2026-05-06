@@ -297,6 +297,10 @@ Goal:
 
 - Add sample market data ingestion, then one free API integration.
 
+Status:
+
+- Implemented with a local sample market data fixture, Pydantic validation, freshness metadata, quality checks, provider registry, tests, and an optional CoinGecko Bitcoin preview endpoint.
+
 Branch:
 
 - `phase-11-data-pipeline`

@@ -120,14 +120,15 @@ Completed phases:
 - Phase 7: Asset detail pages
 - Phase 8: User onboarding and risk profile
 - Phase 9: AI Assistant v1
+- Phase 10: Multi-agent architecture
 
 Current phase:
 
-- Phase 10: Multi-agent architecture
+- Phase 11: Data engineering pipeline
 
 Next phases:
 
-- Phase 11 and beyond: Data pipelines, security, testing, metrics, and deployment
+- Phase 12 and beyond: Market/news impact, tax, retirement, journal, security, testing, metrics, and deployment
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -170,6 +171,7 @@ Phase 7 adds API-backed beginner detail pages for stocks/ETFs, crypto, real esta
 Phase 8 adds an API-backed onboarding flow that turns goals, risk comfort, retirement, debt, and manual assets into a beginner risk profile.
 Phase 9 connects Croc Guide to the assistant API with rule-based intent routing, prompt context, and safety checks.
 Phase 10 adds a lightweight multi-agent orchestrator and visible agent trace for Croc Guide responses.
+Phase 11 adds a sample market data ingestion pipeline, data quality checks, freshness metadata, provider registry, and optional CoinGecko preview endpoint.
 
 Install dependencies:
 
@@ -246,6 +248,10 @@ Current backend endpoints:
 - `GET /api/v1/action-plans`
 - `POST /api/v1/action-plans/generate`
 - `POST /api/v1/ai/assistant`
+- `GET /api/v1/data-pipeline/providers`
+- `POST /api/v1/data-pipeline/market-data/sample-ingest`
+- `GET /api/v1/data-pipeline/market-data/latest`
+- `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 Assistant v1 supports:
 
@@ -273,6 +279,12 @@ Portfolio calculation docs:
 
 ```text
 docs/portfolio-calculations.md
+```
+
+Data pipeline docs:
+
+```text
+docs/data-pipeline.md
 ```
 
 ## Git Workflow

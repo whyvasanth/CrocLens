@@ -43,6 +43,10 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 10 lightweight multi-agent orchestrator and agent registry endpoint.
 - Added assistant agent trace steps for intent routing, specialist handling, action planning, and safety review.
 - Updated Croc Guide to show the agent trace behind each assistant answer.
+- Added Phase 11 market data ingestion pipeline with sample JSON data.
+- Added data provider registry, freshness report, lineage metadata, and basic data quality checks.
+- Added optional CoinGecko Bitcoin live preview integration for the first free public API example.
+- Added data pipeline API routes, tests, and documentation.
 
 ### Notes
 
@@ -55,3 +59,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Phase 8 risk profiles are educational starting points, not personalized investment recommendations.
 - Phase 9 assistant responses are rule-based and educational; no external LLM is called yet.
 - Phase 10 agent orchestration is deterministic; LangGraph or model-backed nodes can be introduced later.
+- Phase 11 market data still uses a local sample file by default; live provider data is optional and not persisted yet.

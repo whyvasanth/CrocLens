@@ -19,12 +19,14 @@ FastAPI REST API
   |
   +--> Portfolio and scoring services
   +--> AI assistant and agent orchestration
+  +--> Data ingestion and freshness services
   +--> Data access layer
   |
   v
 PostgreSQL
 
-External data jobs, added later:
+External data jobs:
+  Sample JSON pipeline in Phase 11
   SEC EDGAR
   FRED
   CoinGecko
@@ -102,6 +104,8 @@ User question
 ### Data Engineering Layer
 
 The data layer is responsible for getting external data into a useful, traceable format.
+
+Phase 11 starts this layer with a local sample JSON pipeline, provider registry, freshness report, quality checks, and optional CoinGecko Bitcoin preview endpoint.
 
 It should eventually handle:
 
@@ -201,4 +205,3 @@ Scheduled jobs
 - Prefer simple REST APIs before more complex event-driven systems.
 - Use mock data first, then replace it with real data behind stable interfaces.
 - Avoid paid data and expensive cloud services in the MVP.
-

@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Phase 10 extends the FastAPI mock backend with a lightweight agent registry and assistant trace.
+Phase 11 extends the FastAPI backend with a sample market data ingestion pipeline and data provider registry.
 
 The backend lives in:
 
@@ -36,6 +36,10 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/action-plans`
 - `POST /api/v1/ai/assistant`
 - `GET /api/v1/ai/agents`
+- `GET /api/v1/data-pipeline/providers`
+- `POST /api/v1/data-pipeline/market-data/sample-ingest`
+- `GET /api/v1/data-pipeline/market-data/latest`
+- `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 The frontend API base URL defaults to:
 
@@ -212,6 +216,41 @@ Phase 9 intent examples:
 - `risk`
 - `education`
 - `safety`
+
+### Data Pipeline
+
+```http
+GET /api/v1/data-pipeline/providers
+POST /api/v1/data-pipeline/market-data/sample-ingest
+GET /api/v1/data-pipeline/market-data/latest
+GET /api/v1/data-pipeline/crypto/bitcoin/live-preview
+```
+
+Purpose:
+
+- List planned and implemented data providers.
+- Run the deterministic sample market data ingestion pipeline.
+- Return latest normalized sample market observations.
+- Optionally preview a live free CoinGecko Bitcoin price response.
+
+The sample ingestion response includes:
+
+- `pipeline_name`
+- `dataset_id`
+- `provider`
+- `status`
+- `extracted_count`
+- `accepted_count`
+- `rejected_count`
+- `freshness_report`
+- `quality_issues`
+- `records`
+- `confidence`
+- `data_limitations`
+- `sources`
+- `educational_disclaimer`
+
+The live CoinGecko preview is intentionally not used by tests or dashboard rendering yet. Free public APIs can be rate limited or temporarily unavailable, so production code should cache and retry carefully.
 
 ## Planned Later Endpoints
 

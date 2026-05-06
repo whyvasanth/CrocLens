@@ -42,6 +42,14 @@ Use sample JSON or CSV files for:
 - News examples
 - Treasury rates
 
+Phase 11 implements this stage with:
+
+```text
+apps/api/data/sample_market_data.json
+```
+
+The sample file is loaded by a tested FastAPI service that validates records, returns freshness metadata, and reports quality issues. This keeps the MVP deterministic while teaching the same ETL pattern used for real providers.
+
 Benefits:
 
 - Teaches data engineering basics.
@@ -61,6 +69,14 @@ Candidate sources:
 | FHFA | Housing price index data | Useful for real estate context |
 | OpenFIGI | Symbol and security mapping | Free tier, useful for identifiers |
 | Alpha Vantage or similar | Stocks and ETFs | Free tier often rate-limited |
+
+Phase 11 adds the first optional free API integration:
+
+```text
+GET /api/v1/data-pipeline/crypto/bitcoin/live-preview
+```
+
+This endpoint calls CoinGecko's public simple price API when requested. It is intentionally optional and not required for tests because free public APIs can fail, rate limit, or change response timing.
 
 ### Stage 4: Optional Paid Providers
 
@@ -106,6 +122,14 @@ Later ingestion jobs should check:
 - API rate limit failures
 - Partial ingestion failures
 
+Phase 11 currently checks:
+
+- Duplicate symbol, metric, and date combinations
+- Zero values that may need review
+- Missing data limitation notes
+
+See `docs/data-pipeline.md` for the Phase 11 pipeline design.
+
 ## Data Engineering Concepts
 
 Extract:
@@ -139,4 +163,3 @@ Retries:
 Rate limits:
 
 - Respect provider limits to avoid blocked requests or surprise costs.
-

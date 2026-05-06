@@ -254,3 +254,28 @@ Key terms:
 Practice idea:
 
 - Add a real estate intent mapping that routes home-equity questions to the Real Estate Insight Agent, then show that trace in Croc Guide.
+
+## Phase 11: Data Engineering Pipeline
+
+What we learned:
+
+- A data pipeline turns external or file-based data into a validated product-ready shape.
+- ETL means extract, transform, and load.
+- Pydantic can validate data files the same way it validates API responses.
+- Freshness and lineage metadata help users understand whether data is current and where it came from.
+- Data quality checks should run before market data reaches dashboards or AI agents.
+- Free APIs are useful for MVP learning, but production systems need caching, retries, rate-limit handling, and graceful failure behavior.
+
+Key terms:
+
+- Extract: read data from a file, API, database, or stream.
+- Transform: clean and normalize data into the internal CrocLens shape.
+- Load: save or expose the transformed data for the app to use.
+- Lineage: metadata describing where data came from.
+- Freshness: metadata describing how current the data is.
+- Rate limit: a provider rule limiting how many API calls can be made.
+- Cache: stored data reused to reduce repeated provider calls.
+
+Practice idea:
+
+- Add a sample bond ETF record to `apps/api/data/sample_market_data.json`, then update the test count and run the API tests.
