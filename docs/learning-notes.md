@@ -445,3 +445,26 @@ Key terms:
 Practice idea:
 
 - Add a new metric for missing data limitation rate and decide whether lower or higher is better.
+
+## Phase 20: Free-Only Deployment Plan
+
+What we learned:
+
+- Deployment is the process of packaging and running software in a repeatable environment.
+- Docker images package runtime dependencies; containers run those images.
+- Docker Compose is useful when a product has more than one local service.
+- Build-time frontend environment variables matter because browser-facing Next.js variables are bundled into the client code.
+- Free-only deployment means avoiding services that can silently bill, even if they advertise a free tier.
+
+Key terms:
+
+- Image: a packaged runtime for an app.
+- Container: a running instance of an image.
+- Dockerfile: build instructions for an image.
+- Compose: a file that runs multiple containers together.
+- Health check: a readiness check that helps services start in the right order.
+- Cost trap: infrastructure that can unexpectedly create charges.
+
+Practice idea:
+
+- Add a `docker compose config` check to your local pre-push routine and explain what it validates.

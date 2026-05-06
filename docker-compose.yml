@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      RATE_LIMIT_PER_MINUTE: "300"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "8000:8000"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_CROCLENS_API_URL: "http://localhost:8000"
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    ports:
+      - "3000:3000"

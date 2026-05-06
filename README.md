@@ -129,14 +129,15 @@ Completed phases:
 - Phase 17: Security and reliability
 - Phase 18: Testing and CI
 - Phase 19: Evaluation metrics
+- Phase 20: Free-only deployment plan
 
-Current phase:
+Current status:
 
-- Phase 20: Deployment plan
+- MVP foundation complete through Phase 20
 
-Next phases:
+Next work:
 
-- Phase 20: Free-only deployment planning and Docker documentation
+- Choose the next product slice deliberately before adding paid infrastructure, real user data, or external APIs.
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -188,6 +189,7 @@ Phase 16 adds watchlist intelligence with sample items, AI-style summaries, and 
 Phase 17 adds security headers, request IDs, rate limiting, prompt-injection checks, privacy controls, export/delete previews, and an API-backed Settings page.
 Phase 18 adds backend agent-output tests, frontend smoke tests, and a manual-only free-usage GitHub Actions CI workflow.
 Phase 19 adds an internal evaluation metrics dashboard for product quality, AI safety, data freshness, and reliability.
+Phase 20 adds local Docker deployment files and a free-only deployment plan that blocks AWS and paid cloud by default.
 
 Install dependencies:
 
@@ -250,6 +252,25 @@ Open:
 
 ```text
 http://127.0.0.1:8000/docs
+```
+
+Run both services with local Docker:
+
+```bash
+npm.cmd run docker:up
+```
+
+Open:
+
+```text
+http://localhost:3000/dashboard
+http://127.0.0.1:8000/docs
+```
+
+Stop Docker services:
+
+```bash
+npm.cmd run docker:down
 ```
 
 Current backend endpoints:
@@ -342,6 +363,12 @@ Evaluation metrics docs:
 
 ```text
 docs/evaluation-metrics.md
+```
+
+Free-only deployment docs:
+
+```text
+docs/aws-deployment.md
 ```
 
 ## Git Workflow

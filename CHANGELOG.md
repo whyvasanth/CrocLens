@@ -63,6 +63,7 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added no-dependency frontend smoke tests and `npm run test:web`.
 - Added manual-only GitHub Actions CI workflow for backend tests and frontend checks, with free-only usage documented.
 - Added Phase 19 evaluation metrics endpoint, API tests, frontend metrics page, smoke-test coverage, and documentation.
+- Added Phase 20 local Docker deployment files, `.env.example`, Docker smoke-test coverage, and a free-only deployment plan.
 
 ### Notes
 
@@ -78,3 +79,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Phase 11 market data uses a local sample file by default; no live paid or ambiguous market data provider is connected.
 - Phase 18 CI is manual-only and should be used only where GitHub Actions remains free or included for the repo/account.
 - Phase 19 metrics use deterministic sample values; no paid analytics, paid monitoring, or external tracking tool is connected.
+- Phase 20 blocks AWS and paid cloud by default; local Docker is the active deployment path.

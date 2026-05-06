@@ -459,6 +459,10 @@ Goal:
 
 - Dockerize services and document a free-only deployment plan.
 
+Status:
+
+- Implemented with local Dockerfiles for the FastAPI API and Next.js web app, `docker-compose.yml`, `.env.example`, Docker smoke-test coverage, and an updated free-only deployment plan. AWS remains blocked by default unless explicitly approved later.
+
 Branch:
 
 - `phase-20-deployment-plan`

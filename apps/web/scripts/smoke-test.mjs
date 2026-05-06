@@ -26,8 +26,20 @@ const requiredRoutes = [
   "apps/web/app/settings/page.tsx"
 ];
 
+const requiredDeploymentFiles = [
+  ".dockerignore",
+  ".env.example",
+  "docker-compose.yml",
+  "apps/api/Dockerfile",
+  "apps/web/Dockerfile"
+];
+
 for (const route of requiredRoutes) {
   assertFile(route);
+}
+
+for (const file of requiredDeploymentFiles) {
+  assertFile(file);
 }
 
 const apiClient = read("apps/web/lib/api-client.ts");
@@ -60,5 +72,9 @@ assert.match(evaluationPage, /Quality gates/, "Evaluation metrics page should sh
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");
 assert.match(dataSources, /ambiguous freemium/i, "Data docs should reject ambiguous freemium APIs");
+
+const deploymentDocs = read("docs/aws-deployment.md");
+assert.match(deploymentDocs, /Do not deploy to AWS/i, "Deployment docs should block AWS by default");
+assert.match(deploymentDocs, /free-only/i, "Deployment docs should preserve the free-only deployment rule");
 
 console.log("CrocLens web smoke tests passed.");
