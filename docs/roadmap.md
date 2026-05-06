@@ -295,11 +295,11 @@ Commit:
 
 Goal:
 
-- Add sample market data ingestion, then one free API integration.
+- Add sample market data ingestion and a free-only provider plan.
 
 Status:
 
-- Implemented with a local sample market data fixture, Pydantic validation, freshness metadata, quality checks, provider registry, tests, and an optional CoinGecko Bitcoin preview endpoint.
+- Implemented with a local sample market data fixture, Pydantic validation, freshness metadata, quality checks, provider registry, and tests. Live market providers remain unconnected until a verified no-cost source is selected.
 
 Branch:
 

@@ -171,7 +171,7 @@ Phase 7 adds API-backed beginner detail pages for stocks/ETFs, crypto, real esta
 Phase 8 adds an API-backed onboarding flow that turns goals, risk comfort, retirement, debt, and manual assets into a beginner risk profile.
 Phase 9 connects Croc Guide to the assistant API with rule-based intent routing, prompt context, and safety checks.
 Phase 10 adds a lightweight multi-agent orchestrator and visible agent trace for Croc Guide responses.
-Phase 11 adds a sample market data ingestion pipeline, data quality checks, freshness metadata, provider registry, and optional CoinGecko preview endpoint.
+Phase 11 adds a sample market data ingestion pipeline, data quality checks, freshness metadata, and a free-only provider registry.
 
 Install dependencies:
 
@@ -251,7 +251,6 @@ Current backend endpoints:
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
-- `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 Assistant v1 supports:
 

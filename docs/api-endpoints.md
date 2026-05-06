@@ -223,7 +223,6 @@ Phase 9 intent examples:
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
-GET /api/v1/data-pipeline/crypto/bitcoin/live-preview
 ```
 
 Purpose:
@@ -231,7 +230,6 @@ Purpose:
 - List planned and implemented data providers.
 - Run the deterministic sample market data ingestion pipeline.
 - Return latest normalized sample market observations.
-- Optionally preview a live free CoinGecko Bitcoin price response.
 
 The sample ingestion response includes:
 
@@ -250,7 +248,7 @@ The sample ingestion response includes:
 - `sources`
 - `educational_disclaimer`
 
-The live CoinGecko preview is intentionally not used by tests or dashboard rendering yet. Free public APIs can be rate limited or temporarily unavailable, so production code should cache and retry carefully.
+Crypto market data is sample-only for now. CrocLens should not add paid or ambiguous freemium market data providers to the MVP.
 
 ## Planned Later Endpoints
 

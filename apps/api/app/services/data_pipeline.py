@@ -1,7 +1,5 @@
-from datetime import UTC, datetime
 from pathlib import Path
 
-import httpx
 from pydantic import ValidationError
 
 from app.schemas.api import (
@@ -16,14 +14,9 @@ from app.schemas.api import (
 from app.services.mock_data import EDUCATIONAL_DISCLAIMER
 
 SAMPLE_MARKET_DATA_PATH = Path(__file__).resolve().parents[2] / "data" / "sample_market_data.json"
-COINGECKO_SIMPLE_PRICE_URL = "https://api.coingecko.com/api/v3/simple/price"
 
 
 class DataPipelineError(RuntimeError):
-    pass
-
-
-class DataPipelineProviderError(DataPipelineError):
     pass
 
 
@@ -43,19 +36,6 @@ def list_data_providers() -> list[DataProviderResponse]:
             ],
         ),
         DataProviderResponse(
-            id="coingecko_simple_price",
-            name="CoinGecko Simple Price API",
-            provider_type="free_api",
-            asset_classes=["crypto"],
-            authentication="No API key required for the basic public endpoint.",
-            cost_model="Free public API with rate limits.",
-            current_use="Optional live Bitcoin preview endpoint; not required for tests.",
-            notes=[
-                "Good first free API because it avoids secrets in the MVP.",
-                "Production use should cache responses and handle rate limits.",
-            ],
-        ),
-        DataProviderResponse(
             id="fred_macro",
             name="FRED",
             provider_type="free_api",
@@ -69,16 +49,29 @@ def list_data_providers() -> list[DataProviderResponse]:
             ],
         ),
         DataProviderResponse(
-            id="alpha_vantage_equities",
-            name="Alpha Vantage or similar market data API",
+            id="treasury_fiscal_data",
+            name="Treasury/Fiscal Data",
             provider_type="free_api",
-            asset_classes=["stock", "etf"],
-            authentication="Free API key usually required.",
-            cost_model="Free tier with strict limits; paid tiers optional later.",
-            current_use="Planned future stocks and ETFs ingestion.",
+            asset_classes=["treasury"],
+            authentication="None for many public endpoints.",
+            cost_model="Free official US government data source.",
+            current_use="Planned future Treasury rates and bond context ingestion.",
             notes=[
-                "Useful for MVP stock price prototypes.",
-                "Rate limits mean caching is required.",
+                "Good fit for rates and Treasury context.",
+                "Production use should still cache responses and handle provider downtime.",
+            ],
+        ),
+        DataProviderResponse(
+            id="fhfa_housing",
+            name="FHFA public housing data",
+            provider_type="free_api",
+            asset_classes=["real_estate"],
+            authentication="None for public datasets.",
+            cost_model="Free official US government housing data source.",
+            current_use="Planned future real estate context ingestion.",
+            notes=[
+                "Useful for broad housing market context.",
+                "Not a replacement for a property appraisal or local real estate valuation.",
             ],
         ),
     ]
@@ -123,68 +116,6 @@ def run_sample_market_ingestion() -> MarketDataIngestionResponse:
 
 def get_latest_market_observations() -> list[MarketObservation]:
     return run_sample_market_ingestion().records
-
-
-def fetch_coingecko_bitcoin_observation() -> MarketObservation:
-    params = {
-        "ids": "bitcoin",
-        "vs_currencies": "usd",
-        "include_24hr_change": "true",
-        "include_last_updated_at": "true",
-    }
-
-    try:
-        with httpx.Client(timeout=10.0) as client:
-            response = client.get(COINGECKO_SIMPLE_PRICE_URL, params=params)
-            response.raise_for_status()
-    except httpx.HTTPError as exc:
-        raise DataPipelineProviderError(f"CoinGecko request failed: {exc}") from exc
-
-    return normalize_coingecko_bitcoin_response(response.json())
-
-
-def normalize_coingecko_bitcoin_response(payload: dict) -> MarketObservation:
-    bitcoin = payload.get("bitcoin")
-    if not isinstance(bitcoin, dict):
-        raise DataPipelineProviderError("CoinGecko response did not include a bitcoin object.")
-
-    usd_price = bitcoin.get("usd")
-    if usd_price is None:
-        raise DataPipelineProviderError("CoinGecko response did not include a USD price.")
-
-    change_percent = bitcoin.get("usd_24h_change")
-    last_updated_at = bitcoin.get("last_updated_at")
-    as_of = (
-        datetime.fromtimestamp(last_updated_at, tz=UTC)
-        if isinstance(last_updated_at, int | float)
-        else datetime.now(tz=UTC)
-    )
-    retrieved_at = datetime.now(tz=UTC)
-
-    return MarketObservation(
-        symbol="BTC",
-        name="Bitcoin",
-        asset_class="crypto",
-        metric_type="price",
-        value=float(usd_price),
-        unit="USD",
-        currency="USD",
-        change_percent=float(change_percent) if change_percent is not None else None,
-        trend=_trend_from_change(change_percent),
-        as_of=as_of,
-        retrieved_at=retrieved_at,
-        source=SourceMetadata(
-            name="CoinGecko",
-            freshness="Live free API preview when this endpoint was called",
-            as_of=as_of.isoformat(),
-        ),
-        source_url=COINGECKO_SIMPLE_PRICE_URL,
-        data_limitations=[
-            "Free public API responses can be rate limited or temporarily unavailable.",
-            "This preview is not cached or persisted yet.",
-            "Crypto prices can move quickly; review source freshness before relying on a value.",
-        ],
-    )
 
 
 def _load_sample_market_data(path: Path = SAMPLE_MARKET_DATA_PATH) -> SampleMarketDataFile:
@@ -243,13 +174,3 @@ def _quality_check_records(records: list[MarketObservation]) -> list[DataQuality
         )
 
     return issues
-
-
-def _trend_from_change(change_percent: float | int | None) -> str:
-    if change_percent is None:
-        return "flat"
-    if change_percent > 0:
-        return "up"
-    if change_percent < 0:
-        return "down"
-    return "flat"

@@ -11,7 +11,6 @@ The backend now has:
 - Basic data quality checks.
 - Freshness and lineage metadata.
 - Data provider registry.
-- An optional CoinGecko free API preview for Bitcoin.
 - Backend tests for the pipeline and API contracts.
 
 This is not a full production data platform yet. It is the MVP shape that lets us learn ETL safely.
@@ -57,12 +56,12 @@ Extract:
 
 - Pull raw data from a source.
 - In Phase 11, the source is a local JSON file.
-- The optional CoinGecko preview demonstrates what a free API extractor looks like.
+- No live crypto provider is connected in the MVP because the project is staying strictly free-only.
 
 Transform:
 
 - Convert raw provider data into CrocLens' internal shape.
-- Example: CoinGecko's `bitcoin.usd` becomes a `MarketObservation` with symbol, value, source, and limitations.
+- Example: a sample JSON record becomes a `MarketObservation` with symbol, value, source, and limitations.
 
 Load:
 
@@ -105,10 +104,9 @@ Each market observation includes:
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
-GET /api/v1/data-pipeline/crypto/bitcoin/live-preview
 ```
 
-The CoinGecko endpoint is optional. It can fail if the public API is down or rate limited, so tests do not depend on it.
+Crypto market data remains sample-only until we choose a verified no-cost source with acceptable terms.
 
 ## Production Upgrade Path
 
@@ -122,6 +120,7 @@ Later phases should add:
 - Dead-letter storage for failed records.
 - Data quality dashboards.
 - More provider clients for FRED, Treasury/Fiscal Data, FHFA, SEC EDGAR, and OpenFIGI.
+- A verified no-cost crypto source only if it fits the project budget and terms.
 
 ## Safety Notes
 

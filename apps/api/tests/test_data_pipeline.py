@@ -1,4 +1,4 @@
-from app.services.data_pipeline import normalize_coingecko_bitcoin_response, run_sample_market_ingestion
+from app.services.data_pipeline import list_data_providers, run_sample_market_ingestion
 
 
 def test_sample_market_ingestion_returns_quality_report() -> None:
@@ -15,21 +15,10 @@ def test_sample_market_ingestion_returns_quality_report() -> None:
     assert "not financial advice" in result.educational_disclaimer
 
 
-def test_coingecko_normalizer_returns_market_observation() -> None:
-    observation = normalize_coingecko_bitcoin_response(
-        {
-            "bitcoin": {
-                "usd": 66123.45,
-                "usd_24h_change": -1.25,
-                "last_updated_at": 1714939200,
-            }
-        }
-    )
+def test_provider_registry_uses_only_free_first_sources() -> None:
+    providers = list_data_providers()
+    provider_ids = {provider.id for provider in providers}
 
-    assert observation.symbol == "BTC"
-    assert observation.asset_class == "crypto"
-    assert observation.metric_type == "price"
-    assert observation.value == 66123.45
-    assert observation.trend == "down"
-    assert observation.source.name == "CoinGecko"
-    assert observation.data_limitations
+    assert provider_ids == {"croclens_sample_market_file", "fred_macro", "treasury_fiscal_data", "fhfa_housing"}
+    assert all(provider.provider_type != "paid_optional" for provider in providers)
+    assert any(provider.id == "treasury_fiscal_data" for provider in providers)

@@ -64,25 +64,22 @@ Candidate sources:
 | --- | --- | --- |
 | SEC EDGAR | Company filings | Free, official, filing-focused |
 | FRED | Macroeconomic data | Free API key, strong macro coverage |
-| CoinGecko | Crypto prices and metadata | Free tier available, rate limits apply |
 | Treasury/Fiscal Data | Treasury rates and public debt data | Free government source |
 | FHFA | Housing price index data | Useful for real estate context |
 | OpenFIGI | Symbol and security mapping | Free tier, useful for identifiers |
-| Alpha Vantage or similar | Stocks and ETFs | Free tier often rate-limited |
 
-Phase 11 adds the first optional free API integration:
+Current free-only policy:
 
-```text
-GET /api/v1/data-pipeline/crypto/bitcoin/live-preview
-```
-
-This endpoint calls CoinGecko's public simple price API when requested. It is intentionally optional and not required for tests because free public APIs can fail, rate limit, or change response timing.
+- Use local sample files first.
+- Prefer official public/government sources when real ingestion starts.
+- Do not add ambiguous freemium or paid market data providers to the MVP.
+- Keep crypto prices sample/manual until a verified no-cost source is selected.
 
 ### Stage 4: Optional Paid Providers
 
-Paid providers should be clearly marked optional.
+Paid providers are out of scope for this MVP.
 
-Possible future categories:
+Do not add these without an explicit future decision:
 
 - Real-time equity market data
 - Institutional fundamentals

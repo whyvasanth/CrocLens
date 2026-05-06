@@ -319,7 +319,7 @@ def list_asset_details() -> list[AssetDetailResponse]:
                 ),
             ],
             confidence="medium",
-            data_limitations=["Uses a static sample crypto value.", "No live CoinGecko or exchange data is connected yet."],
+            data_limitations=["Uses a static sample crypto value.", "No live crypto market data provider is connected yet."],
             source=MOCK_SOURCE,
             educational_disclaimer=EDUCATIONAL_DISCLAIMER,
         ),

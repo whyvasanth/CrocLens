@@ -118,8 +118,10 @@ def test_data_pipeline_provider_registry_lists_sample_and_free_api() -> None:
 
     assert response.status_code == 200
     assert "croclens_sample_market_file" in provider_ids
-    assert "coingecko_simple_price" in provider_ids
+    assert "treasury_fiscal_data" in provider_ids
+    assert "fhfa_housing" in provider_ids
     assert any(provider["provider_type"] == "free_api" for provider in body)
+    assert provider_ids == {"croclens_sample_market_file", "fred_macro", "treasury_fiscal_data", "fhfa_housing"}
 
 
 def test_sample_market_ingestion_endpoint_returns_freshness_and_limitations() -> None:

@@ -29,10 +29,10 @@ External data jobs:
   Sample JSON pipeline in Phase 11
   SEC EDGAR
   FRED
-  CoinGecko
   Treasury/Fiscal Data
   FHFA
-  Alpha Vantage or similar free-tier market API
+  OpenFIGI
+  Verified no-cost sources only
 ```
 
 ## Main System Boundaries
@@ -105,7 +105,7 @@ User question
 
 The data layer is responsible for getting external data into a useful, traceable format.
 
-Phase 11 starts this layer with a local sample JSON pipeline, provider registry, freshness report, quality checks, and optional CoinGecko Bitcoin preview endpoint.
+Phase 11 starts this layer with a local sample JSON pipeline, provider registry, freshness report, and quality checks. No paid or ambiguous freemium market data provider is connected in the MVP.
 
 It should eventually handle:
 
