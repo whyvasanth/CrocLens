@@ -20,5 +20,5 @@ def test_provider_registry_uses_only_free_first_sources() -> None:
     provider_ids = {provider.id for provider in providers}
 
     assert provider_ids == {"croclens_sample_market_file", "fred_macro", "treasury_fiscal_data", "fhfa_housing"}
-    assert all(provider.provider_type != "paid_optional" for provider in providers)
+    assert {provider.provider_type for provider in providers}.issubset({"sample_file", "free_api"})
     assert any(provider.id == "treasury_fiscal_data" for provider in providers)

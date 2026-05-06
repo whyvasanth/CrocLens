@@ -23,7 +23,7 @@ DEFAULT_PRIVACY_SETTINGS = PrivacySettingsRequest()
 def get_security_status() -> SecurityStatusResponse:
     return SecurityStatusResponse(
         api_version=settings.api_version,
-        authentication_status="Planned: Cognito or managed auth later; MVP uses sample data only.",
+        authentication_status="Planned: verified free authentication later; MVP uses sample data only.",
         rate_limit_per_minute=settings.rate_limit_per_minute,
         security_headers_enabled=[
             "X-CrocLens-Request-Id",

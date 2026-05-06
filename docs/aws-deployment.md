@@ -1,143 +1,65 @@
-# CrocLens AWS Deployment Plan
+# CrocLens Free-Only Deployment Policy
 
 ## Current Status
 
-Phase 0 defines the deployment direction. Deployment work will happen in Phase 20.
+Deployment work is planned for Phase 20, but CrocLens is currently a free-only learning project.
 
-## MVP Deployment Principles
+Do not deploy to AWS or any paid cloud service unless the user explicitly approves it later.
 
-- Keep costs low.
-- Avoid always-on services unless needed.
-- Prefer managed services with clear free-tier behavior.
-- Add budget alerts before deploying paid infrastructure.
-- Start with simple deployment before production complexity.
+## Free-Only Rule
 
-## Candidate AWS Architecture
+CrocLens should use:
 
-```text
-User
-  |
-  v
-CloudFront
-  |
-  v
-S3 static frontend or Amplify
+- Local development.
+- GitHub for source control.
+- Free/open-source libraries.
+- Sample data.
+- Verified no-cost public data sources.
 
-API Gateway
-  |
-  v
-Lambda running FastAPI through Mangum
-  |
-  v
-PostgreSQL
+CrocLens should not use by default:
 
-Supporting services:
-  SSM Parameter Store
-  CloudWatch
-  AWS Budgets
+- Paid cloud hosting.
+- Paid databases.
+- Paid auth providers.
+- Paid data APIs.
+- Paid LLM calls.
+- Paid monitoring.
+- Free trials that require a credit card or can later bill.
+
+## Phase 20 Direction
+
+When deployment becomes necessary, evaluate only options that are verifiably free at the time of implementation.
+
+Before choosing any service, document:
+
+- Whether a credit card is required.
+- Whether the service can bill automatically.
+- Usage limits.
+- Sleep/idle behavior.
+- Data retention limits.
+- What happens when limits are exceeded.
+
+## Cost Traps To Avoid
+
+Avoid services that can create charges without careful review:
+
+- NAT Gateway.
+- Always-on virtual machines.
+- Managed relational databases.
+- Search clusters.
+- Hosted model endpoints.
+- Heavy logs.
+- Load balancers.
+- Paid data APIs.
+
+## MVP Deployment Preference
+
+Until Phase 20, run CrocLens locally:
+
+```powershell
+.venv\Scripts\Activate.ps1
+python -m uvicorn app.main:app --reload --app-dir apps/api --host 127.0.0.1 --port 8000
+npm.cmd run dev:web
 ```
 
-## Frontend Options
-
-### S3 + CloudFront
-
-Pros:
-
-- Low cost.
-- Production-grade static hosting.
-- Good caching.
-
-Cons:
-
-- More setup than Amplify.
-- Best for static export or separated frontend deployments.
-
-### Amplify
-
-Pros:
-
-- Easier setup for Next.js.
-- Git-based deployment flow.
-
-Cons:
-
-- Costs and behavior need careful review as the app grows.
-
-## Backend Options
-
-### Lambda + API Gateway + Mangum
-
-Pros:
-
-- Scales to zero.
-- Good for low-traffic MVP.
-- Avoids always-on compute.
-
-Cons:
-
-- Cold starts.
-- Some FastAPI patterns need serverless awareness.
-- Long-running jobs should not live in request handlers.
-
-### Small Container or EC2 Service
-
-Pros:
-
-- More familiar server model.
-- Easier for long-running processes.
-
-Cons:
-
-- Can cost money while idle.
-- Requires more operations work.
-
-## Database Options
-
-### RDS PostgreSQL
-
-Pros:
-
-- Managed relational database.
-- Production-friendly.
-
-Cons:
-
-- Can become a cost trap if left running outside free-tier or credits.
-
-### Free External Postgres
-
-Pros:
-
-- Good for MVP learning.
-- Often cheaper to start.
-
-Cons:
-
-- Provider limits.
-- Network and security configuration still matter.
-
-## Cost Traps
-
-Avoid or review carefully:
-
-- NAT Gateway
-- Always-on EC2
-- RDS left running
-- OpenSearch
-- SageMaker endpoints
-- Heavy Bedrock usage
-- Large CloudWatch logs
-- Load Balancers
-- Paid data APIs
-
-## Cost Controls
-
-Before deploying:
-
-- Create AWS Budget alerts.
-- Set CloudWatch log retention.
-- Use smallest possible database tier.
-- Avoid NAT Gateway unless truly needed.
-- Avoid paid data providers in MVP.
-- Review monthly cost estimate.
-
+The project should remain useful without paid infrastructure.

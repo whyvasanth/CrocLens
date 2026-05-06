@@ -69,16 +69,15 @@ Data layer:
 
 - Manual user entry first
 - Mock/sample data first
-- Free public data sources next
-- Paid providers marked as optional only
+- Verified no-cost public data sources only
+- No paid, trial-based, or ambiguous freemium data providers
 
 Deployment target:
 
-- Low-cost AWS-compatible architecture
-- Frontend on S3 + CloudFront or Amplify
-- FastAPI on Lambda + API Gateway with Mangum, or a small low-cost service
-- PostgreSQL through RDS only when budget allows, otherwise free external Postgres for MVP
-- CloudWatch, AWS Budgets, and cost controls
+- Local development first
+- GitHub for source control and documentation
+- Free-only deployment options may be evaluated later
+- No AWS, paid cloud, paid auth, paid database, or paid data provider unless explicitly approved
 
 ## Future Repository Structure
 

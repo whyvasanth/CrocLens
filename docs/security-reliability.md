@@ -66,7 +66,7 @@ DELETE /api/v1/privacy/data
 
 Later production work should add:
 
-- Cognito or managed authentication.
+- A verified free authentication approach, reviewed before adoption.
 - Persisted per-user privacy settings.
 - Database-backed export jobs.
 - Confirmed delete workflows with audit logs.
@@ -74,6 +74,7 @@ Later production work should add:
 - Structured logs with redaction.
 - Secret scanning and dependency checks in CI.
 - Prompt-injection tests for retrieved documents, news, and filings.
+- No paid auth, paid monitoring, paid LLM, paid database, or paid data provider unless explicitly approved.
 
 ## Mini Assignment
 

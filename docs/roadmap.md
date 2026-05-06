@@ -449,7 +449,7 @@ Commit:
 
 Goal:
 
-- Dockerize services and document low-cost AWS deployment.
+- Dockerize services and document a free-only deployment plan.
 
 Branch:
 
@@ -457,4 +457,4 @@ Branch:
 
 Commit:
 
-- `docs: add AWS deployment and cost-control plan`
+- `docs: add free-only deployment and cost-control plan`

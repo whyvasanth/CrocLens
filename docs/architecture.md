@@ -177,19 +177,15 @@ Not in the earliest MVP:
 - Personalized financial advice.
 - Complex real-time streaming architecture.
 
-## Production Direction
+## Free-Only Production Direction
 
-Later production architecture can look like this:
+Later production architecture must be chosen from verified no-cost options only. Do not add cloud services that can bill automatically unless the user explicitly approves them.
 
 ```text
-CloudFront/S3 or Amplify
+Local development or verified free hosting
   -> Next.js frontend
-
-API Gateway
-  -> Lambda running FastAPI with Mangum
-  -> PostgreSQL
-  -> SSM Parameter Store for secrets
-  -> CloudWatch logs and metrics
+  -> FastAPI backend
+  -> PostgreSQL-compatible database only if a no-cost option is verified
 
 Scheduled jobs
   -> market/news data ingestion

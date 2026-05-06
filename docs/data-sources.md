@@ -75,7 +75,7 @@ Current free-only policy:
 - Do not add ambiguous freemium or paid market data providers to the MVP.
 - Keep crypto prices sample/manual until a verified no-cost source is selected.
 
-### Stage 4: Optional Paid Providers
+### Stage 4: Disallowed For MVP
 
 Paid providers are out of scope for this MVP.
 
@@ -87,7 +87,7 @@ Do not add these without an explicit future decision:
 - Broker aggregation
 - Real estate valuation APIs
 
-CrocLens MVP should not require paid providers.
+CrocLens MVP must not require paid providers, free trials that later bill, or ambiguous freemium APIs.
 
 ## Data Freshness
 

@@ -54,7 +54,7 @@ MVP:
 
 Later:
 
-- Use AWS Cognito or a managed auth provider.
+- Use a verified free auth approach only after review.
 - Add session management.
 - Add role-based access if an admin surface exists.
 - Add passwordless or OAuth flows only when needed.
@@ -66,10 +66,10 @@ Local development:
 - Use `.env` files for local configuration.
 - Never commit real API keys.
 
-AWS later:
+Production later:
 
-- Use SSM Parameter Store or Secrets Manager.
-- Grant least-privilege IAM access.
+- Use only free secret-management options unless explicitly approved.
+- Grant least-privilege access.
 - Rotate secrets when needed.
 
 ## API Security
@@ -149,23 +149,22 @@ Avoid logging:
 - API keys
 - Sensitive user-entered financial details unless truly required
 
-## AWS Cost Safety
+## Free-Only Cost Safety
 
-Cost traps to avoid:
+CrocLens should not add paid services, paid data providers, or ambiguous free trials unless the user explicitly approves them.
 
-- NAT Gateway
-- Always-on EC2
-- RDS left running
-- OpenSearch
-- SageMaker endpoints
-- Heavy Bedrock usage
-- Large CloudWatch logs
-- Load Balancers
-- Paid data APIs
+Cloud cost traps to avoid:
+
+- Any always-on cloud service
+- Any managed database that can bill automatically
+- Any hosted model endpoint or paid LLM call
+- Any paid monitoring or log-retention service
+- Any paid or ambiguous freemium data API
+- Any free trial that requires a credit card or can later bill
 
 Controls:
 
-- AWS Budget alerts
-- CloudWatch log retention
-- Small free-tier compatible services
-- Manual review before adding paid providers
+- Prefer local development and sample data during MVP.
+- Treat cloud "free tier" services as risky until their billing behavior is reviewed.
+- Do not add paid providers, paid auth, paid databases, paid LLM calls, or paid monitoring by default.
+- Require explicit approval before any service that can incur charges.
