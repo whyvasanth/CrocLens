@@ -441,13 +441,17 @@ Goal:
 
 - Define metrics for product quality, AI safety, reliability, data freshness, and user learning.
 
+Status:
+
+- Implemented with a backend evaluation metrics endpoint, API tests, frontend internal metrics page, smoke-test coverage, and updated documentation. Metrics are deterministic sample values and do not require paid analytics tools.
+
 Branch:
 
 - `phase-19-evaluation-metrics`
 
 Commit:
 
-- `docs: add evaluation metrics plan`
+- `feat: add evaluation metrics dashboard`
 
 ## Phase 20: Deployment Plan
 

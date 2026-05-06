@@ -50,6 +50,9 @@ DecisionType = Literal[
     "retirement_contribution_change",
 ]
 WatchlistAssetType = Literal["stock", "etf", "crypto", "real_estate_market", "bond", "treasury", "other"]
+EvaluationMetricCategory = Literal["product", "ai_safety", "data_quality", "reliability"]
+EvaluationMetricStatus = Literal["healthy", "watch", "needs_attention"]
+EvaluationMetricDirection = Literal["higher_is_better", "lower_is_better"]
 
 
 class SourceMetadata(BaseModel):
@@ -565,3 +568,30 @@ class DeleteDataResponse(BaseModel):
     deleted_sections: list[str]
     explanation: str
     data_limitations: list[str]
+
+
+class EvaluationMetricResponse(BaseModel):
+    id: str
+    label: str
+    category: EvaluationMetricCategory
+    value: float = Field(ge=0)
+    unit: str
+    target: str
+    direction: EvaluationMetricDirection
+    status: EvaluationMetricStatus
+    sample_size: int = Field(ge=0)
+    beginner_explanation: str
+    how_measured: str
+    limitations: list[str]
+
+
+class EvaluationMetricsResponse(BaseModel):
+    headline: str
+    beginner_summary: str
+    metrics: list[EvaluationMetricResponse]
+    quality_checks: list[str]
+    recommended_reviews: list[str]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    educational_disclaimer: str

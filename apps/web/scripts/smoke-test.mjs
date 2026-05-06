@@ -22,6 +22,7 @@ const requiredRoutes = [
   "apps/web/app/retirement/page.tsx",
   "apps/web/app/journal/page.tsx",
   "apps/web/app/watchlist/page.tsx",
+  "apps/web/app/evaluation-metrics/page.tsx",
   "apps/web/app/settings/page.tsx"
 ];
 
@@ -37,6 +38,7 @@ const requiredEndpoints = [
   "/api/v1/retirement/plan",
   "/api/v1/journal/entries",
   "/api/v1/watchlist",
+  "/api/v1/evaluation/metrics",
   "/api/v1/security/status",
   "/api/v1/privacy/settings",
   "/api/v1/privacy/export",
@@ -50,6 +52,10 @@ for (const endpoint of requiredEndpoints) {
 const settingsPage = read("apps/web/components/features/settings-privacy-page.tsx");
 assert.match(settingsPage, /Export preview/, "Settings page should include export preview");
 assert.match(settingsPage, /Delete preview/, "Settings page should include delete preview");
+
+const evaluationPage = read("apps/web/components/features/evaluation-metrics-page.tsx");
+assert.match(evaluationPage, /Evaluation Metrics/, "Evaluation metrics page should render the page title");
+assert.match(evaluationPage, /Quality gates/, "Evaluation metrics page should show quality gates");
 
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");

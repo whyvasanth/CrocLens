@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Bell,
+  ClipboardCheck,
   ChartPie,
   CircleDollarSign,
   Home,
@@ -39,6 +40,7 @@ export const sidebarItems: SidebarItem[] = [
   { label: "Journal", href: "/journal", icon: NotebookPen },
   { label: "Retirement", href: "/retirement", icon: PiggyBank },
   { label: "Tax Planner", href: "/tax-planner", icon: ShieldCheck },
+  { label: "Metrics", href: "/evaluation-metrics", icon: ClipboardCheck },
   { label: "Settings", href: "/settings", icon: Settings }
 ];
 

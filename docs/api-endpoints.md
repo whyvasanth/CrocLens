@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Phase 11 extends the FastAPI backend with a sample market data ingestion pipeline and data provider registry.
+Phase 19 extends the FastAPI backend with an evaluation metrics endpoint for product quality, AI safety, data freshness, and reliability.
 
 The backend lives in:
 
@@ -51,7 +51,7 @@ Phase 5 frontend integration currently uses:
 - `PUT /api/v1/privacy/settings`
 - `GET /api/v1/privacy/export`
 - `DELETE /api/v1/privacy/data`
-- `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
+- `GET /api/v1/evaluation/metrics`
 
 The frontend API base URL defaults to:
 
@@ -343,6 +343,25 @@ Purpose:
 - Preview user privacy preferences.
 - Preview data export and delete workflows.
 - Support Settings page controls before persistent auth and storage are added.
+
+### Evaluation Metrics
+
+```http
+GET /api/v1/evaluation/metrics
+```
+
+Purpose:
+
+- Return a local internal scorecard for product usefulness, AI safety, data quality, and reliability.
+- Show metric targets, status, sample size, how each metric is measured, and limitations.
+- Keep the MVP free-only by using deterministic sample metrics instead of paid analytics or monitoring tools.
+
+Metric categories:
+
+- `product`
+- `ai_safety`
+- `data_quality`
+- `reliability`
 
 ## Planned Later Endpoints
 

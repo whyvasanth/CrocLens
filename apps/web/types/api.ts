@@ -475,6 +475,37 @@ export interface DeleteDataResponse {
   data_limitations: string[];
 }
 
+export type EvaluationMetricCategory = "product" | "ai_safety" | "data_quality" | "reliability";
+export type EvaluationMetricStatus = "healthy" | "watch" | "needs_attention";
+export type EvaluationMetricDirection = "higher_is_better" | "lower_is_better";
+
+export interface EvaluationMetricResponse {
+  id: string;
+  label: string;
+  category: EvaluationMetricCategory;
+  value: number;
+  unit: string;
+  target: string;
+  direction: EvaluationMetricDirection;
+  status: EvaluationMetricStatus;
+  sample_size: number;
+  beginner_explanation: string;
+  how_measured: string;
+  limitations: string[];
+}
+
+export interface EvaluationMetricsResponse {
+  headline: string;
+  beginner_summary: string;
+  metrics: EvaluationMetricResponse[];
+  quality_checks: string[];
+  recommended_reviews: string[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  educational_disclaimer: string;
+}
+
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];

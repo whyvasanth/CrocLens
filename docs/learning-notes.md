@@ -423,3 +423,25 @@ Key terms:
 Practice idea:
 
 - Add one new smoke test assertion for a route or API client function you care about.
+
+## Phase 19: Evaluation Metrics
+
+What we learned:
+
+- Product metrics tell us whether users can complete important workflows.
+- AI metrics must evaluate safety and groundedness, not just whether an answer sounds fluent.
+- Data freshness is a product quality metric because users need to know how current financial context is.
+- Reliability metrics like latency and error rate affect user trust.
+- Free-only products can start with deterministic sample metrics and local tests before adding real analytics.
+
+Key terms:
+
+- Metric: a measured number used to evaluate product or system quality.
+- Target: the threshold that tells you whether a metric is acceptable.
+- Sample size: how many events or examples contributed to the metric.
+- Hallucination check: an evaluation that checks whether an AI answer adds unsupported facts.
+- Unsafe recommendation rate: the share of AI outputs that violate financial safety rules.
+
+Practice idea:
+
+- Add a new metric for missing data limitation rate and decide whether lower or higher is better.

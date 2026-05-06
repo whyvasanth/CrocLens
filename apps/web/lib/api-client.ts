@@ -11,6 +11,7 @@ import type {
   DecisionJournalCreateRequest,
   DecisionJournalEntryResponse,
   DecisionJournalResponse,
+  EvaluationMetricsResponse,
   MarketNewsImpactResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
@@ -182,4 +183,8 @@ export function getDataExport(signal?: AbortSignal) {
 
 export function deleteDataPreview(signal?: AbortSignal) {
   return deleteJson<DeleteDataResponse>("/api/v1/privacy/data", signal);
+}
+
+export function getEvaluationMetrics(signal?: AbortSignal) {
+  return requestJson<EvaluationMetricsResponse>("/api/v1/evaluation/metrics", signal);
 }

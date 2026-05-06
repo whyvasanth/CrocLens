@@ -121,14 +121,22 @@ Completed phases:
 - Phase 9: AI Assistant v1
 - Phase 10: Multi-agent architecture
 - Phase 11: Data engineering pipeline
+- Phase 12: Market, news, and personal impact
+- Phase 13: Tax-aware module
+- Phase 14: Retirement planner
+- Phase 15: Decision journal
+- Phase 16: Watchlist intelligence
+- Phase 17: Security and reliability
+- Phase 18: Testing and CI
+- Phase 19: Evaluation metrics
 
 Current phase:
 
-- Phase 12: Market, news, and personal impact
+- Phase 20: Deployment plan
 
 Next phases:
 
-- Phase 12 and beyond: Market/news impact, tax, retirement, journal, security, testing, metrics, and deployment
+- Phase 20: Free-only deployment planning and Docker documentation
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -179,6 +187,7 @@ Phase 15 adds a decision journal workflow with sample entries, entry creation, a
 Phase 16 adds watchlist intelligence with sample items, AI-style summaries, and safe risk/opportunity notes.
 Phase 17 adds security headers, request IDs, rate limiting, prompt-injection checks, privacy controls, export/delete previews, and an API-backed Settings page.
 Phase 18 adds backend agent-output tests, frontend smoke tests, and a manual-only free-usage GitHub Actions CI workflow.
+Phase 19 adds an internal evaluation metrics dashboard for product quality, AI safety, data freshness, and reliability.
 
 Install dependencies:
 
@@ -218,6 +227,7 @@ Current frontend routes:
 - `/journal`
 - `/retirement`
 - `/tax-planner`
+- `/evaluation-metrics`
 - `/settings`
 - `/assets/asset_stock_bucket`
 - `/assets/asset_etf_bucket`
@@ -271,6 +281,7 @@ Current backend endpoints:
 - `PUT /api/v1/privacy/settings`
 - `GET /api/v1/privacy/export`
 - `DELETE /api/v1/privacy/data`
+- `GET /api/v1/evaluation/metrics`
 
 Assistant v1 supports:
 
@@ -325,6 +336,12 @@ Testing and CI docs:
 
 ```text
 docs/testing-ci.md
+```
+
+Evaluation metrics docs:
+
+```text
+docs/evaluation-metrics.md
 ```
 
 ## Git Workflow
