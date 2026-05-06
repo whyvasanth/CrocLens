@@ -423,13 +423,17 @@ Goal:
 
 - Add frontend tests, backend tests, API tests, calculation tests, agent output tests, and GitHub Actions.
 
+Status:
+
+- Implemented with no-dependency frontend smoke tests, backend agent-output validation tests, local test scripts, and a manual-only GitHub Actions workflow that should be used only when it stays within free or included usage.
+
 Branch:
 
 - `phase-18-testing`
 
 Commit:
 
-- `test: add portfolio calculation tests`
+- `test: add testing and CI workflow`
 
 ## Phase 19: Evaluation Metrics
 

@@ -59,6 +59,9 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Replaced the Watchlist placeholder with an API-backed watchlist intelligence page.
 - Added Phase 17 security and reliability foundation with request IDs, security headers, in-memory rate limiting, safe error responses, and prompt-injection checks.
 - Added privacy settings, data export preview, delete data preview, security status endpoints, tests, docs, and an API-backed Settings page.
+- Added Phase 18 backend agent-output validation tests.
+- Added no-dependency frontend smoke tests and `npm run test:web`.
+- Added manual-only GitHub Actions CI workflow for backend tests and frontend checks, with free-only usage documented.
 
 ### Notes
 
@@ -72,3 +75,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Phase 9 assistant responses are rule-based and educational; no external LLM is called yet.
 - Phase 10 agent orchestration is deterministic; LangGraph or model-backed nodes can be introduced later.
 - Phase 11 market data uses a local sample file by default; no live paid or ambiguous market data provider is connected.
+- Phase 18 CI is manual-only and should be used only where GitHub Actions remains free or included for the repo/account.

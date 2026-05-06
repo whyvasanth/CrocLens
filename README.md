@@ -178,6 +178,7 @@ Phase 14 adds a retirement planner with sample accounts, employer match explanat
 Phase 15 adds a decision journal workflow with sample entries, entry creation, and rule-based feedback.
 Phase 16 adds watchlist intelligence with sample items, AI-style summaries, and safe risk/opportunity notes.
 Phase 17 adds security headers, request IDs, rate limiting, prompt-injection checks, privacy controls, export/delete previews, and an API-backed Settings page.
+Phase 18 adds backend agent-output tests, frontend smoke tests, and a manual-only free-usage GitHub Actions CI workflow.
 
 Install dependencies:
 
@@ -293,6 +294,21 @@ Run schema-related tests:
 .venv\Scripts\python.exe -m pytest apps/api
 ```
 
+Run frontend checks:
+
+```bash
+npm.cmd run typecheck:web
+npm.cmd run test:web
+```
+
+CI:
+
+```text
+.github/workflows/ci.yml
+```
+
+The workflow is manual-only. Use GitHub Actions only when it stays within free or included usage for your repository/account.
+
 Portfolio calculation docs:
 
 ```text
@@ -303,6 +319,12 @@ Data pipeline docs:
 
 ```text
 docs/data-pipeline.md
+```
+
+Testing and CI docs:
+
+```text
+docs/testing-ci.md
 ```
 
 ## Git Workflow

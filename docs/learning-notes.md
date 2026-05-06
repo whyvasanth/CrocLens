@@ -401,3 +401,25 @@ Key terms:
 Practice idea:
 
 - Add a new prompt-injection phrase to `assistant_service.py` and add a backend test for it.
+
+## Phase 18: Testing And CI
+
+What we learned:
+
+- A test suite should cover business logic, API contracts, AI safety, frontend wiring, and project policy.
+- Frontend tests do not always need a heavy browser framework at first; smoke tests can catch broken routes and missing wiring.
+- Agent output validation is important because AI features need structured safety guarantees.
+- CI should run the same commands a developer can run locally.
+- Free-only projects must treat hosted CI as a cost surface and use it only when usage is free or included.
+
+Key terms:
+
+- Unit test: checks one function or service.
+- API test: checks endpoint behavior and response shape.
+- Smoke test: a lightweight test that catches obvious wiring failures.
+- CI: continuous integration, automated checks run by the repository.
+- Agent output validation: tests that AI responses include required safety fields and avoid unsafe claims.
+
+Practice idea:
+
+- Add one new smoke test assertion for a route or API client function you care about.
