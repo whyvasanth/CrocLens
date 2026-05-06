@@ -37,6 +37,8 @@ FreshnessStatus = Literal["fresh", "stale", "sample", "unknown"]
 MarketAssetClass = Literal["stock", "etf", "crypto", "treasury", "macro", "real_estate"]
 MarketMetricType = Literal["price", "index_level", "yield", "rate", "housing_index"]
 PipelineRunStatus = Literal["completed", "completed_with_warnings", "failed"]
+ImpactDirection = Literal["positive", "negative", "mixed", "neutral"]
+ImpactLevel = Literal["low", "medium", "high"]
 
 
 class SourceMetadata(BaseModel):
@@ -322,6 +324,43 @@ class MarketDataIngestionResponse(BaseModel):
     freshness_report: DataFreshnessReport
     quality_issues: list[DataQualityIssue]
     records: list[MarketObservation]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    educational_disclaimer: str
+
+
+class NewsArticleResponse(BaseModel):
+    id: str
+    title: str
+    source_name: str
+    published_at: str
+    summary: str
+    topic: str
+    affected_asset_classes: list[str]
+    source_url: str | None = None
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+
+
+class HoldingImpactResponse(BaseModel):
+    holding_id: str
+    symbol: str
+    name: str
+    asset_type: str
+    impact_direction: ImpactDirection
+    impact_level: ImpactLevel
+    why_it_matters: str
+    what_to_watch: list[str]
+
+
+class MarketNewsImpactResponse(BaseModel):
+    headline: str
+    beginner_summary: str
+    portfolio_exposure_summary: str
+    articles: list[NewsArticleResponse]
+    affected_holdings: list[HoldingImpactResponse]
+    suggested_questions: list[str]
     confidence: ConfidenceLevel
     data_limitations: list[str]
     sources: list[SourceMetadata]

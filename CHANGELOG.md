@@ -47,6 +47,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added data provider registry, freshness report, lineage metadata, and basic data quality checks.
 - Added data pipeline API routes, tests, and documentation.
 - Removed ambiguous crypto provider integration so the MVP remains strictly free-only and sample-data driven by default.
+- Added Phase 12 market news impact workflow with sample headlines mapped to affected holdings.
+- Added `/market-news` frontend page, sidebar link, API route, tests, and documentation.
 
 ### Notes
 

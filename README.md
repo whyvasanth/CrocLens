@@ -121,10 +121,11 @@ Completed phases:
 - Phase 8: User onboarding and risk profile
 - Phase 9: AI Assistant v1
 - Phase 10: Multi-agent architecture
+- Phase 11: Data engineering pipeline
 
 Current phase:
 
-- Phase 11: Data engineering pipeline
+- Phase 12: Market, news, and personal impact
 
 Next phases:
 
@@ -172,6 +173,7 @@ Phase 8 adds an API-backed onboarding flow that turns goals, risk comfort, retir
 Phase 9 connects Croc Guide to the assistant API with rule-based intent routing, prompt context, and safety checks.
 Phase 10 adds a lightweight multi-agent orchestrator and visible agent trace for Croc Guide responses.
 Phase 11 adds a sample market data ingestion pipeline, data quality checks, freshness metadata, and a free-only provider registry.
+Phase 12 adds a market news impact workflow that maps sample headlines to affected holdings with safe educational wording.
 
 Install dependencies:
 
@@ -205,6 +207,7 @@ Current frontend routes:
 - `/onboarding`
 - `/portfolio`
 - `/compare-assets`
+- `/market-news`
 - `/watchlist`
 - `/action-plans`
 - `/journal`
@@ -251,6 +254,7 @@ Current backend endpoints:
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
+- `GET /api/v1/market-news/impact-summary`
 
 Assistant v1 supports:
 

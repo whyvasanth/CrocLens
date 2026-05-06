@@ -315,6 +315,10 @@ Goal:
 
 - Build "How does this affect me?" analysis using holdings and news context.
 
+Status:
+
+- Implemented with sample news articles, affected holding mapping, safe suggested questions, an API endpoint, frontend page, tests, and documentation.
+
 Branch:
 
 - `phase-12-market-news-impact`

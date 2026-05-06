@@ -146,6 +146,19 @@ def test_latest_market_data_endpoint_returns_cross_asset_records() -> None:
     assert {"SP500", "BTC", "US10Y", "FHFA-HPI"}.issubset(symbols)
 
 
+def test_market_news_impact_summary_maps_news_to_holdings() -> None:
+    response = client.get("/api/v1/market-news/impact-summary")
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["articles"]
+    assert body["affected_holdings"]
+    assert any(item["asset_type"] == "Real Estate" for item in body["affected_holdings"])
+    assert body["suggested_questions"]
+    assert body["confidence"] == "medium"
+    assert "not financial advice" in body["educational_disclaimer"]
+
+
 def test_onboarding_options_are_available() -> None:
     response = client.get("/api/v1/onboarding/options")
     body = response.json()

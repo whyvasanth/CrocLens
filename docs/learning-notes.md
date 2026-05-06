@@ -279,3 +279,22 @@ Key terms:
 Practice idea:
 
 - Add a sample bond ETF record to `apps/api/data/sample_market_data.json`, then update the test count and run the API tests.
+
+## Phase 12: Market, News, And Personal Impact
+
+What we learned:
+
+- News should be mapped to portfolio context before it reaches the user.
+- "How does this affect me?" is an impact explanation, not a trading signal.
+- Safe product design means showing confidence, limitations, and sources next to market commentary.
+- A deterministic sample workflow is easier to test than live news ingestion.
+
+Key terms:
+
+- Impact mapping: connecting a headline or market event to affected holdings.
+- Exposure: the part of a portfolio that may be touched by a risk or event.
+- Source limitation: a clear statement of what the data cannot tell the user.
+
+Practice idea:
+
+- Add one inflation article and map it to cash, real estate, and retirement holdings.

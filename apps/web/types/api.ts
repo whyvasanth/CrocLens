@@ -238,6 +238,43 @@ export interface AssistantResponse {
   safety_disclaimer: string;
 }
 
+export interface NewsArticleResponse {
+  id: string;
+  title: string;
+  source_name: string;
+  published_at: string;
+  summary: string;
+  topic: string;
+  affected_asset_classes: string[];
+  source_url: string | null;
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+}
+
+export interface HoldingImpactResponse {
+  holding_id: string;
+  symbol: string;
+  name: string;
+  asset_type: string;
+  impact_direction: "positive" | "negative" | "mixed" | "neutral";
+  impact_level: "low" | "medium" | "high";
+  why_it_matters: string;
+  what_to_watch: string[];
+}
+
+export interface MarketNewsImpactResponse {
+  headline: string;
+  beginner_summary: string;
+  portfolio_exposure_summary: string;
+  articles: NewsArticleResponse[];
+  affected_holdings: HoldingImpactResponse[];
+  suggested_questions: string[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  educational_disclaimer: string;
+}
+
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];

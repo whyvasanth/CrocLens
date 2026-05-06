@@ -6,6 +6,7 @@ import type {
   AssetDetailCardResponse,
   AssetDetailResponse,
   AssetResponse,
+  MarketNewsImpactResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
   OnboardingProfileResponse,
@@ -86,4 +87,8 @@ export function askAssistant(request: AssistantRequest, signal?: AbortSignal) {
 
 export function getAgentRegistry(signal?: AbortSignal) {
   return requestJson<AgentRegistryResponse>("/api/v1/ai/agents", signal);
+}
+
+export function getMarketNewsImpact(signal?: AbortSignal) {
+  return requestJson<MarketNewsImpactResponse>("/api/v1/market-news/impact-summary", signal);
 }

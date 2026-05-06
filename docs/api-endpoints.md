@@ -39,6 +39,7 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
+- `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 The frontend API base URL defaults to:
@@ -249,6 +250,19 @@ The sample ingestion response includes:
 - `educational_disclaimer`
 
 Crypto market data is sample-only for now. CrocLens should not add paid or ambiguous freemium market data providers to the MVP.
+
+### Market News Impact
+
+```http
+GET /api/v1/market-news/impact-summary
+```
+
+Purpose:
+
+- Return sample news context.
+- Map headlines to affected holdings.
+- Explain why the news may matter in beginner-friendly language.
+- Include confidence, limitations, source metadata, and educational disclaimer.
 
 ## Planned Later Endpoints
 

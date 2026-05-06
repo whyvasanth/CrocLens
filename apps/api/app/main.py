@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import action_plans, assistant, assets, data_pipeline, health, onboarding, portfolio
+from app.api.routes import action_plans, assistant, assets, data_pipeline, health, market_news, onboarding, portfolio
 from app.core.config import settings
 
 
@@ -27,6 +27,7 @@ def create_app() -> FastAPI:
     app.include_router(action_plans.router, prefix=settings.api_prefix)
     app.include_router(assistant.router, prefix=settings.api_prefix)
     app.include_router(data_pipeline.router, prefix=settings.api_prefix)
+    app.include_router(market_news.router, prefix=settings.api_prefix)
 
     return app
 
