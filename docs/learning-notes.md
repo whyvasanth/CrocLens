@@ -357,3 +357,23 @@ Key terms:
 Practice idea:
 
 - Add a reviewed journal entry with an actual outcome field.
+
+## Phase 16: Watchlist Intelligence
+
+What we learned:
+
+- A watchlist is a research queue, not a recommendation list.
+- Each watch item should capture why the user is watching it.
+- Risk and opportunity notes make research more balanced.
+- Safe AI summaries should avoid buy/sell language and include data limitations.
+
+Key terms:
+
+- Watchlist: a list of assets or markets to research.
+- Research prompt: a question that guides investigation before acting.
+- Opportunity note: a possible upside or use case to research.
+- Risk note: a possible downside or uncertainty to review.
+
+Practice idea:
+
+- Add a real estate market watch item and explain which source you would use to validate the data.

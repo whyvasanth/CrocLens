@@ -44,6 +44,8 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/retirement/plan`
 - `GET /api/v1/journal/entries`
 - `POST /api/v1/journal/entries`
+- `GET /api/v1/watchlist`
+- `POST /api/v1/watchlist`
 - `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 The frontend API base URL defaults to:
@@ -306,6 +308,19 @@ Purpose:
 - Return sample decision journal entries.
 - Accept a new decision entry preview.
 - Return rule-based process feedback.
+
+### Watchlist
+
+```http
+GET /api/v1/watchlist
+POST /api/v1/watchlist
+```
+
+Purpose:
+
+- Return sample watchlist intelligence.
+- Accept a new watchlist item preview.
+- Explain risk and opportunity notes without presenting the watchlist as a buy list.
 
 ## Planned Later Endpoints
 

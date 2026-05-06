@@ -13,6 +13,7 @@ from app.api.routes import (
     portfolio,
     retirement,
     tax,
+    watchlist,
 )
 from app.core.config import settings
 
@@ -43,6 +44,7 @@ def create_app() -> FastAPI:
     app.include_router(tax.router, prefix=settings.api_prefix)
     app.include_router(retirement.router, prefix=settings.api_prefix)
     app.include_router(journal.router, prefix=settings.api_prefix)
+    app.include_router(watchlist.router, prefix=settings.api_prefix)
 
     return app
 

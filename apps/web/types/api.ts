@@ -399,6 +399,39 @@ export interface DecisionJournalResponse {
   educational_disclaimer: string;
 }
 
+export type WatchlistAssetType = "stock" | "etf" | "crypto" | "real_estate_market" | "bond" | "treasury" | "other";
+
+export interface WatchlistItemResponse {
+  id: string;
+  symbol: string;
+  name: string;
+  asset_type: WatchlistAssetType;
+  why_watching: string;
+  ai_summary: string;
+  risk_notes: string[];
+  opportunity_notes: string[];
+  source: SourceMetadata;
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+}
+
+export interface WatchlistCreateRequest {
+  symbol: string;
+  name: string;
+  asset_type: WatchlistAssetType;
+  why_watching: string;
+}
+
+export interface WatchlistResponse {
+  items: WatchlistItemResponse[];
+  beginner_summary: string;
+  safe_research_prompts: string[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  educational_disclaimer: string;
+}
+
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];

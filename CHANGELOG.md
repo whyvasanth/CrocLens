@@ -55,6 +55,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Replaced the Retirement placeholder with an API-backed planner page.
 - Added Phase 15 decision journal workflow with sample entries, entry creation, rule-based feedback, tests, and documentation.
 - Replaced the Journal placeholder with an API-backed journal page.
+- Added Phase 16 watchlist intelligence with sample watch items, preview creation, risk notes, opportunity notes, tests, and documentation.
+- Replaced the Watchlist placeholder with an API-backed watchlist intelligence page.
 
 ### Notes
 

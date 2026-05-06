@@ -212,6 +212,32 @@ def test_decision_journal_lists_entries_and_creates_feedback() -> None:
     assert create_body["feedback_summary"]
 
 
+def test_watchlist_returns_intelligence_and_preview_create() -> None:
+    list_response = client.get("/api/v1/watchlist")
+    list_body = list_response.json()
+
+    assert list_response.status_code == 200
+    assert list_body["items"]
+    assert list_body["safe_research_prompts"]
+    assert "buy list" in list_body["beginner_summary"].lower()
+
+    create_response = client.post(
+        "/api/v1/watchlist",
+        json={
+            "symbol": "schd",
+            "name": "Dividend ETF sample",
+            "asset_type": "etf",
+            "why_watching": "I want to compare dividend income with total return and tax complexity.",
+        },
+    )
+    create_body = create_response.json()
+
+    assert create_response.status_code == 200
+    assert create_body["symbol"] == "SCHD"
+    assert create_body["risk_notes"]
+    assert create_body["opportunity_notes"]
+
+
 def test_onboarding_options_are_available() -> None:
     response = client.get("/api/v1/onboarding/options")
     body = response.json()

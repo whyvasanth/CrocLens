@@ -49,6 +49,7 @@ DecisionType = Literal[
     "debt_payoff",
     "retirement_contribution_change",
 ]
+WatchlistAssetType = Literal["stock", "etf", "crypto", "real_estate_market", "bond", "treasury", "other"]
 
 
 class SourceMetadata(BaseModel):
@@ -486,6 +487,37 @@ class DecisionJournalResponse(BaseModel):
     entries: list[DecisionJournalEntryResponse]
     feedback_prompts: list[str]
     beginner_summary: str
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    educational_disclaimer: str
+
+
+class WatchlistItemResponse(BaseModel):
+    id: str
+    symbol: str
+    name: str
+    asset_type: WatchlistAssetType
+    why_watching: str
+    ai_summary: str
+    risk_notes: list[str]
+    opportunity_notes: list[str]
+    source: SourceMetadata
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+
+
+class WatchlistCreateRequest(BaseModel):
+    symbol: str = Field(min_length=1, max_length=32)
+    name: str = Field(min_length=2, max_length=120)
+    asset_type: WatchlistAssetType
+    why_watching: str = Field(min_length=10, max_length=500)
+
+
+class WatchlistResponse(BaseModel):
+    items: list[WatchlistItemResponse]
+    beginner_summary: str
+    safe_research_prompts: list[str]
     confidence: ConfidenceLevel
     data_limitations: list[str]
     sources: list[SourceMetadata]

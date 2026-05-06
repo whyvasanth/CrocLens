@@ -177,6 +177,7 @@ Phase 12 adds a market news impact workflow that maps sample headlines to affect
 Phase 13 adds an educational tax-aware module with sample tax lots, unrealized gain/loss, holding-period labels, and wash-sale warning language.
 Phase 14 adds a retirement planner with sample accounts, employer match explanation, and contribution scenarios.
 Phase 15 adds a decision journal workflow with sample entries, entry creation, and rule-based feedback.
+Phase 16 adds watchlist intelligence with sample items, AI-style summaries, and safe risk/opportunity notes.
 
 Install dependencies:
 
@@ -262,6 +263,8 @@ Current backend endpoints:
 - `GET /api/v1/retirement/plan`
 - `GET /api/v1/journal/entries`
 - `POST /api/v1/journal/entries`
+- `GET /api/v1/watchlist`
+- `POST /api/v1/watchlist`
 
 Assistant v1 supports:
 

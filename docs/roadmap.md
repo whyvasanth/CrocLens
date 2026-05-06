@@ -387,6 +387,10 @@ Goal:
 
 - Let users watch assets and track why each one matters.
 
+Status:
+
+- Implemented with sample watchlist items, preview item creation, educational AI-style summaries, risk notes, opportunity notes, API tests, and an API-backed Watchlist page.
+
 Branch:
 
 - `phase-16-watchlist-intelligence`

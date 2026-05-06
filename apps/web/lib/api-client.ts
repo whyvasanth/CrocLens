@@ -15,7 +15,10 @@ import type {
   OnboardingProfileResponse,
   PortfolioSummaryResponse,
   RetirementPlanResponse,
-  TaxInsightResponse
+  TaxInsightResponse,
+  WatchlistCreateRequest,
+  WatchlistItemResponse,
+  WatchlistResponse
 } from "@/types/api";
 
 const API_BASE_URL =
@@ -112,4 +115,12 @@ export function getDecisionJournal(signal?: AbortSignal) {
 
 export function createDecisionJournalEntry(entry: DecisionJournalCreateRequest, signal?: AbortSignal) {
   return postJson<DecisionJournalEntryResponse, DecisionJournalCreateRequest>("/api/v1/journal/entries", entry, signal);
+}
+
+export function getWatchlist(signal?: AbortSignal) {
+  return requestJson<WatchlistResponse>("/api/v1/watchlist", signal);
+}
+
+export function createWatchlistItem(item: WatchlistCreateRequest, signal?: AbortSignal) {
+  return postJson<WatchlistItemResponse, WatchlistCreateRequest>("/api/v1/watchlist", item, signal);
 }
