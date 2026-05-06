@@ -172,6 +172,19 @@ def test_tax_insights_include_lots_losses_and_wash_sale_warning() -> None:
     assert "not financial advice" in body["educational_disclaimer"]
 
 
+def test_retirement_plan_includes_match_and_scenarios() -> None:
+    response = client.get("/api/v1/retirement/plan")
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["accounts"]
+    assert body["employer_match"]["has_match"] is True
+    assert len(body["scenarios"]) == 3
+    assert body["scenarios"][1]["contribution_percent"] == 6
+    assert body["suggested_reviews"]
+    assert "not guaranteed" in body["data_limitations"][-1].lower()
+
+
 def test_onboarding_options_are_available() -> None:
     response = client.get("/api/v1/onboarding/options")
     body = response.json()

@@ -351,6 +351,10 @@ Goal:
 
 - Track retirement accounts, contributions, employer match, and progress scenarios.
 
+Status:
+
+- Implemented with sample retirement accounts, employer match explanation, contribution scenarios, API tests, and an API-backed Retirement page.
+
 Branch:
 
 - `phase-14-retirement-planner`

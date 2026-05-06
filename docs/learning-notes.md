@@ -318,3 +318,22 @@ Key terms:
 Practice idea:
 
 - Add one more sample tax lot and confirm the API labels it short-term or long-term.
+
+## Phase 14: Retirement And 401(k) Planner
+
+What we learned:
+
+- Retirement projections are assumption-driven, not guarantees.
+- Employer match can be modeled separately from employee contributions.
+- Scenario comparison helps users understand tradeoffs without prescribing a decision.
+- Long-term planning pages should show assumptions as clearly as results.
+
+Key terms:
+
+- Employer match: money an employer contributes when the employee contributes.
+- Contribution rate: the percent of income directed to a retirement account.
+- Projection: an estimate based on assumptions, not a promise.
+
+Practice idea:
+
+- Add a 12% contribution scenario and compare it with the current scenario.

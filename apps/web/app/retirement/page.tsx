@@ -1,7 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/placeholder-page";
-import { productPages } from "@/lib/page-config";
+import { RetirementPlanPage } from "@/components/features/retirement-plan-page";
 
 export default function RetirementPage() {
-  return <PlaceholderPage config={productPages.retirement} />;
+  return <RetirementPlanPage />;
 }
-

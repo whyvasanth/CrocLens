@@ -313,6 +313,49 @@ export interface TaxInsightResponse {
   educational_disclaimer: string;
 }
 
+export interface RetirementAccountResponse {
+  id: string;
+  account_type: string;
+  provider_name: string;
+  current_balance: number;
+  contribution_percent: number;
+  annual_contribution_estimate: number;
+  investment_mix_summary: string;
+}
+
+export interface EmployerMatchResponse {
+  has_match: boolean;
+  formula: string;
+  estimated_annual_match: number;
+  beginner_explanation: string;
+}
+
+export interface RetirementScenarioResponse {
+  id: string;
+  label: string;
+  contribution_percent: number;
+  estimated_annual_employee_contribution: number;
+  estimated_annual_employer_match: number;
+  projected_balance_at_65: number;
+  assumptions: string[];
+}
+
+export interface RetirementPlanResponse {
+  headline: string;
+  progress_percent: number;
+  target_retirement_balance: number;
+  current_retirement_balance: number;
+  accounts: RetirementAccountResponse[];
+  employer_match: EmployerMatchResponse;
+  scenarios: RetirementScenarioResponse[];
+  beginner_summary: string;
+  suggested_reviews: string[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  educational_disclaimer: string;
+}
+
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];

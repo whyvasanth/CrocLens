@@ -41,6 +41,7 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/data-pipeline/market-data/latest`
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
+- `GET /api/v1/retirement/plan`
 - `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 The frontend API base URL defaults to:
@@ -277,6 +278,19 @@ Purpose:
 - Explain unrealized gains/losses and holding periods.
 - Show educational tax-loss harvesting opportunities.
 - Include wash-sale warning language and tax-advice limitations.
+
+### Retirement Plan
+
+```http
+GET /api/v1/retirement/plan
+```
+
+Purpose:
+
+- Return sample retirement accounts.
+- Explain employer 401(k) match.
+- Compare contribution scenarios.
+- Include projection assumptions and limitations.
 
 ## Planned Later Endpoints
 

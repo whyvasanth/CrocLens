@@ -175,6 +175,7 @@ Phase 10 adds a lightweight multi-agent orchestrator and visible agent trace for
 Phase 11 adds a sample market data ingestion pipeline, data quality checks, freshness metadata, and a free-only provider registry.
 Phase 12 adds a market news impact workflow that maps sample headlines to affected holdings with safe educational wording.
 Phase 13 adds an educational tax-aware module with sample tax lots, unrealized gain/loss, holding-period labels, and wash-sale warning language.
+Phase 14 adds a retirement planner with sample accounts, employer match explanation, and contribution scenarios.
 
 Install dependencies:
 
@@ -257,6 +258,7 @@ Current backend endpoints:
 - `GET /api/v1/data-pipeline/market-data/latest`
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
+- `GET /api/v1/retirement/plan`
 
 Assistant v1 supports:
 

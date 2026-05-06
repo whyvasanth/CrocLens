@@ -404,3 +404,46 @@ class TaxInsightResponse(BaseModel):
     data_limitations: list[str]
     sources: list[SourceMetadata]
     educational_disclaimer: str
+
+
+class RetirementAccountResponse(BaseModel):
+    id: str
+    account_type: str
+    provider_name: str
+    current_balance: float = Field(ge=0)
+    contribution_percent: float = Field(ge=0, le=100)
+    annual_contribution_estimate: float = Field(ge=0)
+    investment_mix_summary: str
+
+
+class EmployerMatchResponse(BaseModel):
+    has_match: bool
+    formula: str
+    estimated_annual_match: float = Field(ge=0)
+    beginner_explanation: str
+
+
+class RetirementScenarioResponse(BaseModel):
+    id: str
+    label: str
+    contribution_percent: float = Field(ge=0, le=100)
+    estimated_annual_employee_contribution: float = Field(ge=0)
+    estimated_annual_employer_match: float = Field(ge=0)
+    projected_balance_at_65: float = Field(ge=0)
+    assumptions: list[str]
+
+
+class RetirementPlanResponse(BaseModel):
+    headline: str
+    progress_percent: int = Field(ge=0, le=100)
+    target_retirement_balance: float = Field(ge=0)
+    current_retirement_balance: float = Field(ge=0)
+    accounts: list[RetirementAccountResponse]
+    employer_match: EmployerMatchResponse
+    scenarios: list[RetirementScenarioResponse]
+    beginner_summary: str
+    suggested_reviews: list[str]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    educational_disclaimer: str

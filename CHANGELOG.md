@@ -51,6 +51,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added `/market-news` frontend page, sidebar link, API route, tests, and documentation.
 - Added Phase 13 tax-aware module with sample tax lots, unrealized gain/loss, holding-period labels, and wash-sale warning language.
 - Replaced the Tax Planner placeholder with an API-backed educational tax insights page.
+- Added Phase 14 retirement planner with sample retirement accounts, employer match explanation, contribution scenarios, tests, and documentation.
+- Replaced the Retirement placeholder with an API-backed planner page.
 
 ### Notes
 

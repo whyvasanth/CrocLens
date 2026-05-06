@@ -11,6 +11,7 @@ import type {
   OnboardingProfileRequest,
   OnboardingProfileResponse,
   PortfolioSummaryResponse,
+  RetirementPlanResponse,
   TaxInsightResponse
 } from "@/types/api";
 
@@ -96,4 +97,8 @@ export function getMarketNewsImpact(signal?: AbortSignal) {
 
 export function getTaxInsights(signal?: AbortSignal) {
   return requestJson<TaxInsightResponse>("/api/v1/tax/insights", signal);
+}
+
+export function getRetirementPlan(signal?: AbortSignal) {
+  return requestJson<RetirementPlanResponse>("/api/v1/retirement/plan", signal);
 }
