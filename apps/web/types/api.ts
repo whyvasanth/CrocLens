@@ -432,6 +432,49 @@ export interface WatchlistResponse {
   educational_disclaimer: string;
 }
 
+export interface SecurityStatusResponse {
+  api_version: string;
+  authentication_status: string;
+  rate_limit_per_minute: number;
+  security_headers_enabled: string[];
+  cors_origins: string[];
+  logging_summary: string;
+  prompt_injection_guardrails: string[];
+  data_rights: string[];
+}
+
+export interface PrivacySettingsRequest {
+  beginner_mode_enabled: boolean;
+  store_assistant_history: boolean;
+  allow_product_analytics: boolean;
+  allow_external_integrations: boolean;
+  data_retention_days: number;
+}
+
+export interface PrivacySettingsResponse extends PrivacySettingsRequest {
+  profile_id: string;
+  explanation: string;
+  updated_at: string;
+}
+
+export interface DataExportResponse {
+  export_id: string;
+  generated_at: string;
+  sections: string[];
+  record_counts: Record<string, number>;
+  delivery_note: string;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+}
+
+export interface DeleteDataResponse {
+  request_id: string;
+  status: "preview_only" | "completed";
+  deleted_sections: string[];
+  explanation: string;
+  data_limitations: string[];
+}
+
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];

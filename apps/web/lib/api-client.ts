@@ -6,6 +6,8 @@ import type {
   AssetDetailCardResponse,
   AssetDetailResponse,
   AssetResponse,
+  DataExportResponse,
+  DeleteDataResponse,
   DecisionJournalCreateRequest,
   DecisionJournalEntryResponse,
   DecisionJournalResponse,
@@ -14,7 +16,10 @@ import type {
   OnboardingProfileRequest,
   OnboardingProfileResponse,
   PortfolioSummaryResponse,
+  PrivacySettingsRequest,
+  PrivacySettingsResponse,
   RetirementPlanResponse,
+  SecurityStatusResponse,
   TaxInsightResponse,
   WatchlistCreateRequest,
   WatchlistItemResponse,
@@ -97,6 +102,40 @@ export function getAgentRegistry(signal?: AbortSignal) {
   return requestJson<AgentRegistryResponse>("/api/v1/ai/agents", signal);
 }
 
+async function putJson<TResponse, TRequest>(path: string, body: TRequest, signal?: AbortSignal): Promise<TResponse> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    body: JSON.stringify(body),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json"
+    },
+    method: "PUT",
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+  }
+
+  return response.json() as Promise<TResponse>;
+}
+
+async function deleteJson<TResponse>(path: string, signal?: AbortSignal): Promise<TResponse> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: {
+      Accept: "application/json"
+    },
+    method: "DELETE",
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+  }
+
+  return response.json() as Promise<TResponse>;
+}
+
 export function getMarketNewsImpact(signal?: AbortSignal) {
   return requestJson<MarketNewsImpactResponse>("/api/v1/market-news/impact-summary", signal);
 }
@@ -123,4 +162,24 @@ export function getWatchlist(signal?: AbortSignal) {
 
 export function createWatchlistItem(item: WatchlistCreateRequest, signal?: AbortSignal) {
   return postJson<WatchlistItemResponse, WatchlistCreateRequest>("/api/v1/watchlist", item, signal);
+}
+
+export function getSecurityStatus(signal?: AbortSignal) {
+  return requestJson<SecurityStatusResponse>("/api/v1/security/status", signal);
+}
+
+export function getPrivacySettings(signal?: AbortSignal) {
+  return requestJson<PrivacySettingsResponse>("/api/v1/privacy/settings", signal);
+}
+
+export function updatePrivacySettings(settings: PrivacySettingsRequest, signal?: AbortSignal) {
+  return putJson<PrivacySettingsResponse, PrivacySettingsRequest>("/api/v1/privacy/settings", settings, signal);
+}
+
+export function getDataExport(signal?: AbortSignal) {
+  return requestJson<DataExportResponse>("/api/v1/privacy/export", signal);
+}
+
+export function deleteDataPreview(signal?: AbortSignal) {
+  return deleteJson<DeleteDataResponse>("/api/v1/privacy/data", signal);
 }

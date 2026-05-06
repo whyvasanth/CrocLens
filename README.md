@@ -178,6 +178,7 @@ Phase 13 adds an educational tax-aware module with sample tax lots, unrealized g
 Phase 14 adds a retirement planner with sample accounts, employer match explanation, and contribution scenarios.
 Phase 15 adds a decision journal workflow with sample entries, entry creation, and rule-based feedback.
 Phase 16 adds watchlist intelligence with sample items, AI-style summaries, and safe risk/opportunity notes.
+Phase 17 adds security headers, request IDs, rate limiting, prompt-injection checks, privacy controls, export/delete previews, and an API-backed Settings page.
 
 Install dependencies:
 
@@ -265,6 +266,11 @@ Current backend endpoints:
 - `POST /api/v1/journal/entries`
 - `GET /api/v1/watchlist`
 - `POST /api/v1/watchlist`
+- `GET /api/v1/security/status`
+- `GET /api/v1/privacy/settings`
+- `PUT /api/v1/privacy/settings`
+- `GET /api/v1/privacy/export`
+- `DELETE /api/v1/privacy/data`
 
 Assistant v1 supports:
 

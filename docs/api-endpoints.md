@@ -46,6 +46,11 @@ Phase 5 frontend integration currently uses:
 - `POST /api/v1/journal/entries`
 - `GET /api/v1/watchlist`
 - `POST /api/v1/watchlist`
+- `GET /api/v1/security/status`
+- `GET /api/v1/privacy/settings`
+- `PUT /api/v1/privacy/settings`
+- `GET /api/v1/privacy/export`
+- `DELETE /api/v1/privacy/data`
 - `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 The frontend API base URL defaults to:
@@ -321,6 +326,23 @@ Purpose:
 - Return sample watchlist intelligence.
 - Accept a new watchlist item preview.
 - Explain risk and opportunity notes without presenting the watchlist as a buy list.
+
+### Security And Privacy
+
+```http
+GET /api/v1/security/status
+GET /api/v1/privacy/settings
+PUT /api/v1/privacy/settings
+GET /api/v1/privacy/export
+DELETE /api/v1/privacy/data
+```
+
+Purpose:
+
+- Show current MVP security controls.
+- Preview user privacy preferences.
+- Preview data export and delete workflows.
+- Support Settings page controls before persistent auth and storage are added.
 
 ## Planned Later Endpoints
 

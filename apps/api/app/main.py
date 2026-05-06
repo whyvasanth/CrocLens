@@ -12,10 +12,12 @@ from app.api.routes import (
     onboarding,
     portfolio,
     retirement,
+    security,
     tax,
     watchlist,
 )
 from app.core.config import settings
+from app.core.middleware import SecurityHeadersAndRateLimitMiddleware
 
 
 def create_app() -> FastAPI:
@@ -32,6 +34,10 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+    app.add_middleware(
+        SecurityHeadersAndRateLimitMiddleware,
+        rate_limit_per_minute=settings.rate_limit_per_minute,
+    )
 
     app.include_router(health.router)
     app.include_router(portfolio.router, prefix=settings.api_prefix)
@@ -45,6 +51,7 @@ def create_app() -> FastAPI:
     app.include_router(retirement.router, prefix=settings.api_prefix)
     app.include_router(journal.router, prefix=settings.api_prefix)
     app.include_router(watchlist.router, prefix=settings.api_prefix)
+    app.include_router(security.router, prefix=settings.api_prefix)
 
     return app
 

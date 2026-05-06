@@ -57,6 +57,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Replaced the Journal placeholder with an API-backed journal page.
 - Added Phase 16 watchlist intelligence with sample watch items, preview creation, risk notes, opportunity notes, tests, and documentation.
 - Replaced the Watchlist placeholder with an API-backed watchlist intelligence page.
+- Added Phase 17 security and reliability foundation with request IDs, security headers, in-memory rate limiting, safe error responses, and prompt-injection checks.
+- Added privacy settings, data export preview, delete data preview, security status endpoints, tests, docs, and an API-backed Settings page.
 
 ### Notes
 

@@ -79,9 +79,21 @@ Backend should include:
 - Pydantic validation
 - Clear status codes
 - Error responses that do not leak internals
-- Rate limiting in a later phase
+- In-memory rate limiting for the MVP
 - Request size limits
 - CORS configured only for expected frontend origins
+- Request IDs for debugging
+- Basic browser security headers
+
+Phase 17 adds:
+
+- `X-CrocLens-Request-Id`
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `Referrer-Policy`
+- `Permissions-Policy`
+- Generic unhandled error responses
+- `GET /api/v1/security/status`
 
 ## Prompt Injection Safety
 
@@ -96,6 +108,29 @@ Guardrails:
 - Run a Safety/Compliance Guardrail Agent before returning responses.
 - Do not let external text change system behavior.
 - Refuse requests for guaranteed returns or direct trading instructions.
+- Detect phrases such as "ignore previous instructions", "reveal your system prompt", and "bypass guardrails".
+
+## Privacy Controls
+
+Phase 17 adds MVP privacy endpoints:
+
+```http
+GET /api/v1/privacy/settings
+PUT /api/v1/privacy/settings
+GET /api/v1/privacy/export
+DELETE /api/v1/privacy/data
+```
+
+Current limitation:
+
+- Settings, export, and delete are previews because the app still uses sample data.
+
+Production requirement:
+
+- Persist settings per authenticated user.
+- Require confirmation for deletes.
+- Generate export archives asynchronously.
+- Track deletion jobs and audit logs without storing sensitive data unnecessarily.
 
 ## Logging and Monitoring
 
@@ -134,4 +169,3 @@ Controls:
 - CloudWatch log retention
 - Small free-tier compatible services
 - Manual review before adding paid providers
-

@@ -1,7 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/placeholder-page";
-import { productPages } from "@/lib/page-config";
+import { SettingsPrivacyPage } from "@/components/features/settings-privacy-page";
 
 export default function SettingsPage() {
-  return <PlaceholderPage config={productPages.settings} />;
+  return <SettingsPrivacyPage />;
 }
-

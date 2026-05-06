@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 class Settings:
     api_prefix: str = "/api/v1"
     api_version: str = "0.1.0"
+    rate_limit_per_minute: int = int(os.getenv("RATE_LIMIT_PER_MINUTE", "300"))
     database_url: str = os.getenv(
         "DATABASE_URL",
         "postgresql+psycopg://croclens:croclens@localhost:5432/croclens",

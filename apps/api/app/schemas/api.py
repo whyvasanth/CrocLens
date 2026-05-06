@@ -522,3 +522,46 @@ class WatchlistResponse(BaseModel):
     data_limitations: list[str]
     sources: list[SourceMetadata]
     educational_disclaimer: str
+
+
+class SecurityStatusResponse(BaseModel):
+    api_version: str
+    authentication_status: str
+    rate_limit_per_minute: int = Field(ge=0)
+    security_headers_enabled: list[str]
+    cors_origins: list[str]
+    logging_summary: str
+    prompt_injection_guardrails: list[str]
+    data_rights: list[str]
+
+
+class PrivacySettingsRequest(BaseModel):
+    beginner_mode_enabled: bool = True
+    store_assistant_history: bool = False
+    allow_product_analytics: bool = False
+    allow_external_integrations: bool = False
+    data_retention_days: int = Field(default=30, ge=1, le=365)
+
+
+class PrivacySettingsResponse(PrivacySettingsRequest):
+    profile_id: str
+    explanation: str
+    updated_at: str
+
+
+class DataExportResponse(BaseModel):
+    export_id: str
+    generated_at: str
+    sections: list[str]
+    record_counts: dict[str, int]
+    delivery_note: str
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+
+
+class DeleteDataResponse(BaseModel):
+    request_id: str
+    status: Literal["preview_only", "completed"]
+    deleted_sections: list[str]
+    explanation: str
+    data_limitations: list[str]

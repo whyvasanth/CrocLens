@@ -377,3 +377,27 @@ Key terms:
 Practice idea:
 
 - Add a real estate market watch item and explain which source you would use to validate the data.
+
+## Phase 17: Security And Reliability
+
+What we learned:
+
+- Security is a cross-cutting system concern, not one isolated page.
+- Request IDs make debugging and support easier.
+- Security headers reduce common browser-side risk.
+- Rate limiting protects API availability.
+- Privacy controls should be visible before a product collects sensitive data.
+- Export and delete workflows need authentication, confirmation, and auditability in production.
+- Prompt-injection safety starts with treating user and external text as untrusted input.
+
+Key terms:
+
+- Request ID: a unique identifier attached to a request for debugging.
+- Rate limit: a cap on how many requests a client can make in a time window.
+- Security header: an HTTP header that instructs browsers to enforce safer behavior.
+- Data minimization: collecting and storing only what the product needs.
+- Prompt injection: text that tries to override an AI system's rules.
+
+Practice idea:
+
+- Add a new prompt-injection phrase to `assistant_service.py` and add a backend test for it.

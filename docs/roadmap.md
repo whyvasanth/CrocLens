@@ -405,6 +405,10 @@ Goal:
 
 - Add auth plan, validation, rate limiting, logging, error handling, privacy controls, export, and delete flows.
 
+Status:
+
+- Implemented MVP request IDs, security headers, in-memory rate limiting, safe error responses, prompt-injection detection, privacy settings, export/delete previews, tests, documentation, and an API-backed Settings page.
+
 Branch:
 
 - `phase-17-security-reliability`

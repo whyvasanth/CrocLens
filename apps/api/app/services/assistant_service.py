@@ -28,6 +28,14 @@ UNSAFE_DIRECTIVE_TERMS = [
     "guaranteed",
     "will make money",
     "best investment",
+    "ignore previous instructions",
+    "ignore your instructions",
+    "reveal your system prompt",
+    "show me your system prompt",
+    "developer message",
+    "bypass guardrails",
+    "jailbreak",
+    "act as my financial advisor",
 ]
 
 
@@ -45,7 +53,7 @@ def normalize_question(question: str) -> str:
 def route_intent(question: str) -> AssistantIntent:
     lowered = question.lower()
 
-    if any(term in lowered for term in ["buy", "sell", "guaranteed", "best investment", "will make money"]):
+    if any(term in lowered for term in UNSAFE_DIRECTIVE_TERMS):
         return "safety"
     if any(term in lowered for term in ["debt", "loan", "mortgage", "credit card", "interest rate", "apr"]):
         return "debt"
