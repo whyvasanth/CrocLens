@@ -39,6 +39,7 @@ MarketMetricType = Literal["price", "index_level", "yield", "rate", "housing_ind
 PipelineRunStatus = Literal["completed", "completed_with_warnings", "failed"]
 ImpactDirection = Literal["positive", "negative", "mixed", "neutral"]
 ImpactLevel = Literal["low", "medium", "high"]
+HoldingTerm = Literal["short_term", "long_term"]
 
 
 class SourceMetadata(BaseModel):
@@ -361,6 +362,44 @@ class MarketNewsImpactResponse(BaseModel):
     articles: list[NewsArticleResponse]
     affected_holdings: list[HoldingImpactResponse]
     suggested_questions: list[str]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    educational_disclaimer: str
+
+
+class TaxLotResponse(BaseModel):
+    id: str
+    symbol: str
+    asset_name: str
+    quantity: float = Field(gt=0)
+    purchase_date: str
+    cost_basis: float = Field(ge=0)
+    current_value: float = Field(ge=0)
+    unrealized_gain_loss: float
+    holding_period_days: int = Field(ge=0)
+    holding_term: HoldingTerm
+    beginner_explanation: str
+
+
+class TaxOpportunityResponse(BaseModel):
+    id: str
+    symbol: str
+    title: str
+    estimated_unrealized_loss: float = Field(ge=0)
+    explanation: str
+    safe_next_steps: list[str]
+
+
+class TaxInsightResponse(BaseModel):
+    headline: str
+    beginner_summary: str
+    total_unrealized_gain: float
+    total_unrealized_loss: float = Field(ge=0)
+    tax_lots: list[TaxLotResponse]
+    harvesting_opportunities: list[TaxOpportunityResponse]
+    short_term_vs_long_term_explanation: str
+    wash_sale_warning: str
     confidence: ConfidenceLevel
     data_limitations: list[str]
     sources: list[SourceMetadata]

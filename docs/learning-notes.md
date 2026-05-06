@@ -298,3 +298,23 @@ Key terms:
 Practice idea:
 
 - Add one inflation article and map it to cash, real estate, and retirement holdings.
+
+## Phase 13: Tax-Aware Module
+
+What we learned:
+
+- A tax lot is a purchase record used to reason about cost basis and holding period.
+- Unrealized gains and losses are educational signals until a taxable transaction occurs.
+- Holding period labels can help beginners understand short-term versus long-term treatment.
+- Tax-loss harvesting explanations must include wash-sale warnings and professional-review language.
+
+Key terms:
+
+- Cost basis: what the user paid for a lot, including relevant adjustments.
+- Unrealized gain/loss: value change before a sale.
+- Holding period: how long the lot has been held.
+- Wash sale: a rule that can limit loss deductions after certain replacement purchases.
+
+Practice idea:
+
+- Add one more sample tax lot and confirm the API labels it short-term or long-term.

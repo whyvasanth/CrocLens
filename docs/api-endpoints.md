@@ -40,6 +40,7 @@ Phase 5 frontend integration currently uses:
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
 - `GET /api/v1/market-news/impact-summary`
+- `GET /api/v1/tax/insights`
 - `GET /api/v1/data-pipeline/crypto/bitcoin/live-preview`
 
 The frontend API base URL defaults to:
@@ -263,6 +264,19 @@ Purpose:
 - Map headlines to affected holdings.
 - Explain why the news may matter in beginner-friendly language.
 - Include confidence, limitations, source metadata, and educational disclaimer.
+
+### Tax Insights
+
+```http
+GET /api/v1/tax/insights
+```
+
+Purpose:
+
+- Return sample tax lots.
+- Explain unrealized gains/losses and holding periods.
+- Show educational tax-loss harvesting opportunities.
+- Include wash-sale warning language and tax-advice limitations.
 
 ## Planned Later Endpoints
 

@@ -10,7 +10,8 @@ import type {
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
   OnboardingProfileResponse,
-  PortfolioSummaryResponse
+  PortfolioSummaryResponse,
+  TaxInsightResponse
 } from "@/types/api";
 
 const API_BASE_URL =
@@ -91,4 +92,8 @@ export function getAgentRegistry(signal?: AbortSignal) {
 
 export function getMarketNewsImpact(signal?: AbortSignal) {
   return requestJson<MarketNewsImpactResponse>("/api/v1/market-news/impact-summary", signal);
+}
+
+export function getTaxInsights(signal?: AbortSignal) {
+  return requestJson<TaxInsightResponse>("/api/v1/tax/insights", signal);
 }

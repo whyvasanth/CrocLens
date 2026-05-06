@@ -275,6 +275,44 @@ export interface MarketNewsImpactResponse {
   educational_disclaimer: string;
 }
 
+export interface TaxLotResponse {
+  id: string;
+  symbol: string;
+  asset_name: string;
+  quantity: number;
+  purchase_date: string;
+  cost_basis: number;
+  current_value: number;
+  unrealized_gain_loss: number;
+  holding_period_days: number;
+  holding_term: "short_term" | "long_term";
+  beginner_explanation: string;
+}
+
+export interface TaxOpportunityResponse {
+  id: string;
+  symbol: string;
+  title: string;
+  estimated_unrealized_loss: number;
+  explanation: string;
+  safe_next_steps: string[];
+}
+
+export interface TaxInsightResponse {
+  headline: string;
+  beginner_summary: string;
+  total_unrealized_gain: number;
+  total_unrealized_loss: number;
+  tax_lots: TaxLotResponse[];
+  harvesting_opportunities: TaxOpportunityResponse[];
+  short_term_vs_long_term_explanation: string;
+  wash_sale_warning: string;
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  educational_disclaimer: string;
+}
+
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];

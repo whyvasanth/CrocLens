@@ -49,6 +49,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Removed ambiguous crypto provider integration so the MVP remains strictly free-only and sample-data driven by default.
 - Added Phase 12 market news impact workflow with sample headlines mapped to affected holdings.
 - Added `/market-news` frontend page, sidebar link, API route, tests, and documentation.
+- Added Phase 13 tax-aware module with sample tax lots, unrealized gain/loss, holding-period labels, and wash-sale warning language.
+- Replaced the Tax Planner placeholder with an API-backed educational tax insights page.
 
 ### Notes
 

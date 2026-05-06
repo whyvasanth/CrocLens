@@ -333,6 +333,10 @@ Goal:
 
 - Add tax lots, unrealized gain/loss, holding period explanations, and safe tax-language warnings.
 
+Status:
+
+- Implemented with sample tax lots, gain/loss calculations, short-term versus long-term labels, tax-loss harvesting education, wash-sale warning language, API tests, and an API-backed Tax Planner page.
+
 Branch:
 
 - `phase-13-tax-aware-module`

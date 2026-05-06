@@ -159,6 +159,19 @@ def test_market_news_impact_summary_maps_news_to_holdings() -> None:
     assert "not financial advice" in body["educational_disclaimer"]
 
 
+def test_tax_insights_include_lots_losses_and_wash_sale_warning() -> None:
+    response = client.get("/api/v1/tax/insights")
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["tax_lots"]
+    assert body["harvesting_opportunities"]
+    assert body["total_unrealized_loss"] > 0
+    assert "wash-sale" in body["wash_sale_warning"].lower()
+    assert "tax advice" in body["data_limitations"][-1].lower()
+    assert "not financial advice" in body["educational_disclaimer"]
+
+
 def test_onboarding_options_are_available() -> None:
     response = client.get("/api/v1/onboarding/options")
     body = response.json()

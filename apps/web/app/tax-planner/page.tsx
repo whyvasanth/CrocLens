@@ -1,7 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/placeholder-page";
-import { productPages } from "@/lib/page-config";
+import { TaxPlannerPage as TaxPlannerFeaturePage } from "@/components/features/tax-planner-page";
 
 export default function TaxPlannerPage() {
-  return <PlaceholderPage config={productPages.taxPlanner} />;
+  return <TaxPlannerFeaturePage />;
 }
-
