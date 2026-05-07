@@ -15,7 +15,6 @@ import type {
   DecisionJournalEntryResponse,
   DecisionJournalResponse,
   EvaluationMetricsResponse,
-  MarketObservationResponse,
   MarketNewsImpactResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
@@ -151,10 +150,6 @@ async function deleteJson<TResponse>(path: string, signal?: AbortSignal): Promis
 
 export function getMarketNewsImpact(signal?: AbortSignal) {
   return requestJson<MarketNewsImpactResponse>("/api/v1/market-news/impact-summary", signal);
-}
-
-export function getLatestTreasuryMarketData(signal?: AbortSignal) {
-  return requestJson<MarketObservationResponse[]>("/api/v1/data-pipeline/market-data/treasury-latest", signal);
 }
 
 export function getTaxInsights(signal?: AbortSignal) {

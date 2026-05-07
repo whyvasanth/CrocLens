@@ -5,7 +5,6 @@ import {
   getActionPlan,
   getApiBaseUrl,
   getAssets,
-  getLatestTreasuryMarketData,
   getPortfolioSummary
 } from "@/lib/api-client";
 import type { DashboardApiData } from "@/types/api";
@@ -36,14 +35,13 @@ export function useDashboardData(): DashboardDataState {
       setError(null);
 
       try {
-        const [portfolio, assets, actionPlan, marketData] = await Promise.all([
+        const [portfolio, assets, actionPlan] = await Promise.all([
           getPortfolioSummary(controller.signal),
           getAssets(controller.signal),
-          getActionPlan(controller.signal),
-          getLatestTreasuryMarketData(controller.signal).catch(() => [])
+          getActionPlan(controller.signal)
         ]);
 
-        setData({ portfolio, assets, actionPlan, marketData });
+        setData({ portfolio, assets, actionPlan });
       } catch (err) {
         if (controller.signal.aborted) {
           return;

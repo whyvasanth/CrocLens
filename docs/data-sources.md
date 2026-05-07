@@ -56,33 +56,6 @@ Benefits:
 - Supports repeatable tests.
 - Avoids external failures during development.
 
-### Current Real-Data Slice: Treasury Yield Curve
-
-CrocLens now has a first real-data slice that uses the official U.S. Treasury public XML feed for Daily Treasury Par Yield Curve Rates:
-
-```text
-https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value={year}
-```
-
-Implemented records:
-
-- 3-month Treasury yield
-- 2-year Treasury yield
-- 10-year Treasury yield
-- 30-year Treasury yield
-
-Why this source was chosen first:
-
-- It is an official public government source.
-- It does not require an API key.
-- It does not require a paid subscription, free trial, credit card, or ambiguous freemium account.
-- It is useful beginner context because Treasury yields affect cash yields, bonds, mortgages, and discount-rate discussions.
-
-Important limitation:
-
-- Treasury rates are macro context only. They do not provide live stock, ETF, mutual fund, or crypto prices.
-- The dashboard should label Treasury values as real public data and keep unresolved stock/crypto data as sample/manual.
-
 ### Stage 3: Free Public APIs
 
 Candidate sources:
@@ -91,7 +64,7 @@ Candidate sources:
 | --- | --- | --- |
 | SEC EDGAR | Company filings | Free, official, filing-focused |
 | FRED | Macroeconomic data | Free API key, strong macro coverage |
-| Treasury/Fiscal Data | Treasury rates and public debt data | First real-data slice implemented through the no-key public Treasury XML feed |
+| Treasury/Fiscal Data | Treasury rates and public debt data | Free government source |
 | FHFA | Housing price index data | Useful for real estate context |
 | OpenFIGI | Symbol and security mapping | Free tier, useful for identifiers |
 
@@ -101,7 +74,6 @@ Current free-only policy:
 - Prefer official public/government sources when real ingestion starts.
 - Do not add ambiguous freemium or paid market data providers to the MVP.
 - Keep crypto prices sample/manual until a verified no-cost source is selected.
-- Do not add CoinGecko, Alpha Vantage, or similar providers unless we explicitly verify that the selected endpoint is truly free for the planned use and has acceptable terms.
 
 ### Stage 4: Disallowed For MVP
 

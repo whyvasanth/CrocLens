@@ -24,9 +24,6 @@ export type InvestmentExperience = "new" | "some" | "experienced";
 export type PrimaryGoal = "learn" | "build_wealth" | "retirement" | "debt_payoff" | "home" | "emergency_fund";
 export type RiskToleranceInput = "low" | "medium" | "high";
 export type TimeHorizon = "short" | "medium" | "long";
-export type MarketAssetClass = "stock" | "etf" | "crypto" | "treasury" | "macro" | "real_estate";
-export type MarketMetricType = "price" | "index_level" | "yield" | "rate" | "housing_index";
-export type TrendDirection = "up" | "down" | "flat";
 
 export interface SourceMetadata {
   name: string;
@@ -76,23 +73,6 @@ export interface AssetResponse {
   risk_level: RiskLevel;
   beginner_explanation: string;
   source: SourceMetadata;
-}
-
-export interface MarketObservationResponse {
-  symbol: string;
-  name: string;
-  asset_class: MarketAssetClass;
-  metric_type: MarketMetricType;
-  value: number;
-  unit: string;
-  currency: string | null;
-  change_percent: number | null;
-  trend: TrendDirection;
-  as_of: string;
-  retrieved_at: string;
-  source: SourceMetadata;
-  source_url: string | null;
-  data_limitations: string[];
 }
 
 export interface AssetDetailMetric {
@@ -562,6 +542,5 @@ export interface EvaluationMetricsResponse {
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];
-  marketData: MarketObservationResponse[];
   portfolio: PortfolioSummaryResponse;
 }

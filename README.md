@@ -191,7 +191,6 @@ Phase 18 adds backend agent-output tests, frontend smoke tests, and a manual-onl
 Phase 19 adds an internal evaluation metrics dashboard for product quality, AI safety, data freshness, and reliability.
 Phase 20 adds local Docker deployment files and a free-only deployment plan that blocks AWS and paid cloud by default.
 Latest refinement adds mock signup/login pages, collects onboarding information during account creation, and keeps Croc Guide from blurring the dashboard while chat is open.
-Real-data v1 adds official public U.S. Treasury yield curve data to the dashboard Market Snapshot card. Stock, ETF, mutual fund, and crypto prices remain sample/manual until a verified no-cost source is selected.
 
 Install dependencies:
 
@@ -211,7 +210,7 @@ Open:
 http://localhost:3000/dashboard
 ```
 
-The dashboard fetches portfolio summary, assets, action plan data, and Treasury yield context from the backend API. Chart history and unresolved stock/crypto market values still use sample frontend data.
+The dashboard fetches portfolio summary, assets, and action plan data from the backend API. Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
 
 Optional frontend API override:
 
@@ -296,8 +295,6 @@ Current backend endpoints:
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
-- `POST /api/v1/data-pipeline/market-data/treasury-ingest`
-- `GET /api/v1/data-pipeline/market-data/treasury-latest`
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
 - `GET /api/v1/retirement/plan`
