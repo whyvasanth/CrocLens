@@ -67,13 +67,14 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added mock signup/login endpoints and frontend pages.
 - Moved onboarding collection into account creation and redirected the old onboarding route to signup.
 - Removed Croc Guide's background blur so dashboard content remains visible while chatting.
+- Added real-data v1 with official no-key U.S. Treasury yield curve ingestion, API endpoints, dashboard market snapshot wiring, tests, and documentation.
 
 ### Notes
 
-- The backend uses static mock data only.
+- The backend uses static mock data for most product areas, plus official public Treasury yield curve data for the dashboard market snapshot.
 - Database persistence is not implemented yet.
 - A live PostgreSQL database is not required yet; Phase 4 defines the schema and migration foundation.
-- Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
+- Market snapshot can use live public Treasury yield data when the backend is running; chart history and unresolved stock/crypto market values still use sample data.
 - Phase 6 scores are educational heuristics and are intentionally simple for auditability.
 - Phase 7 detail pages use static sample data and educational explanations, not personalized advice.
 - Phase 8 risk profiles are educational starting points, not personalized investment recommendations.

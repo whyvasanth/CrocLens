@@ -468,3 +468,25 @@ Key terms:
 Practice idea:
 
 - Add a `docker compose config` check to your local pre-push routine and explain what it validates.
+
+## Real Data v1: Treasury Yield Curve
+
+What we learned:
+
+- Real data should start with a narrow, trustworthy source before broad market coverage.
+- Official public data can be safer for a free-only MVP than freemium market APIs.
+- External data needs source labels, freshness labels, confidence, and limitations.
+- Yield changes should be labeled in percentage points, not ordinary percent returns.
+- Tests for data pipelines should use fixed fixtures so they do not fail when an external provider is down.
+
+Key terms:
+
+- Public XML feed: a structured data endpoint that returns machine-readable XML.
+- Parser: code that converts provider data into the app's internal shape.
+- Normalization: mapping source-specific fields into consistent CrocLens records.
+- Freshness: how current the data is.
+- Percentage point: the direct difference between two percentages, such as 4.18% minus 4.15% = 0.03 pp.
+
+Practice idea:
+
+- Add the 5-year Treasury yield to the ingestion service and dashboard, then update the backend test fixture.

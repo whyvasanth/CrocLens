@@ -49,6 +49,7 @@ const requiredEndpoints = [
   "/api/v1/auth/signup",
   "/api/v1/auth/login",
   "/api/v1/portfolio/summary",
+  "/api/v1/data-pipeline/market-data/treasury-latest",
   "/api/v1/market-news/impact-summary",
   "/api/v1/tax/insights",
   "/api/v1/retirement/plan",
@@ -83,9 +84,14 @@ assert.doesNotMatch(sidebarData, /label:\s*"Onboarding"/, "Onboarding should not
 const guidePanel = read("apps/web/components/dashboard/croc-guide-panel.tsx");
 assert.doesNotMatch(guidePanel, /backdrop-blur/, "Croc Guide should not blur dashboard content when open");
 
+const marketSnapshot = read("apps/web/components/dashboard/market-snapshot.tsx");
+assert.match(marketSnapshot, /Real public Treasury data/, "Market Snapshot should show live Treasury source labeling");
+assert.match(marketSnapshot, /pp/, "Treasury yield changes should be labeled as percentage points");
+
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");
 assert.match(dataSources, /ambiguous freemium/i, "Data docs should reject ambiguous freemium APIs");
+assert.match(dataSources, /Treasury yield curve/i, "Data docs should document the real Treasury data source");
 
 const deploymentDocs = read("docs/aws-deployment.md");
 assert.match(deploymentDocs, /Do not deploy to AWS/i, "Deployment docs should block AWS by default");

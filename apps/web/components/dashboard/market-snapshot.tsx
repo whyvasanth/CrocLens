@@ -1,6 +1,20 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 import { marketSnapshot } from "@/lib/mock-dashboard-data";
 import { Card, SectionTitle } from "@/components/dashboard/ui";
+import type { MarketObservationResponse, TrendDirection } from "@/types/api";
+
+interface MarketSnapshotProps {
+  isLoading?: boolean;
+  marketData: MarketObservationResponse[];
+}
+
+interface SnapshotDisplayItem {
+  change: string;
+  direction: TrendDirection;
+  label: string;
+  note: string;
+  value: string;
+}
 
 const icons = {
   up: ArrowUpRight,
@@ -14,7 +28,14 @@ const classes = {
   flat: "bg-amber-100 text-amber-800"
 };
 
-export function MarketSnapshot() {
+export function MarketSnapshot({ isLoading = false, marketData }: MarketSnapshotProps) {
+  const realDataItems = marketData.map(mapMarketObservationToSnapshotItem);
+  const items = realDataItems.length > 0 ? realDataItems : marketSnapshot;
+  const hasRealData = realDataItems.length > 0;
+  const footer = hasRealData
+    ? `Real public Treasury data as of ${formatShortDate(marketData[0].as_of)}`
+    : "Sample fallback until a free public source is connected";
+
   return (
     <Card>
       <SectionTitle
@@ -23,7 +44,7 @@ export function MarketSnapshot() {
         action={<a href="#" className="text-sm font-semibold text-croc-moss">View more</a>}
       />
       <div className="divide-y divide-emerald-900/10">
-        {marketSnapshot.map((item) => {
+        {items.map((item) => {
           const Icon = icons[item.direction];
 
           return (
@@ -53,7 +74,62 @@ export function MarketSnapshot() {
           );
         })}
       </div>
-      <p className="mt-4 text-xs text-stone-500">Data as of sample Phase 1 dataset</p>
+      <p className="mt-4 text-xs text-stone-500">
+        {isLoading && !hasRealData ? "Loading public market context..." : footer}
+      </p>
     </Card>
   );
+}
+
+function mapMarketObservationToSnapshotItem(record: MarketObservationResponse): SnapshotDisplayItem {
+  return {
+    change: formatObservationChange(record),
+    direction: record.trend,
+    label: record.name.replace(" Treasury Yield", ""),
+    note: "Official Treasury yield curve context",
+    value: formatObservationValue(record)
+  };
+}
+
+function formatObservationValue(record: MarketObservationResponse) {
+  if (record.unit === "percent" || record.metric_type === "yield" || record.metric_type === "rate") {
+    return `${record.value.toFixed(2)}%`;
+  }
+
+  if (record.currency) {
+    return new Intl.NumberFormat("en-US", {
+      currency: record.currency,
+      maximumFractionDigits: 2,
+      style: "currency"
+    }).format(record.value);
+  }
+
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(record.value);
+}
+
+function formatObservationChange(record: MarketObservationResponse) {
+  if (record.change_percent === null) {
+    return "New";
+  }
+
+  if (record.change_percent === 0) {
+    return "Flat";
+  }
+
+  const sign = record.change_percent > 0 ? "+" : "";
+
+  if (record.unit === "percent" || record.metric_type === "yield" || record.metric_type === "rate") {
+    return `${sign}${record.change_percent.toFixed(2)} pp`;
+  }
+
+  return `${sign}${record.change_percent.toFixed(2)}%`;
+}
+
+function formatShortDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+    year: "numeric"
+  }).format(new Date(value));
 }

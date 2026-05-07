@@ -2,9 +2,7 @@
 
 ## Current Status
 
-Phase 19 extends the FastAPI backend with an evaluation metrics endpoint for product quality, AI safety, data freshness, and reliability.
-
-Latest product refinement adds mock account endpoints so signup can collect onboarding profile data during account creation.
+Latest product refinement adds the first real-data endpoint using the official no-key U.S. Treasury yield curve XML feed. Stock, ETF, mutual fund, and crypto data remain sample/manual until a verified free source is selected.
 
 The backend lives in:
 
@@ -43,6 +41,8 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
+- `POST /api/v1/data-pipeline/market-data/treasury-ingest`
+- `GET /api/v1/data-pipeline/market-data/treasury-latest`
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
 - `GET /api/v1/retirement/plan`
@@ -268,6 +268,8 @@ Phase 9 intent examples:
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
+POST /api/v1/data-pipeline/market-data/treasury-ingest
+GET /api/v1/data-pipeline/market-data/treasury-latest
 ```
 
 Purpose:
@@ -275,6 +277,8 @@ Purpose:
 - List planned and implemented data providers.
 - Run the deterministic sample market data ingestion pipeline.
 - Return latest normalized sample market observations.
+- Run the official U.S. Treasury yield curve ingestion pipeline.
+- Return latest normalized Treasury observations for dashboard market context.
 
 The sample ingestion response includes:
 
@@ -293,7 +297,15 @@ The sample ingestion response includes:
 - `sources`
 - `educational_disclaimer`
 
-Crypto market data is sample-only for now. CrocLens should not add paid or ambiguous freemium market data providers to the MVP.
+Treasury observations include:
+
+- `symbol`, such as `US3M`, `US2Y`, `US10Y`, and `US30Y`
+- `metric_type: "yield"`
+- `unit: "percent"`
+- `change_percent`, currently used as day-over-day yield-point movement
+- `source`, `source_url`, `as_of`, `retrieved_at`, and `data_limitations`
+
+Crypto, stock, ETF, and mutual fund market data are sample-only for now. CrocLens should not add paid or ambiguous freemium market data providers to the MVP.
 
 ### Market News Impact
 

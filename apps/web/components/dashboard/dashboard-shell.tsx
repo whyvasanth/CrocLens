@@ -30,7 +30,7 @@ export function DashboardShell() {
               isLoading={isLoading}
               portfolio={data?.portfolio ?? null}
             />
-            <MarketSnapshot />
+            <MarketSnapshot isLoading={isLoading} marketData={data?.marketData ?? []} />
           </div>
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.9fr)]">
             <CrossAssetComparisonCard assets={data?.assets ?? []} isLoading={isLoading} />

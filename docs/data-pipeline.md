@@ -2,12 +2,13 @@
 
 ## What We Built
 
-Phase 11 adds the first CrocLens market data ingestion slice.
+Phase 11 added the first CrocLens market data ingestion shape. The current real-data update adds the first live public source: official U.S. Treasury yield curve data.
 
 The backend now has:
 
 - A local sample market data JSON fixture.
 - A Pydantic-validated ingestion service.
+- A live no-key Treasury yield curve ingestion service.
 - Basic data quality checks.
 - Freshness and lineage metadata.
 - Data provider registry.
@@ -24,10 +25,10 @@ For a beginner finance app, stale or unclear data is dangerous because a user ma
 ## Architecture
 
 ```text
-Sample JSON file
+Sample JSON file or Treasury public XML feed
       |
       v
-Extract: read local file
+Extract: read local file or fetch official Treasury XML
       |
       v
 Transform: validate with Pydantic and normalize records
@@ -50,12 +51,22 @@ apps/api/app/services/data_pipeline.py
 apps/api/app/api/routes/data_pipeline.py
 ```
 
+Real-data v1 source:
+
+```text
+U.S. Treasury Daily Treasury Par Yield Curve Rates
+https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve
+```
+
+The backend fetches the public XML feed for the current year, parses the latest and previous daily rows, normalizes selected maturities into `MarketObservation` records, and computes day-over-day yield movement in percentage points.
+
 ## ETL Concepts
 
 Extract:
 
 - Pull raw data from a source.
 - In Phase 11, the source is a local JSON file.
+- In real-data v1, the source is the official public Treasury XML feed.
 - No live crypto provider is connected in the MVP because the project is staying strictly free-only.
 
 Transform:
@@ -68,6 +79,7 @@ Load:
 - Save or expose normalized records.
 - In Phase 11, records are returned through the API.
 - Later, records should be written to PostgreSQL tables such as `market_prices`.
+- Real-data v1 still returns records from memory. Database persistence remains a later step.
 
 ## Data Quality Checks
 
@@ -104,9 +116,11 @@ Each market observation includes:
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
+POST /api/v1/data-pipeline/market-data/treasury-ingest
+GET /api/v1/data-pipeline/market-data/treasury-latest
 ```
 
-Crypto market data remains sample-only until we choose a verified no-cost source with acceptable terms.
+`treasury-latest` is the dashboard's first real market context endpoint. Stock, ETF, mutual fund, and crypto prices remain sample/manual until we choose verified no-cost sources with acceptable terms.
 
 ## Production Upgrade Path
 
