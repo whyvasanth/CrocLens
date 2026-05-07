@@ -5,9 +5,14 @@ import {
   getActionPlan,
   getApiBaseUrl,
   getAssets,
+  getCryptoPrice,
+  getDataFreshness,
+  getDataProviders,
+  getMacroSeries,
+  getMarketPrice,
   getPortfolioSummary
 } from "@/lib/api-client";
-import type { DashboardApiData } from "@/types/api";
+import type { DashboardApiData, NormalizedDataPointResponse } from "@/types/api";
 
 interface DashboardDataState {
   apiBaseUrl: string;
@@ -35,13 +40,36 @@ export function useDashboardData(): DashboardDataState {
       setError(null);
 
       try {
-        const [portfolio, assets, actionPlan] = await Promise.all([
+        const [
+          portfolio,
+          assets,
+          actionPlan,
+          providers,
+          dataFreshness,
+          vooPrice,
+          aggPrice,
+          bitcoinPrice,
+          inflationSeries
+        ] = await Promise.all([
           getPortfolioSummary(controller.signal),
           getAssets(controller.signal),
-          getActionPlan(controller.signal)
+          getActionPlan(controller.signal),
+          getDataProviders(controller.signal).catch(() => []),
+          getDataFreshness(controller.signal).catch(() => null),
+          getMarketPrice("VOO", controller.signal).catch(() => null),
+          getMarketPrice("AGG", controller.signal).catch(() => null),
+          getCryptoPrice("bitcoin", controller.signal).catch(() => null),
+          getMacroSeries("CPIAUCSL", controller.signal).catch(() => null)
         ]);
 
-        setData({ portfolio, assets, actionPlan });
+        setData({
+          actionPlan,
+          assets,
+          dataFreshness,
+          marketData: [vooPrice, aggPrice, bitcoinPrice, inflationSeries].filter(isNormalizedDataPoint),
+          portfolio,
+          providers
+        });
       } catch (err) {
         if (controller.signal.aborted) {
           return;
@@ -71,4 +99,10 @@ export function useDashboardData(): DashboardDataState {
     isLoading,
     refetch
   };
+}
+
+function isNormalizedDataPoint(
+  item: NormalizedDataPointResponse | null
+): item is NormalizedDataPointResponse {
+  return item !== null;
 }

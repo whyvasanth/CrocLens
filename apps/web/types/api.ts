@@ -3,19 +3,14 @@ export type RiskLevel = "low" | "medium" | "high";
 export type AssetDetailCategory = "stock_etf" | "crypto" | "real_estate" | "debt" | "retirement";
 export type AssistantIntent = "portfolio" | "debt" | "retirement" | "tax" | "market" | "risk" | "education" | "safety";
 export type AgentRole =
-  | "intent_router"
-  | "portfolio_analyst"
-  | "cross_asset_comparison"
-  | "stock_etf_research"
-  | "crypto_research"
-  | "real_estate_insight"
-  | "news_impact"
-  | "tax_aware"
-  | "retirement_planner"
-  | "debt_liability_coach"
+  | "router_agent"
+  | "wealth_analyst"
+  | "market_research"
+  | "life_planning"
+  | "tax_awareness"
   | "action_plan"
-  | "decision_journal_feedback"
-  | "safety_compliance_guardrail";
+  | "decision_journal"
+  | "safety_guardrail";
 export type AgentStatus = "planned" | "used" | "skipped";
 export type MetricTone = "green" | "gold" | "blue" | "coral" | "neutral";
 export type EmployerMatchStatus = "yes" | "no" | "not_sure" | "not_applicable";
@@ -688,5 +683,8 @@ export interface EvaluationMetricsResponse {
 export interface DashboardApiData {
   actionPlan: ActionPlanResponse;
   assets: AssetResponse[];
+  dataFreshness: DataFreshnessResponse | null;
+  marketData: NormalizedDataPointResponse[];
   portfolio: PortfolioSummaryResponse;
+  providers: ProviderStatusResponse[];
 }

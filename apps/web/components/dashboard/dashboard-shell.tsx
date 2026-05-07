@@ -7,6 +7,7 @@ import { CrossAssetComparisonCard } from "@/components/dashboard/cross-asset-com
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { MarketSnapshot } from "@/components/dashboard/market-snapshot";
 import { PortfolioChart } from "@/components/dashboard/portfolio-chart";
+import { ProviderStatusCard } from "@/components/dashboard/provider-status-card";
 import { RiskMeter } from "@/components/dashboard/risk-meter";
 import { RetirementCard, TaxInsightCard } from "@/components/dashboard/insight-cards";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
@@ -25,12 +26,17 @@ export function DashboardShell() {
             title="Good morning, Maya"
           />
           <ApiStatusBanner error={error} isLoading={isLoading} onRetry={refetch} />
+          <ProviderStatusCard
+            dataFreshness={data?.dataFreshness ?? null}
+            isLoading={isLoading}
+            providers={data?.providers ?? []}
+          />
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.9fr)]">
             <PortfolioChart
               isLoading={isLoading}
               portfolio={data?.portfolio ?? null}
             />
-            <MarketSnapshot />
+            <MarketSnapshot isLoading={isLoading} marketData={data?.marketData ?? []} />
           </div>
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.9fr)]">
             <CrossAssetComparisonCard assets={data?.assets ?? []} isLoading={isLoading} />

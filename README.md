@@ -193,6 +193,7 @@ Phase 19 adds an internal evaluation metrics dashboard for product quality, AI s
 Phase 20 adds local Docker deployment files and a free-only deployment plan that blocks AWS and paid cloud by default.
 Latest refinement adds mock signup/login pages, collects onboarding information during account creation, and keeps Croc Guide from blurring the dashboard while chat is open.
 Phase 21 adds a free/free-tier provider registry and an efficient LLM-ready agent architecture while keeping the app runnable without API keys.
+The dashboard now shows provider status and provider-backed snapshot values with fallback labels.
 
 Install dependencies:
 
@@ -212,7 +213,7 @@ Open:
 http://localhost:3000/dashboard
 ```
 
-The dashboard fetches portfolio summary, assets, and action plan data from the backend API. Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
+The dashboard fetches portfolio summary, assets, action plan data, provider status, and provider-backed market snapshot data from the backend API. Chart history still uses sample frontend data.
 
 Optional frontend API override:
 

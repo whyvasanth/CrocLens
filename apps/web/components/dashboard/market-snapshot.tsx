@@ -1,6 +1,21 @@
 import { ArrowDownRight, ArrowRight, ArrowUpRight } from "lucide-react";
 import { marketSnapshot } from "@/lib/mock-dashboard-data";
-import { Card, SectionTitle } from "@/components/dashboard/ui";
+import { Card, Pill, SectionTitle } from "@/components/dashboard/ui";
+import type { NormalizedDataPointResponse } from "@/types/api";
+
+interface MarketSnapshotProps {
+  isLoading?: boolean;
+  marketData?: NormalizedDataPointResponse[];
+}
+
+interface SnapshotItem {
+  change: string;
+  direction: "up" | "down" | "flat";
+  label: string;
+  note: string;
+  provider: string;
+  value: string;
+}
 
 const icons = {
   up: ArrowUpRight,
@@ -14,16 +29,25 @@ const classes = {
   flat: "bg-amber-100 text-amber-800"
 };
 
-export function MarketSnapshot() {
+export function MarketSnapshot({ isLoading = false, marketData = [] }: MarketSnapshotProps) {
+  const providerItems = marketData.map(mapProviderPointToSnapshotItem);
+  const items: SnapshotItem[] = providerItems.length
+    ? providerItems
+    : marketSnapshot.map((item) => ({
+        ...item,
+        provider: "frontend_sample"
+      }));
+  const isProviderBacked = providerItems.length > 0;
+
   return (
     <Card>
       <SectionTitle
-        eyebrow="Market snapshot"
+        eyebrow={isProviderBacked ? "Provider-backed snapshot" : "Market snapshot"}
         title="Today at a glance"
-        action={<a href="#" className="text-sm font-semibold text-croc-moss">View more</a>}
+        action={<Pill tone={isProviderBacked ? "green" : "gold"}>{isProviderBacked ? "API data" : "Sample"}</Pill>}
       />
       <div className="divide-y divide-emerald-900/10">
-        {marketSnapshot.map((item) => {
+        {items.map((item) => {
           const Icon = icons[item.direction];
 
           return (
@@ -53,7 +77,50 @@ export function MarketSnapshot() {
           );
         })}
       </div>
-      <p className="mt-4 text-xs text-stone-500">Data as of sample Phase 1 dataset</p>
+      <p className="mt-4 text-xs text-stone-500">
+        {isLoading
+          ? "Loading provider data..."
+          : isProviderBacked
+            ? "Provider layer data shown with live-or-sample fallback labels."
+            : "Data as of sample Phase 1 dataset"}
+      </p>
     </Card>
   );
+}
+
+function mapProviderPointToSnapshotItem(point: NormalizedDataPointResponse): SnapshotItem {
+  return {
+    change: point.provider === "croclens_sample_fallback" ? "Fallback" : point.confidence,
+    direction: "flat",
+    label: labelForPoint(point),
+    note: `${point.provider} • ${point.freshness}`,
+    provider: point.provider,
+    value: formatProviderValue(point)
+  };
+}
+
+function labelForPoint(point: NormalizedDataPointResponse) {
+  const labels: Record<string, string> = {
+    AGG: "Bond ETF",
+    bitcoin: "Bitcoin",
+    CPIAUCSL: "Inflation index",
+    VOO: "S&P 500 ETF"
+  };
+  return labels[point.symbol_or_series_id] ?? point.symbol_or_series_id;
+}
+
+function formatProviderValue(point: NormalizedDataPointResponse) {
+  if (point.currency) {
+    return new Intl.NumberFormat("en-US", {
+      currency: point.currency,
+      maximumFractionDigits: 2,
+      style: "currency"
+    }).format(point.value);
+  }
+
+  if (point.source_type === "treasury_rates") {
+    return `${point.value.toFixed(2)}%`;
+  }
+
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(point.value);
 }

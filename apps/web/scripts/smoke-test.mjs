@@ -95,6 +95,14 @@ assert.doesNotMatch(sidebarData, /label:\s*"Onboarding"/, "Onboarding should not
 const guidePanel = read("apps/web/components/dashboard/croc-guide-panel.tsx");
 assert.doesNotMatch(guidePanel, /backdrop-blur/, "Croc Guide should not blur dashboard content when open");
 
+const dashboardShell = read("apps/web/components/dashboard/dashboard-shell.tsx");
+assert.match(dashboardShell, /ProviderStatusCard/, "Dashboard should render Phase 21 provider status");
+assert.match(dashboardShell, /marketData/, "Dashboard should pass provider market data into Market Snapshot");
+
+const dashboardHook = read("apps/web/hooks/use-dashboard-data.ts");
+assert.match(dashboardHook, /getDataProviders/, "Dashboard hook should fetch provider status");
+assert.match(dashboardHook, /getMarketPrice/, "Dashboard hook should fetch provider-backed market prices");
+
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");
 assert.match(dataSources, /ambiguous freemium/i, "Data docs should reject ambiguous freemium APIs");

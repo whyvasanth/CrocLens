@@ -138,6 +138,12 @@ GET /api/v1/rates/treasury
 
 These endpoints are safe to call without API keys. They either return configured provider data or sample fallback data with source limitations.
 
+The dashboard now surfaces this layer through:
+
+- A compact provider status card.
+- A provider-backed Market Snapshot card.
+- Clear labels when values come from sample fallback instead of live providers.
+
 ## Safety Notes
 
 Market data endpoints should never imply a user should buy or sell.
