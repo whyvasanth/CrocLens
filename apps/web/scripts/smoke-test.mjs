@@ -16,6 +16,8 @@ function assertFile(relativePath) {
 }
 
 const requiredRoutes = [
+  "apps/web/app/login/page.tsx",
+  "apps/web/app/signup/page.tsx",
   "apps/web/app/dashboard/page.tsx",
   "apps/web/app/market-news/page.tsx",
   "apps/web/app/tax-planner/page.tsx",
@@ -44,6 +46,8 @@ for (const file of requiredDeploymentFiles) {
 
 const apiClient = read("apps/web/lib/api-client.ts");
 const requiredEndpoints = [
+  "/api/v1/auth/signup",
+  "/api/v1/auth/login",
   "/api/v1/portfolio/summary",
   "/api/v1/market-news/impact-summary",
   "/api/v1/tax/insights",
@@ -68,6 +72,16 @@ assert.match(settingsPage, /Delete preview/, "Settings page should include delet
 const evaluationPage = read("apps/web/components/features/evaluation-metrics-page.tsx");
 assert.match(evaluationPage, /Evaluation Metrics/, "Evaluation metrics page should render the page title");
 assert.match(evaluationPage, /Quality gates/, "Evaluation metrics page should show quality gates");
+
+const authPage = read("apps/web/components/auth/account-auth-page.tsx");
+assert.match(authPage, /Create your account/, "Signup page should include account creation");
+assert.match(authPage, /onboarding_profile/, "Signup should collect onboarding profile data during account creation");
+
+const sidebarData = read("apps/web/lib/mock-dashboard-data.ts");
+assert.doesNotMatch(sidebarData, /label:\s*"Onboarding"/, "Onboarding should not be a separate primary nav item");
+
+const guidePanel = read("apps/web/components/dashboard/croc-guide-panel.tsx");
+assert.doesNotMatch(guidePanel, /backdrop-blur/, "Croc Guide should not blur dashboard content when open");
 
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");

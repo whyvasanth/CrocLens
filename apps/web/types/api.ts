@@ -182,6 +182,39 @@ export interface OnboardingOptionsResponse {
   employer_match: EmployerMatchStatus[];
 }
 
+export interface AccountCreateRequest {
+  display_name: string;
+  email: string;
+  password: string;
+  onboarding_profile: OnboardingProfileRequest;
+}
+
+export interface AccountLoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface AccountUserResponse {
+  id: string;
+  display_name: string;
+  email: string;
+  beginner_mode_enabled: boolean;
+  created_at: string;
+}
+
+export interface AccountSessionResponse {
+  user: AccountUserResponse;
+  onboarding_profile: OnboardingProfileResponse | null;
+  session_token: string;
+  token_type: "mock_session";
+  expires_in_minutes: number;
+  next_path: string;
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  sources: SourceMetadata[];
+  security_note: string;
+}
+
 export interface AssistantRequest {
   question: string;
   beginner_mode: boolean;

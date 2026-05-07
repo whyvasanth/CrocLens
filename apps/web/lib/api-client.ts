@@ -1,4 +1,7 @@
 import type {
+  AccountCreateRequest,
+  AccountLoginRequest,
+  AccountSessionResponse,
   ActionPlanResponse,
   AgentRegistryResponse,
   AssistantRequest,
@@ -93,6 +96,14 @@ export function getOnboardingOptions(signal?: AbortSignal) {
 
 export function submitOnboardingProfile(profile: OnboardingProfileRequest, signal?: AbortSignal) {
   return postJson<OnboardingProfileResponse, OnboardingProfileRequest>("/api/v1/onboarding/profile", profile, signal);
+}
+
+export function createAccount(request: AccountCreateRequest, signal?: AbortSignal) {
+  return postJson<AccountSessionResponse, AccountCreateRequest>("/api/v1/auth/signup", request, signal);
+}
+
+export function loginAccount(request: AccountLoginRequest, signal?: AbortSignal) {
+  return postJson<AccountSessionResponse, AccountLoginRequest>("/api/v1/auth/login", request, signal);
 }
 
 export function askAssistant(request: AssistantRequest, signal?: AbortSignal) {

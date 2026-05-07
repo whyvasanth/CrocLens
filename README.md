@@ -190,6 +190,7 @@ Phase 17 adds security headers, request IDs, rate limiting, prompt-injection che
 Phase 18 adds backend agent-output tests, frontend smoke tests, and a manual-only free-usage GitHub Actions CI workflow.
 Phase 19 adds an internal evaluation metrics dashboard for product quality, AI safety, data freshness, and reliability.
 Phase 20 adds local Docker deployment files and a free-only deployment plan that blocks AWS and paid cloud by default.
+Latest refinement adds mock signup/login pages, collects onboarding information during account creation, and keeps Croc Guide from blurring the dashboard while chat is open.
 
 Install dependencies:
 
@@ -219,8 +220,10 @@ set NEXT_PUBLIC_CROCLENS_API_URL=http://127.0.0.1:8000
 
 Current frontend routes:
 
+- `/login`
+- `/signup`
 - `/dashboard`
-- `/onboarding`
+- `/onboarding` redirects to `/signup`
 - `/portfolio`
 - `/compare-assets`
 - `/market-news`
@@ -281,6 +284,8 @@ Current backend endpoints:
 - `GET /api/v1/assets/{asset_id}`
 - `GET /api/v1/assets/detail-cards`
 - `GET /api/v1/assets/{asset_id}/detail`
+- `POST /api/v1/auth/signup`
+- `POST /api/v1/auth/login`
 - `GET /api/v1/onboarding/options`
 - `POST /api/v1/onboarding/profile`
 - `GET /api/v1/ai/agents`

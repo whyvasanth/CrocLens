@@ -64,6 +64,9 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added manual-only GitHub Actions CI workflow for backend tests and frontend checks, with free-only usage documented.
 - Added Phase 19 evaluation metrics endpoint, API tests, frontend metrics page, smoke-test coverage, and documentation.
 - Added Phase 20 local Docker deployment files, `.env.example`, Docker smoke-test coverage, and a free-only deployment plan.
+- Added mock signup/login endpoints and frontend pages.
+- Moved onboarding collection into account creation and redirected the old onboarding route to signup.
+- Removed Croc Guide's background blur so dashboard content remains visible while chatting.
 
 ### Notes
 
@@ -80,3 +83,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Phase 18 CI is manual-only and should be used only where GitHub Actions remains free or included for the repo/account.
 - Phase 19 metrics use deterministic sample values; no paid analytics, paid monitoring, or external tracking tool is connected.
 - Phase 20 blocks AWS and paid cloud by default; local Docker is the active deployment path.
+- Current auth is mock-only and must be replaced before real users or real financial data.

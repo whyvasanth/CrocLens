@@ -314,6 +314,62 @@ def test_onboarding_options_are_available() -> None:
     assert "debt_payoff" in body["primary_goal"]
 
 
+def test_signup_collects_account_and_onboarding_profile() -> None:
+    response = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "display_name": "Maya Rivera",
+            "email": "maya@example.com",
+            "password": "sample-pass-123",
+            "onboarding_profile": {
+                "investment_experience": "new",
+                "primary_goal": "debt_payoff",
+                "risk_tolerance": "medium",
+                "time_horizon": "medium",
+                "income_range": "50k_100k",
+                "emergency_cash_months": 2,
+                "has_retirement_account": True,
+                "employer_match": "not_sure",
+                "retirement_contribution_percent": 4,
+                "has_mortgage": False,
+                "has_student_loans": True,
+                "has_credit_card_debt": True,
+                "has_high_interest_debt": True,
+                "manual_assets": [
+                    {
+                        "asset_class": "Cash",
+                        "label": "Emergency savings",
+                        "estimated_value": 4500,
+                    }
+                ],
+            },
+        },
+    )
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["user"]["email"] == "maya@example.com"
+    assert body["token_type"] == "mock_session"
+    assert body["next_path"] == "/dashboard"
+    assert body["onboarding_profile"]["risk_profile"] == "Cautious Beginner"
+    assert "mock" in body["security_note"].lower()
+    assert body["data_limitations"]
+
+
+def test_login_returns_mock_session_without_claiming_real_auth() -> None:
+    response = client.post(
+        "/api/v1/auth/login",
+        json={"email": "maya@example.com", "password": "sample-pass-123"},
+    )
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["user"]["email"] == "maya@example.com"
+    assert body["onboarding_profile"] is None
+    assert body["token_type"] == "mock_session"
+    assert "does not verify" in body["data_limitations"][0]
+
+
 def test_onboarding_profile_returns_risk_profile_and_guardrails() -> None:
     response = client.post(
         "/api/v1/onboarding/profile",

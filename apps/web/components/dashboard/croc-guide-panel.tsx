@@ -91,13 +91,6 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
 
   return (
     <>
-      <div
-        className={clsx(
-          "fixed inset-0 z-40 bg-croc-ink/35 backdrop-blur-sm transition-opacity",
-          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
-        )}
-        onClick={onClose}
-      />
       <aside
         aria-label="Croc Guide assistant drawer"
         aria-hidden={!isOpen}

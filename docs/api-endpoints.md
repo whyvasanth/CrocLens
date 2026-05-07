@@ -4,6 +4,8 @@
 
 Phase 19 extends the FastAPI backend with an evaluation metrics endpoint for product quality, AI safety, data freshness, and reliability.
 
+Latest product refinement adds mock account endpoints so signup can collect onboarding profile data during account creation.
+
 The backend lives in:
 
 ```text
@@ -31,6 +33,8 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/assets`
 - `GET /api/v1/assets/detail-cards`
 - `GET /api/v1/assets/{asset_id}/detail`
+- `POST /api/v1/auth/signup`
+- `POST /api/v1/auth/login`
 - `GET /api/v1/onboarding/options`
 - `POST /api/v1/onboarding/profile`
 - `GET /api/v1/action-plans`
@@ -169,6 +173,35 @@ The profile response includes:
 - `data_limitations`
 - `source`
 - `educational_disclaimer`
+
+Current UX rule:
+
+- `/signup` collects onboarding profile data during account creation.
+- `/onboarding` redirects to `/signup` so onboarding is no longer a separate primary page.
+
+### Auth
+
+```http
+POST /api/v1/auth/signup
+POST /api/v1/auth/login
+```
+
+Purpose:
+
+- Model account creation and login without adding a paid auth provider.
+- Collect onboarding profile data during signup.
+- Return a mock session token and security limitations.
+
+Signup request includes:
+
+- `display_name`
+- `email`
+- `password`
+- `onboarding_profile`
+
+Important limitation:
+
+- These are MVP mock endpoints. Production auth must hash passwords, persist users, verify email, protect sessions, add recovery flows, and apply rate limits.
 
 ### Action Plans
 

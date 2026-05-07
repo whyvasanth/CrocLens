@@ -5,6 +5,7 @@ from app.api.routes import (
     action_plans,
     assistant,
     assets,
+    auth,
     data_pipeline,
     evaluation,
     health,
@@ -43,6 +44,7 @@ def create_app() -> FastAPI:
     app.include_router(health.router)
     app.include_router(portfolio.router, prefix=settings.api_prefix)
     app.include_router(assets.router, prefix=settings.api_prefix)
+    app.include_router(auth.router, prefix=settings.api_prefix)
     app.include_router(onboarding.router, prefix=settings.api_prefix)
     app.include_router(action_plans.router, prefix=settings.api_prefix)
     app.include_router(assistant.router, prefix=settings.api_prefix)

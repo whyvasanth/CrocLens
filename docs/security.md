@@ -49,15 +49,34 @@ CrocLens should eventually support:
 
 MVP:
 
-- Start with no real user auth or simple local demo auth if needed.
+- Use local mock account creation and login endpoints only.
+- Collect onboarding profile data during account creation.
+- Redirect the old `/onboarding` page to `/signup` so onboarding is not a separate product surface.
 - Do not store real secrets or real financial credentials.
+- Do not claim mock sessions are production authentication.
 
 Later:
 
 - Use a verified free auth approach only after review.
+- Hash passwords with a production-grade password hashing algorithm.
+- Persist users, sessions, and profiles safely.
+- Add email verification and account recovery.
 - Add session management.
 - Add role-based access if an admin surface exists.
 - Add passwordless or OAuth flows only when needed.
+
+Current MVP auth endpoints:
+
+```http
+POST /api/v1/auth/signup
+POST /api/v1/auth/login
+```
+
+Current limitation:
+
+- Signup and login return mock sessions only.
+- Passwords are accepted to model request contracts but are not persisted.
+- Production auth must be implemented before real users or real financial data.
 
 ## Secret Management
 

@@ -201,6 +201,39 @@ class OnboardingOptionsResponse(BaseModel):
     employer_match: list[str]
 
 
+class AccountCreateRequest(BaseModel):
+    display_name: str = Field(min_length=2, max_length=80)
+    email: str = Field(min_length=5, max_length=120)
+    password: str = Field(min_length=8, max_length=120)
+    onboarding_profile: OnboardingProfileRequest
+
+
+class AccountLoginRequest(BaseModel):
+    email: str = Field(min_length=5, max_length=120)
+    password: str = Field(min_length=8, max_length=120)
+
+
+class AccountUserResponse(BaseModel):
+    id: str
+    display_name: str
+    email: str
+    beginner_mode_enabled: bool
+    created_at: str
+
+
+class AccountSessionResponse(BaseModel):
+    user: AccountUserResponse
+    onboarding_profile: OnboardingProfileResponse | None = None
+    session_token: str
+    token_type: Literal["mock_session"]
+    expires_in_minutes: int = Field(ge=1)
+    next_path: str
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    sources: list[SourceMetadata]
+    security_note: str
+
+
 class ActionPlanItem(BaseModel):
     id: str
     title: str
