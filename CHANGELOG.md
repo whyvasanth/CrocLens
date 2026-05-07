@@ -67,6 +67,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added mock signup/login endpoints and frontend pages.
 - Moved onboarding collection into account creation and redirected the old onboarding route to signup.
 - Removed Croc Guide's background blur so dashboard content remains visible while chatting.
+- Added Phase 21 data provider registry with normalized provider responses, sample fallback, TTL cache, provider endpoints, and optional yfinance/CoinGecko/FRED/Treasury provider paths.
+- Added Phase 21 efficient LLM-ready agent architecture with 8 agents, new AI endpoints, mock LLM mode, and safety-last orchestration.
 
 ### Notes
 

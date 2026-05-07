@@ -9,19 +9,14 @@ TrendDirection = Literal["up", "down", "flat"]
 AssetDetailCategory = Literal["stock_etf", "crypto", "real_estate", "debt", "retirement"]
 AssistantIntent = Literal["portfolio", "debt", "retirement", "tax", "market", "risk", "education", "safety"]
 AgentRole = Literal[
-    "intent_router",
-    "portfolio_analyst",
-    "cross_asset_comparison",
-    "stock_etf_research",
-    "crypto_research",
-    "real_estate_insight",
-    "news_impact",
-    "tax_aware",
-    "retirement_planner",
-    "debt_liability_coach",
+    "router_agent",
+    "wealth_analyst",
+    "market_research",
+    "life_planning",
+    "tax_awareness",
     "action_plan",
-    "decision_journal_feedback",
-    "safety_compliance_guardrail",
+    "decision_journal",
+    "safety_guardrail",
 ]
 AgentStatus = Literal["planned", "used", "skipped"]
 MetricTone = Literal["green", "gold", "blue", "coral", "neutral"]

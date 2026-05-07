@@ -2,12 +2,13 @@
 
 ## What We Built
 
-Phase 11 adds the first CrocLens market data ingestion slice.
+Phase 11 adds the first CrocLens market data ingestion slice. Phase 21 adds a provider registry layer on top of the sample-first pipeline so future ingestion can route through normalized provider contracts.
 
 The backend now has:
 
 - A local sample market data JSON fixture.
 - A Pydantic-validated ingestion service.
+- A Phase 21 provider registry with live-provider attempts and sample fallback.
 - Basic data quality checks.
 - Freshness and lineage metadata.
 - Data provider registry.
@@ -115,12 +116,27 @@ Later phases should add:
 - Database persistence into `market_prices`.
 - Scheduled ingestion jobs.
 - Provider-specific retry logic.
-- Provider response caching.
+- Provider response caching beyond the Phase 21 in-memory TTL cache.
 - Rate-limit handling.
 - Dead-letter storage for failed records.
 - Data quality dashboards.
 - More provider clients for FRED, Treasury/Fiscal Data, FHFA, SEC EDGAR, and OpenFIGI.
 - A verified no-cost crypto source only if it fits the project budget and terms.
+
+## Phase 21 Provider Endpoints
+
+```http
+GET /api/v1/data/providers
+GET /api/v1/data/freshness
+GET /api/v1/market/price/{symbol}
+GET /api/v1/market/history/{symbol}
+GET /api/v1/market/indicators/{symbol}
+GET /api/v1/crypto/price/{coin_id}
+GET /api/v1/macro/series/{series_id}
+GET /api/v1/rates/treasury
+```
+
+These endpoints are safe to call without API keys. They either return configured provider data or sample fallback data with source limitations.
 
 ## Safety Notes
 

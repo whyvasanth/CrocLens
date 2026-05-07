@@ -8,6 +8,41 @@ Beginners need a reliable product experience before the system depends on extern
 
 ## Data Source Stages
 
+## Phase 21 Provider Layer
+
+Phase 21 adds a vendor-agnostic provider registry inspired by TradingAgents' routing pattern, but redesigned for CrocLens' beginner wealth intelligence use case.
+
+Provider rules:
+
+- CrocLens stays runnable without API keys.
+- Live providers are optional and must fall back to sample data.
+- Every provider response includes source, freshness, confidence, retrieved time, and limitations.
+- Agents and API routes use normalized provider objects instead of raw vendor payloads.
+- Paid APIs and ambiguous free trials remain out of scope.
+
+Implemented or scaffolded providers:
+
+| Provider | Use | Status |
+| --- | --- | --- |
+| yfinance | Stock/ETF prototype price and history | Implemented, unofficial, fallback-safe |
+| stockstats | Technical indicators from OHLCV | Implemented as derived indicator layer |
+| CoinGecko | Crypto price context | Implemented with public/demo endpoint and fallback |
+| FRED | Macro series | Implemented only when `FRED_API_KEY` exists |
+| Treasury Fiscal Data | Treasury/rate context | Implemented as optional endpoint, not wired into dashboard |
+| Alpha Vantage | Stock/ETF backup | Documented stub |
+| SEC EDGAR | Filings and fundamentals | Documented stub |
+| FHFA | Housing index context | Documented stub |
+| Census | Local real estate/economic context | Documented stub |
+| OpenFIGI | Identifier mapping | Documented stub |
+
+Default mode:
+
+```text
+DATA_PROVIDER_MODE=mock_or_live
+```
+
+If a provider is missing, unconfigured, rate-limited, or unavailable, CrocLens returns deterministic sample fallback data with explicit limitations.
+
 ### Stage 1: Manual and Mock Data
 
 Use for:
@@ -73,7 +108,7 @@ Current free-only policy:
 - Use local sample files first.
 - Prefer official public/government sources when real ingestion starts.
 - Do not add ambiguous freemium or paid market data providers to the MVP.
-- Keep crypto prices sample/manual until a verified no-cost source is selected.
+- Keep crypto prices sample/manual by default; the optional CoinGecko public/demo path must fall back safely when rate-limited or unavailable.
 
 ### Stage 4: Disallowed For MVP
 

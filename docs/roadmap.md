@@ -470,3 +470,21 @@ Branch:
 Commit:
 
 - `docs: add free-only deployment and cost-control plan`
+
+## Phase 21: Free Data Provider Layer and Smarter Agent Architecture
+
+Goal:
+
+- Add a free/free-tier provider registry and consolidate CrocLens agents into an efficient LLM-ready architecture.
+
+Status:
+
+- Implemented with normalized provider responses, sample fallback, TTL cache, provider endpoints, 8-agent orchestration, mock LLM mode, safety-last validation, tests, and documentation.
+
+Branch:
+
+- `phase-21-data-provider-agent-upgrade`
+
+Commit:
+
+- `feat: add free data providers and smarter agent architecture`

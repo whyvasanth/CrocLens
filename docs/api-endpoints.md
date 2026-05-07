@@ -5,6 +5,7 @@
 Phase 19 extends the FastAPI backend with an evaluation metrics endpoint for product quality, AI safety, data freshness, and reliability.
 
 Latest product refinement adds mock account endpoints so signup can collect onboarding profile data during account creation.
+Phase 21 adds data provider endpoints and LLM-ready AI orchestration endpoints while keeping existing mock flows compatible.
 
 The backend lives in:
 
@@ -40,6 +41,18 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/action-plans`
 - `POST /api/v1/ai/assistant`
 - `GET /api/v1/ai/agents`
+- `POST /api/v1/ai/chat`
+- `POST /api/v1/ai/action-plan`
+- `POST /api/v1/ai/explain-asset`
+- `POST /api/v1/ai/portfolio-review`
+- `GET /api/v1/data/providers`
+- `GET /api/v1/data/freshness`
+- `GET /api/v1/market/price/{symbol}`
+- `GET /api/v1/market/history/{symbol}`
+- `GET /api/v1/market/indicators/{symbol}`
+- `GET /api/v1/crypto/price/{coin_id}`
+- `GET /api/v1/macro/series/{series_id}`
+- `GET /api/v1/rates/treasury`
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
@@ -219,6 +232,10 @@ Purpose:
 ```http
 POST /api/v1/ai/assistant
 GET /api/v1/ai/agents
+POST /api/v1/ai/chat
+POST /api/v1/ai/action-plan
+POST /api/v1/ai/explain-asset
+POST /api/v1/ai/portfolio-review
 ```
 
 Purpose:
@@ -249,7 +266,21 @@ Required safety fields in the response:
 - `prompt_context`
 - `safety_disclaimer`
 
-`GET /api/v1/ai/agents` returns the Phase 10 agent registry, including implemented and stubbed agents.
+`GET /api/v1/ai/agents` returns the Phase 21 consolidated 8-agent registry.
+
+The new Phase 21 AI endpoints return:
+
+- `summary`
+- `reasoning_summary`
+- `action_items`
+- `risks`
+- `confidence`
+- `data_sources`
+- `data_freshness`
+- `limitations`
+- `safety_flags`
+- `agent_trace`
+- `safety_disclaimer`
 
 Phase 9 intent examples:
 
@@ -268,6 +299,14 @@ Phase 9 intent examples:
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
+GET /api/v1/data/providers
+GET /api/v1/data/freshness
+GET /api/v1/market/price/{symbol}
+GET /api/v1/market/history/{symbol}
+GET /api/v1/market/indicators/{symbol}
+GET /api/v1/crypto/price/{coin_id}
+GET /api/v1/macro/series/{series_id}
+GET /api/v1/rates/treasury
 ```
 
 Purpose:
@@ -275,6 +314,8 @@ Purpose:
 - List planned and implemented data providers.
 - Run the deterministic sample market data ingestion pipeline.
 - Return latest normalized sample market observations.
+- Route optional live provider requests through Phase 21 free/free-tier providers.
+- Fall back to deterministic sample data when providers are missing, unconfigured, rate-limited, or unavailable.
 
 The sample ingestion response includes:
 

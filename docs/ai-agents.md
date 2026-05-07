@@ -1,5 +1,50 @@
 # CrocLens AI Agents
 
+## Phase 21 Efficient Agent Architecture
+
+Phase 21 replaces the earlier 13-agent conceptual list with 8 focused agents:
+
+- Router Agent
+- Wealth Analyst Agent
+- Market Research Agent
+- Life Planning Agent
+- Tax Awareness Agent
+- Action Plan Agent
+- Decision Journal Agent
+- Safety Guardrail Agent
+
+Merged agents:
+
+- Portfolio Analyst and Cross-Asset Comparison are now Wealth Analyst.
+- Stock/ETF Research, Crypto Research, News Impact, and macro context are now Market Research.
+- Retirement Planner and Debt/Liability Coach are now Life Planning.
+- Real Estate Insight is handled through Wealth Analyst and Life Planning until richer real estate data exists.
+
+Runtime rules:
+
+- Default `LLM_MODE=mock` keeps the app deterministic and free.
+- LLMs may explain and synthesize, but they must not calculate money values by themselves.
+- Agents can only use allowlisted provider tools.
+- The Safety Guardrail Agent always runs last.
+- Responses include summary, reasoning summary, action items, risks, confidence, data sources, freshness, limitations, and disclaimer.
+
+New endpoints:
+
+```http
+POST /api/v1/ai/chat
+POST /api/v1/ai/action-plan
+POST /api/v1/ai/explain-asset
+POST /api/v1/ai/portfolio-review
+```
+
+The legacy endpoint remains:
+
+```http
+POST /api/v1/ai/assistant
+```
+
+It forwards into the Phase 21 orchestrator and maps back to the older response shape for frontend compatibility.
+
 ## AI Strategy
 
 CrocLens will not start with a complex agent system.

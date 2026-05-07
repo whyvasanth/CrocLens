@@ -130,10 +130,11 @@ Completed phases:
 - Phase 18: Testing and CI
 - Phase 19: Evaluation metrics
 - Phase 20: Free-only deployment plan
+- Phase 21: Free data provider layer and smarter agent architecture
 
 Current status:
 
-- MVP foundation complete through Phase 20
+- MVP foundation complete through Phase 21
 
 Next work:
 
@@ -191,6 +192,7 @@ Phase 18 adds backend agent-output tests, frontend smoke tests, and a manual-onl
 Phase 19 adds an internal evaluation metrics dashboard for product quality, AI safety, data freshness, and reliability.
 Phase 20 adds local Docker deployment files and a free-only deployment plan that blocks AWS and paid cloud by default.
 Latest refinement adds mock signup/login pages, collects onboarding information during account creation, and keeps Croc Guide from blurring the dashboard while chat is open.
+Phase 21 adds a free/free-tier provider registry and an efficient LLM-ready agent architecture while keeping the app runnable without API keys.
 
 Install dependencies:
 
@@ -292,9 +294,21 @@ Current backend endpoints:
 - `GET /api/v1/action-plans`
 - `POST /api/v1/action-plans/generate`
 - `POST /api/v1/ai/assistant`
+- `POST /api/v1/ai/chat`
+- `POST /api/v1/ai/action-plan`
+- `POST /api/v1/ai/explain-asset`
+- `POST /api/v1/ai/portfolio-review`
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
+- `GET /api/v1/data/providers`
+- `GET /api/v1/data/freshness`
+- `GET /api/v1/market/price/{symbol}`
+- `GET /api/v1/market/history/{symbol}`
+- `GET /api/v1/market/indicators/{symbol}`
+- `GET /api/v1/crypto/price/{coin_id}`
+- `GET /api/v1/macro/series/{series_id}`
+- `GET /api/v1/rates/treasury`
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
 - `GET /api/v1/retirement/plan`
@@ -402,5 +416,6 @@ Branch strategy:
 - `phase-18-testing`
 - `phase-19-evaluation-metrics`
 - `phase-20-deployment-plan`
+- `phase-21-data-provider-agent-upgrade`
 
 Each phase should end with one branch, one clean commit, and one pull request.

@@ -34,6 +34,18 @@ Every AI output should include:
 - Beginner-friendly explanation
 - Safe wording
 
+## Phase 21 Provider And Agent Safety
+
+Phase 21 adds these safety boundaries:
+
+- Provider API keys are read only from environment variables.
+- `.env.example` contains placeholders only.
+- Provider responses normalize source, freshness, confidence, and limitations before reaching agents.
+- Live provider failures fall back to sample data instead of crashing the app.
+- Agents cannot call arbitrary functions; they use allowlisted provider tools through the registry.
+- `LLM_MODE=mock` is the default so no paid model call is required.
+- The Safety Guardrail Agent always runs last and blocks direct buy/sell or guaranteed-return wording.
+
 ## Privacy Principles
 
 CrocLens should eventually support:

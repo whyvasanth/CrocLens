@@ -10,20 +10,27 @@ import type {
   AssetDetailResponse,
   AssetResponse,
   DataExportResponse,
+  DataFreshnessResponse,
   DeleteDataResponse,
   DecisionJournalCreateRequest,
   DecisionJournalEntryResponse,
   DecisionJournalResponse,
   EvaluationMetricsResponse,
+  AgentAIRequest,
+  FinalAIResponse,
   MarketNewsImpactResponse,
+  NormalizedDataPointResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
   OnboardingProfileResponse,
+  PriceHistoryResponse,
   PortfolioSummaryResponse,
   PrivacySettingsRequest,
   PrivacySettingsResponse,
+  ProviderStatusResponse,
   RetirementPlanResponse,
   SecurityStatusResponse,
+  TechnicalIndicatorSetResponse,
   TaxInsightResponse,
   WatchlistCreateRequest,
   WatchlistItemResponse,
@@ -114,6 +121,22 @@ export function getAgentRegistry(signal?: AbortSignal) {
   return requestJson<AgentRegistryResponse>("/api/v1/ai/agents", signal);
 }
 
+export function chatWithAgent(request: AgentAIRequest, signal?: AbortSignal) {
+  return postJson<FinalAIResponse, AgentAIRequest>("/api/v1/ai/chat", request, signal);
+}
+
+export function generateAgentActionPlan(request: AgentAIRequest, signal?: AbortSignal) {
+  return postJson<FinalAIResponse, AgentAIRequest>("/api/v1/ai/action-plan", request, signal);
+}
+
+export function explainAssetWithAgent(request: AgentAIRequest, signal?: AbortSignal) {
+  return postJson<FinalAIResponse, AgentAIRequest>("/api/v1/ai/explain-asset", request, signal);
+}
+
+export function reviewPortfolioWithAgent(request: AgentAIRequest, signal?: AbortSignal) {
+  return postJson<FinalAIResponse, AgentAIRequest>("/api/v1/ai/portfolio-review", request, signal);
+}
+
 async function putJson<TResponse, TRequest>(path: string, body: TRequest, signal?: AbortSignal): Promise<TResponse> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     body: JSON.stringify(body),
@@ -150,6 +173,38 @@ async function deleteJson<TResponse>(path: string, signal?: AbortSignal): Promis
 
 export function getMarketNewsImpact(signal?: AbortSignal) {
   return requestJson<MarketNewsImpactResponse>("/api/v1/market-news/impact-summary", signal);
+}
+
+export function getDataProviders(signal?: AbortSignal) {
+  return requestJson<ProviderStatusResponse[]>("/api/v1/data/providers", signal);
+}
+
+export function getDataFreshness(signal?: AbortSignal) {
+  return requestJson<DataFreshnessResponse>("/api/v1/data/freshness", signal);
+}
+
+export function getMarketPrice(symbol: string, signal?: AbortSignal) {
+  return requestJson<NormalizedDataPointResponse>(`/api/v1/market/price/${symbol}`, signal);
+}
+
+export function getMarketHistory(symbol: string, signal?: AbortSignal) {
+  return requestJson<PriceHistoryResponse>(`/api/v1/market/history/${symbol}`, signal);
+}
+
+export function getMarketIndicators(symbol: string, signal?: AbortSignal) {
+  return requestJson<TechnicalIndicatorSetResponse>(`/api/v1/market/indicators/${symbol}`, signal);
+}
+
+export function getCryptoPrice(coinId: string, signal?: AbortSignal) {
+  return requestJson<NormalizedDataPointResponse>(`/api/v1/crypto/price/${coinId}`, signal);
+}
+
+export function getMacroSeries(seriesId: string, signal?: AbortSignal) {
+  return requestJson<NormalizedDataPointResponse>(`/api/v1/macro/series/${seriesId}`, signal);
+}
+
+export function getTreasuryRates(signal?: AbortSignal) {
+  return requestJson<NormalizedDataPointResponse>("/api/v1/rates/treasury", signal);
 }
 
 export function getTaxInsights(signal?: AbortSignal) {

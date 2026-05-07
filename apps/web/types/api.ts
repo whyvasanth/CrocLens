@@ -24,6 +24,18 @@ export type InvestmentExperience = "new" | "some" | "experienced";
 export type PrimaryGoal = "learn" | "build_wealth" | "retirement" | "debt_payoff" | "home" | "emergency_fund";
 export type RiskToleranceInput = "low" | "medium" | "high";
 export type TimeHorizon = "short" | "medium" | "long";
+export type ProviderHealth = "configured" | "unconfigured" | "fallback_only" | "unavailable";
+export type AgentWorkflow = "chat" | "action_plan" | "explain_asset" | "portfolio_review";
+export type Phase21AgentIntent = "portfolio" | "market" | "life_planning" | "tax" | "journal" | "education" | "safety";
+export type Phase21AgentName =
+  | "router_agent"
+  | "wealth_analyst"
+  | "market_research"
+  | "life_planning"
+  | "tax_awareness"
+  | "action_plan"
+  | "decision_journal"
+  | "safety_guardrail";
 
 export interface SourceMetadata {
   name: string;
@@ -73,6 +85,140 @@ export interface AssetResponse {
   risk_level: RiskLevel;
   beginner_explanation: string;
   source: SourceMetadata;
+}
+
+export interface ProviderStatusResponse {
+  id: string;
+  name: string;
+  source_type: string;
+  capabilities: string[];
+  configured: boolean;
+  health: ProviderHealth;
+  requires_api_key: boolean;
+  cost_note: string;
+  limitations: string[];
+}
+
+export interface DataFreshnessItemResponse {
+  provider: string;
+  status: ProviderHealth;
+  last_retrieved_at: string | null;
+  cache_ttl_seconds: number;
+  note: string;
+}
+
+export interface DataFreshnessResponse {
+  mode: string;
+  providers: DataFreshnessItemResponse[];
+}
+
+export interface ProviderFallbackStepResponse {
+  provider: string;
+  status: "used" | "skipped" | "failed";
+  reason: string;
+}
+
+export interface NormalizedDataPointResponse {
+  provider: string;
+  source_type: string;
+  asset_type: string;
+  symbol_or_series_id: string;
+  value: number;
+  currency: string | null;
+  as_of: string;
+  retrieved_at: string;
+  source_url: string | null;
+  freshness: string;
+  confidence: ConfidenceLevel;
+  limitations: string[];
+  raw_payload: Record<string, unknown> | null;
+  fallback_chain: ProviderFallbackStepResponse[];
+}
+
+export interface PriceHistoryPointResponse {
+  date: string;
+  open: number | null;
+  high: number | null;
+  low: number | null;
+  close: number;
+  volume: number | null;
+}
+
+export interface PriceHistoryResponse {
+  provider: string;
+  source_type: "price_history";
+  asset_type: string;
+  symbol_or_series_id: string;
+  currency: string | null;
+  as_of: string;
+  retrieved_at: string;
+  source_url: string | null;
+  freshness: string;
+  confidence: ConfidenceLevel;
+  limitations: string[];
+  points: PriceHistoryPointResponse[];
+  raw_payload: Record<string, unknown> | null;
+  fallback_chain: ProviderFallbackStepResponse[];
+}
+
+export interface TechnicalIndicatorResponse {
+  name: string;
+  value: number | null;
+  explanation: string;
+}
+
+export interface TechnicalIndicatorSetResponse {
+  provider: string;
+  source_type: "technical_indicator";
+  asset_type: string;
+  symbol_or_series_id: string;
+  as_of: string;
+  retrieved_at: string;
+  freshness: string;
+  confidence: ConfidenceLevel;
+  limitations: string[];
+  indicators: TechnicalIndicatorResponse[];
+  source_url: string | null;
+  fallback_chain: ProviderFallbackStepResponse[];
+}
+
+export interface AgentAIRequest {
+  question: string;
+  workflow?: AgentWorkflow;
+  beginner_mode?: boolean;
+  asset_symbol?: string | null;
+}
+
+export interface AgentDataSourceResponse {
+  provider: string;
+  label: string;
+  freshness: string;
+  as_of: string | null;
+  limitations: string[];
+}
+
+export interface Phase21AgentTraceResponse {
+  agent: Phase21AgentName;
+  status: "used" | "skipped";
+  input_summary: string;
+  output_summary: string;
+  tools_used: string[];
+}
+
+export interface FinalAIResponse {
+  intent: Phase21AgentIntent;
+  workflow: AgentWorkflow;
+  summary: string;
+  reasoning_summary: string;
+  action_items: string[];
+  risks: string[];
+  confidence: ConfidenceLevel;
+  data_sources: AgentDataSourceResponse[];
+  data_freshness: string;
+  limitations: string[];
+  safety_flags: string[];
+  agent_trace: Phase21AgentTraceResponse[];
+  safety_disclaimer: string;
 }
 
 export interface AssetDetailMetric {

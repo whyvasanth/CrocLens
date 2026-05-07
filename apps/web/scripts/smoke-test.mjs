@@ -49,6 +49,18 @@ const requiredEndpoints = [
   "/api/v1/auth/signup",
   "/api/v1/auth/login",
   "/api/v1/portfolio/summary",
+  "/api/v1/ai/chat",
+  "/api/v1/ai/action-plan",
+  "/api/v1/ai/explain-asset",
+  "/api/v1/ai/portfolio-review",
+  "/api/v1/data/providers",
+  "/api/v1/data/freshness",
+  "/api/v1/market/price",
+  "/api/v1/market/history",
+  "/api/v1/market/indicators",
+  "/api/v1/crypto/price",
+  "/api/v1/macro/series",
+  "/api/v1/rates/treasury",
   "/api/v1/market-news/impact-summary",
   "/api/v1/tax/insights",
   "/api/v1/retirement/plan",
@@ -86,6 +98,10 @@ assert.doesNotMatch(guidePanel, /backdrop-blur/, "Croc Guide should not blur das
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");
 assert.match(dataSources, /ambiguous freemium/i, "Data docs should reject ambiguous freemium APIs");
+assert.match(dataSources, /Phase 21 Provider Layer/, "Data docs should describe Phase 21 provider routing");
+
+const aiAgents = read("docs/ai-agents.md");
+assert.match(aiAgents, /Safety Guardrail Agent always runs last/, "AI docs should document safety-last orchestration");
 
 const deploymentDocs = read("docs/aws-deployment.md");
 assert.match(deploymentDocs, /Do not deploy to AWS/i, "Deployment docs should block AWS by default");

@@ -468,3 +468,25 @@ Key terms:
 Practice idea:
 
 - Add a `docker compose config` check to your local pre-push routine and explain what it validates.
+
+## Phase 21: Free Data Providers And Smarter Agents
+
+What we learned:
+
+- A provider registry separates product code from vendor-specific APIs.
+- Normalized data contracts make it easier for agents, API routes, and future dashboards to trust the same shape.
+- Free/provider fallback design keeps the app runnable without API keys.
+- Efficient agents are better than agent bloat; merge overlapping responsibilities.
+- LLMs should explain and synthesize, while deterministic code handles calculations, validation, and safety.
+
+Key terms:
+
+- Provider registry: a router that chooses a data source for a requested capability.
+- Fallback chain: ordered providers tried before sample data is returned.
+- TTL cache: temporary in-memory cache that avoids repeated provider calls.
+- Tool boundary: a restriction that agents can only call approved functions.
+- Reasoning summary: a user-safe explanation of why the output was produced, not hidden chain-of-thought.
+
+Practice idea:
+
+- Add one new provider status field showing whether the provider was used in the last request.
