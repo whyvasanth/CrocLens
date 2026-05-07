@@ -93,7 +93,7 @@ function mapProviderPointToSnapshotItem(point: NormalizedDataPointResponse): Sna
     change: point.provider === "croclens_sample_fallback" ? "Fallback" : point.confidence,
     direction: "flat",
     label: labelForPoint(point),
-    note: `${point.provider} • ${point.freshness}`,
+    note: `${point.provider} | ${point.freshness}`,
     provider: point.provider,
     value: formatProviderValue(point)
   };

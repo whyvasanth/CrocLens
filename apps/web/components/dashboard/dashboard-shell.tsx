@@ -29,6 +29,7 @@ export function DashboardShell() {
           <ProviderStatusCard
             dataFreshness={data?.dataFreshness ?? null}
             isLoading={isLoading}
+            marketData={data?.marketData ?? []}
             providers={data?.providers ?? []}
           />
           <div className="grid gap-5 xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.9fr)]">
