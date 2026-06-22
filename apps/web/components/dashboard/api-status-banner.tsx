@@ -25,7 +25,7 @@ export function ApiStatusBanner({ error, isLoading, onRetry }: ApiStatusBannerPr
           <div>
             <p className="font-semibold">Backend connection issue</p>
             <p className="mt-1 leading-6">
-              Start FastAPI at <span className="font-semibold">{getApiBaseUrl()}</span>. {error}
+              Start FastAPI at <span className="font-semibold">{getApiBaseUrl()}</span> and keep the Next.js BFF running. {error}
             </p>
           </div>
         </div>
@@ -45,7 +45,7 @@ export function ApiStatusBanner({ error, isLoading, onRetry }: ApiStatusBannerPr
   return (
     <div className="flex items-center gap-3 rounded-lg border border-emerald-900/10 bg-white/80 px-4 py-3 text-sm text-stone-700 shadow-card">
       <CheckCircle2 className="h-4 w-4 text-croc-moss" />
-      Connected to CrocLens API at <span className="font-semibold text-croc-moss">{getApiBaseUrl()}</span>
+      Connected through the CrocLens BFF to <span className="font-semibold text-croc-moss">{getApiBaseUrl()}</span>
     </div>
   );
 }

@@ -114,9 +114,15 @@ export function CrossAssetComparisonCard({ assets, isLoading }: CrossAssetCompar
             })}
       </div>
       {!isLoading && assets.length === 0 ? (
-        <p className="mt-4 text-sm leading-6 text-stone-600">
-          No assets returned from the API yet. Start the FastAPI backend and retry.
-        </p>
+        <div className="mt-4 rounded-lg border border-emerald-900/10 bg-croc-cream p-4">
+          <p className="text-sm font-semibold text-croc-ink">No holdings tracked yet</p>
+          <p className="mt-2 text-sm leading-6 text-stone-600">
+            Add a holding on the Portfolio page to start seeing your own cross-asset comparison here.
+          </p>
+          <Link href="/portfolio" className="mt-3 inline-flex text-sm font-semibold text-croc-moss">
+            Add portfolio records
+          </Link>
+        </div>
       ) : null}
     </Card>
   );

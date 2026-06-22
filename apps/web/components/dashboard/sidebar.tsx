@@ -1,18 +1,37 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { ChevronDown, HelpCircle, LogOut, X } from "lucide-react";
 import { clsx } from "clsx";
+import { logoutAccount } from "@/lib/api-client";
 import { sidebarItems } from "@/lib/mock-dashboard-data";
+import type { AccountUserResponse } from "@/types/api";
 
 interface SidebarProps {
+  account: AccountUserResponse | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ account, isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const displayName = account?.display_name ?? "Demo visitor";
+  const email = account?.email ?? "Sample data mode";
+  const initial = displayName.trim().charAt(0).toUpperCase() || "C";
+
+  async function handleLogout() {
+    if (!account) {
+      router.push("/login");
+      return;
+    }
+
+    await logoutAccount();
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <>
@@ -93,24 +112,29 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             type="button"
           >
             <span className="grid h-11 w-11 place-items-center rounded-lg bg-white text-sm font-bold text-croc-emerald">
-              M
+              {initial}
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-sm font-semibold">Maya Rivera</span>
-              <span className="block truncate text-xs text-emerald-100">maya@example.com</span>
+              <span className="block text-sm font-semibold">{displayName}</span>
+              <span className="block truncate text-xs text-emerald-100">{email}</span>
             </span>
             <ChevronDown className="h-4 w-4 text-emerald-100" />
           </button>
 
           <div className="space-y-1 border-t border-white/10 pt-3">
-            <a href="#" className="flex min-h-9 items-center gap-3 rounded-lg px-3 text-sm text-emerald-50 hover:bg-white/10">
+            <Link href="/settings" className="flex min-h-9 items-center gap-3 rounded-lg px-3 text-sm text-emerald-50 hover:bg-white/10">
               <HelpCircle className="h-4 w-4" />
               Help Center
-            </a>
-            <a href="#" className="flex min-h-9 items-center gap-3 rounded-lg px-3 text-sm text-emerald-50 hover:bg-white/10">
+            </Link>
+            <button
+              className="flex min-h-9 w-full items-center gap-3 rounded-lg px-3 text-left text-sm text-emerald-50 hover:bg-white/10"
+              onClick={handleLogout}
+              suppressHydrationWarning
+              type="button"
+            >
               <LogOut className="h-4 w-4" />
-              Log Out
-            </a>
+              {account ? "Log Out" : "Log In"}
+            </button>
           </div>
         </div>
       </aside>

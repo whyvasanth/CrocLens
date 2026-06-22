@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis
 } from "recharts";
+import Link from "next/link";
 import { portfolioHistory } from "@/lib/mock-dashboard-data";
 import { formatCompactCurrency, formatCurrency } from "@/lib/formatters";
 import { Card, Pill, SectionTitle } from "@/components/dashboard/ui";
@@ -24,6 +25,7 @@ export function PortfolioChart({ isLoading, portfolio }: PortfolioChartProps) {
   const totalAssets = portfolio?.total_assets ?? 329_400;
   const totalLiabilities = portfolio?.total_liabilities ?? 114_600;
   const sourceLabel = portfolio?.sources[0]?.freshness ?? "Static mock data";
+  const hasTrackedAssets = totalAssets > 0;
 
   return (
     <Card>
@@ -59,6 +61,17 @@ export function PortfolioChart({ isLoading, portfolio }: PortfolioChartProps) {
           </p>
         </>
       )}
+      {!isLoading && !hasTrackedAssets ? (
+        <div className="mb-4 rounded-lg border border-emerald-900/10 bg-croc-cream p-4">
+          <p className="text-sm font-semibold text-croc-ink">Start with your first record</p>
+          <p className="mt-2 text-sm leading-6 text-stone-600">
+            Add cash, an ETF, a retirement balance, or a debt on the Portfolio page. CrocLens will calculate net worth from those records.
+          </p>
+          <Link href="/portfolio" className="mt-3 inline-flex text-sm font-semibold text-croc-moss">
+            Open Portfolio
+          </Link>
+        </div>
+      ) : null}
       <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={portfolioHistory} margin={{ left: 0, right: 8, top: 8, bottom: 0 }}>

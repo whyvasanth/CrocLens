@@ -100,6 +100,12 @@ assert.doesNotMatch(sidebarData, /label:\s*"Onboarding"/, "Onboarding should not
 const guidePanel = read("apps/web/components/dashboard/croc-guide-panel.tsx");
 assert.doesNotMatch(guidePanel, /backdrop-blur/, "Croc Guide should not blur dashboard content when open");
 
+const dashboardShell = read("apps/web/components/dashboard/dashboard-shell.tsx");
+assert.doesNotMatch(dashboardShell, /Good morning, Maya/, "Dashboard greeting should use the signed-in account or portfolio user name");
+
+const sidebar = read("apps/web/components/dashboard/sidebar.tsx");
+assert.doesNotMatch(sidebar, /Maya Rivera/, "Sidebar account panel should not be hardcoded to the sample user");
+
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");
 assert.match(dataSources, /ambiguous freemium/i, "Data docs should reject ambiguous freemium APIs");

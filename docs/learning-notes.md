@@ -490,3 +490,23 @@ Key terms:
 Practice idea:
 
 - Add edit support for holdings and liabilities in the Portfolio page using the existing `PUT` endpoints.
+
+## Production MVP Slice: Account-Aware Dashboard
+
+What we learned:
+
+- Shared layout components are a good place to fetch account state once and pass it down to navigation and page content.
+- Removing hardcoded demo names matters after authentication exists because users need to trust that they are seeing their own account context.
+- Empty states should explain the next useful action, not sound like errors.
+- Logout should clear the server-managed cookie session through the BFF route, then move the user back to login.
+
+Key terms:
+
+- Account-aware shell: a shared app layout that knows whether a user is signed in.
+- Empty state: UI shown when data is valid but missing.
+- Demo mode: unauthenticated sample experience, separate from a signed-in user's records.
+- Session revocation: marking a session as no longer usable.
+
+Practice idea:
+
+- Add an account menu item that links to Settings and shows whether the current session is local development auth.
