@@ -136,7 +136,7 @@ Avoid by default: NAT Gateway, RDS provisioning, Application Load Balancer, Open
 9. Calculate authenticated user portfolio summary from persisted data.
 10. Update dashboard to use authenticated user state, empty states, and mutation dialogs. Partially complete through account-aware dashboard/sidebar state, BFF-backed Portfolio page CRUD, and first-pass empty states; edit dialogs remain.
 11. Add read-only public landing page and explicit recruiter demo mode.
-12. Ground Croc Guide in authenticated portfolio calculations with safety fields.
+12. Ground Croc Guide in authenticated portfolio calculations with safety fields. Completed for deterministic assistant responses using persisted holdings/liabilities when a session is present.
 13. Replace frontend smoke checks with Vitest/RTL and add Playwright where practical.
 14. Expand backend tests for auth, authorization, CRUD, provider failures, and user isolation.
 15. Update CI to run on pull requests and pushes to `main`.

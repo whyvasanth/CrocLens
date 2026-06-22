@@ -27,11 +27,12 @@ Implemented pieces:
 - Safety checks for direct trading and guaranteed-return wording
 - Structured assistant response fields
 - Croc Guide frontend integration
+- Authenticated portfolio grounding from PostgreSQL holdings and liabilities when a session is present
 
 The current prompt version is:
 
 ```text
-assistant_v1_rule_based_2026_05_05
+assistant_v2_portfolio_grounded_2026_06_22
 ```
 
 The assistant can route:
@@ -54,6 +55,7 @@ Current flow:
 ```text
 User question
   -> Intent Router Agent
+  -> Portfolio context builder, using authenticated PostgreSQL records when available
   -> Specialist Agent
   -> Action Plan Agent
   -> Safety/Compliance Guardrail Agent

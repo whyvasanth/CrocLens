@@ -510,3 +510,24 @@ Key terms:
 Practice idea:
 
 - Add an account menu item that links to Settings and shows whether the current session is local development auth.
+
+## Production MVP Slice: Authenticated Croc Guide Grounding
+
+What we learned:
+
+- LLM-ready does not mean LLM-dependent. CrocLens can improve assistant quality with deterministic logic and better context first.
+- AI should not calculate financial values from scratch when backend services already calculate them.
+- The assistant route can use optional authentication: sample answers for demo visitors, persisted portfolio context for signed-in users.
+- Prompt context is an input contract, not hidden reasoning. It should summarize what data the assistant is allowed to use.
+- Safety rules still run for authenticated users; personalization should not weaken financial guardrails.
+
+Key terms:
+
+- Grounding: connecting an AI response to known data instead of letting it invent context.
+- Context builder: code that prepares verified facts for an assistant or model.
+- Optional authentication: a route can behave differently when a user is logged in without requiring login for every use case.
+- Reasoning summary: safe explanation of the basis for a response, not hidden chain-of-thought.
+
+Practice idea:
+
+- Add one new assistant question path that uses the largest tracked asset class from the authenticated portfolio.

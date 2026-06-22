@@ -1,16 +1,25 @@
 from dataclasses import dataclass
 
+from sqlalchemy.orm import Session
+
+from app.models import User
 from app.schemas.api import (
     AssistantIntent,
     AssistantPromptContext,
     AssistantRequest,
     AssistantResponse,
     AssistantSafetyCheck,
+    SourceMetadata,
 )
 from app.services.agent_orchestrator import build_agent_trace
 from app.services.mock_data import EDUCATIONAL_DISCLAIMER, MOCK_SOURCE, get_portfolio_summary
+from app.services.portfolio_service import (
+    get_user_portfolio_summary,
+    list_user_holdings,
+    list_user_liabilities,
+)
 
-PROMPT_VERSION = "assistant_v1_rule_based_2026_05_05"
+PROMPT_VERSION = "assistant_v2_portfolio_grounded_2026_06_22"
 
 SYSTEM_RULES = [
     "You are Croc Guide, a friendly educational finance assistant for beginners.",
@@ -44,6 +53,26 @@ class IntentAnswer:
     summary: str
     beginner_explanation: str
     suggested_next_steps: list[str]
+
+
+@dataclass(frozen=True)
+class PortfolioAssistantContext:
+    user_name: str
+    total_assets: float
+    total_liabilities: float
+    net_worth: float
+    debt_to_asset_percent: float
+    top_asset_classes: list[str]
+    top_liabilities: list[str]
+    holdings_count: int
+    liabilities_count: int
+    sources: list[SourceMetadata]
+    limitations: list[str]
+    is_authenticated: bool
+
+    @property
+    def label(self) -> str:
+        return "your persisted portfolio" if self.is_authenticated else "CrocLens sample data"
 
 
 def normalize_question(question: str) -> str:
@@ -88,12 +117,78 @@ def run_safety_check(question: str) -> AssistantSafetyCheck:
     )
 
 
-def build_prompt_context(question: str, intent: AssistantIntent) -> AssistantPromptContext:
+def build_assistant_context(db: Session | None = None, current_user: User | None = None) -> PortfolioAssistantContext:
+    if db is not None and current_user is not None:
+        portfolio = get_user_portfolio_summary(db, current_user)
+        holdings = list_user_holdings(db, current_user)
+        liabilities = list_user_liabilities(db, current_user)
+        top_asset_classes = [
+            f"{item.asset_class} {item.percent:.1f}%"
+            for item in portfolio.allocation[:3]
+        ]
+        top_liabilities = [
+            f"{liability.liability_type}: ${liability.balance:,.0f}"
+            for liability in sorted(liabilities, key=lambda item: item.balance, reverse=True)[:3]
+        ]
+
+        limitations = [
+            "This response uses your manually entered CrocLens portfolio records.",
+            "Market prices, time-series performance, tax lots, and account aggregation are not live-connected yet.",
+        ]
+        if not holdings:
+            limitations.insert(0, "No holdings are tracked yet, so portfolio insights are limited.")
+        if not liabilities:
+            limitations.append("No liabilities are tracked yet, so debt impact may be incomplete.")
+
+        return PortfolioAssistantContext(
+            user_name=portfolio.user_name,
+            total_assets=portfolio.total_assets,
+            total_liabilities=portfolio.total_liabilities,
+            net_worth=portfolio.net_worth,
+            debt_to_asset_percent=portfolio.debt_impact.debt_to_asset_percent,
+            top_asset_classes=top_asset_classes,
+            top_liabilities=top_liabilities,
+            holdings_count=len(holdings),
+            liabilities_count=len(liabilities),
+            sources=portfolio.sources,
+            limitations=limitations,
+            is_authenticated=True,
+        )
+
     portfolio = get_portfolio_summary()
+    return PortfolioAssistantContext(
+        user_name=portfolio.user_name,
+        total_assets=portfolio.total_assets,
+        total_liabilities=portfolio.total_liabilities,
+        net_worth=portfolio.net_worth,
+        debt_to_asset_percent=portfolio.debt_impact.debt_to_asset_percent,
+        top_asset_classes=[
+            f"{item.asset_class} {item.percent:.1f}%"
+            for item in portfolio.allocation[:3]
+        ],
+        top_liabilities=[],
+        holdings_count=len(portfolio.allocation),
+        liabilities_count=1 if portfolio.total_liabilities > 0 else 0,
+        sources=[MOCK_SOURCE],
+        limitations=[
+            "This response uses CrocLens sample data, not live financial accounts.",
+            "No live market data, tax lots, legal context, or account aggregation is connected yet.",
+        ],
+        is_authenticated=False,
+    )
+
+
+def build_prompt_context(
+    question: str,
+    intent: AssistantIntent,
+    context: PortfolioAssistantContext,
+) -> AssistantPromptContext:
     context_summary = (
-        f"Sample user {portfolio.user_name} has net worth ${portfolio.net_worth:,.0f}, "
-        f"assets ${portfolio.total_assets:,.0f}, liabilities ${portfolio.total_liabilities:,.0f}, "
-        f"and a debt-to-asset ratio of {portfolio.debt_impact.debt_to_asset_percent}%."
+        f"{context.user_name} has net worth ${context.net_worth:,.0f}, "
+        f"assets ${context.total_assets:,.0f}, liabilities ${context.total_liabilities:,.0f}, "
+        f"a debt-to-asset ratio of {context.debt_to_asset_percent}%, "
+        f"{context.holdings_count} tracked holdings, and {context.liabilities_count} tracked liabilities. "
+        f"Context source: {context.label}."
     )
 
     return AssistantPromptContext(
@@ -105,7 +200,12 @@ def build_prompt_context(question: str, intent: AssistantIntent) -> AssistantPro
     )
 
 
-def answer_for_intent(intent: AssistantIntent, question: str, beginner_mode: bool) -> IntentAnswer:
+def answer_for_intent(
+    intent: AssistantIntent,
+    question: str,
+    beginner_mode: bool,
+    context: PortfolioAssistantContext,
+) -> IntentAnswer:
     if intent == "safety":
         return IntentAnswer(
             summary="I can help you review the idea safely, but I cannot tell you to buy or sell anything.",
@@ -121,11 +221,20 @@ def answer_for_intent(intent: AssistantIntent, question: str, beginner_mode: boo
         )
 
     if intent == "debt":
+        debt_focus = (
+            f" Your tracked liabilities include {', '.join(context.top_liabilities)}."
+            if context.top_liabilities
+            else " No liabilities are tracked yet, so CrocLens can only explain the debt concept generally."
+        )
         return IntentAnswer(
-            summary="Debt can affect net worth because interest costs may slow progress toward other goals.",
+            summary=(
+                f"Debt can affect net worth because your liabilities are subtracted from assets. "
+                f"Based on {context.label}, tracked liabilities are ${context.total_liabilities:,.0f}."
+            ),
             beginner_explanation=(
                 "Based on the data provided, CrocLens compares debt with assets because wealth is what "
-                "you own minus what you owe. Higher-interest debt usually deserves extra attention."
+                f"you own minus what you owe. Your current debt-to-asset ratio is {context.debt_to_asset_percent}%."
+                f"{debt_focus}"
             ),
             suggested_next_steps=[
                 "Consider listing each debt balance, interest rate, minimum payment, and due date.",
@@ -167,7 +276,8 @@ def answer_for_intent(intent: AssistantIntent, question: str, beginner_mode: boo
             summary="Market moves matter most when they affect assets that are a meaningful share of your wealth.",
             beginner_explanation=(
                 "A big headline may not affect everyone the same way. CrocLens looks at what you own, "
-                "how large each position is, and whether the impact is short-term noise or long-term risk."
+                "how large each position is, and whether the impact is short-term noise or long-term risk. "
+                f"Your largest tracked areas are {', '.join(context.top_asset_classes) if context.top_asset_classes else 'not available yet'}."
             ),
             suggested_next_steps=[
                 "Consider checking which holdings are actually connected to the market event.",
@@ -178,10 +288,14 @@ def answer_for_intent(intent: AssistantIntent, question: str, beginner_mode: boo
 
     if intent == "risk":
         return IntentAnswer(
-            summary="Risk is not one number; it includes volatility, concentration, liquidity, debt, and taxes.",
+            summary=(
+                "Risk is not one number; it includes volatility, concentration, liquidity, debt, and taxes. "
+                f"Based on {context.label}, your tracked asset total is ${context.total_assets:,.0f}."
+            ),
             beginner_explanation=(
                 "For beginners, the most useful risk question is often: could this surprise force me to "
-                "change plans at a bad time?"
+                "change plans at a bad time? "
+                f"CrocLens is currently seeing {context.holdings_count} holdings across {len(context.top_asset_classes)} top asset groups."
             ),
             suggested_next_steps=[
                 "Consider reviewing your largest asset classes and whether one area dominates.",
@@ -192,7 +306,7 @@ def answer_for_intent(intent: AssistantIntent, question: str, beginner_mode: boo
 
     if intent == "education":
         return IntentAnswer(
-            summary="I can explain money concepts in plain language using your CrocLens sample context.",
+            summary=f"I can explain money concepts in plain language using {context.label}.",
             beginner_explanation=(
                 "A useful way to learn is to connect each concept to the dashboard: assets are what you own, "
                 "liabilities are what you owe, and net worth is the difference."
@@ -205,7 +319,10 @@ def answer_for_intent(intent: AssistantIntent, question: str, beginner_mode: boo
         )
 
     return IntentAnswer(
-        summary="Croc Guide can help explain this using your sample whole-wealth dashboard data.",
+        summary=(
+            f"Croc Guide can help explain this using {context.label}. "
+            f"Your tracked net worth is ${context.net_worth:,.0f}."
+        ),
         beginner_explanation=(
             "Based on the data provided, the biggest beginner-friendly idea is to compare risk, liquidity, "
             "debt, and diversification together instead of looking at one asset alone."
@@ -218,18 +335,19 @@ def answer_for_intent(intent: AssistantIntent, question: str, beginner_mode: boo
     )
 
 
-def answer_question(request: AssistantRequest) -> AssistantResponse:
+def answer_question(
+    request: AssistantRequest,
+    db: Session | None = None,
+    current_user: User | None = None,
+) -> AssistantResponse:
     question = normalize_question(request.question)
     intent = route_intent(question)
     safety = run_safety_check(question)
-    prompt_context = build_prompt_context(question, intent)
-    intent_answer = answer_for_intent(intent, question, request.beginner_mode)
+    context = build_assistant_context(db=db, current_user=current_user)
+    prompt_context = build_prompt_context(question, intent, context)
+    intent_answer = answer_for_intent(intent, question, request.beginner_mode, context)
 
-    limitations = [
-        "This response uses CrocLens sample data, not live financial accounts.",
-        "No live market data, tax lots, legal context, or account aggregation is connected yet.",
-        f"Question received: {question}",
-    ]
+    limitations = [*context.limitations, f"Question received: {question}"]
 
     if not safety.passed:
         limitations.insert(0, "The question included wording that CrocLens treats as unsafe for direct financial advice.")
@@ -241,7 +359,7 @@ def answer_question(request: AssistantRequest) -> AssistantResponse:
         suggested_next_steps=intent_answer.suggested_next_steps,
         confidence="medium",
         data_limitations=limitations,
-        sources=[MOCK_SOURCE],
+        sources=context.sources,
         safety=safety,
         agent_trace=build_agent_trace(
             intent=intent,

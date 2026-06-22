@@ -96,7 +96,7 @@ def test_assistant_reframes_unsafe_trading_question() -> None:
         "intent_router",
         "safety_compliance_guardrail",
     ]
-    assert body["prompt_context"]["prompt_version"].startswith("assistant_v1")
+    assert body["prompt_context"]["prompt_version"].startswith("assistant_v")
     assert "cannot tell you to buy or sell" in body["summary"].lower()
 
 
@@ -114,6 +114,50 @@ def test_assistant_detects_prompt_injection_language() -> None:
     assert body["intent"] == "safety"
     assert body["safety"]["passed"] is False
     assert "ignore previous instructions" in body["safety"]["flags"]
+
+
+def test_assistant_uses_authenticated_portfolio_context() -> None:
+    token = _signup_user(
+        email="assistant-owner@example.com",
+        manual_assets=[
+            {"asset_class": "Cash", "label": "Emergency savings", "estimated_value": 2500},
+        ],
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+
+    liability_response = client.post(
+        "/api/v1/portfolio/liabilities",
+        headers=headers,
+        json={
+            "name": "Credit card balance",
+            "liability_type": "Credit card",
+            "balance": 500,
+            "interest_rate": 0.199,
+            "minimum_payment": 25,
+            "due_day": 22,
+        },
+    )
+    assert liability_response.status_code == 200
+
+    response = client.post(
+        "/api/v1/ai/assistant",
+        headers=headers,
+        json={
+            "question": "How does debt affect my net worth?",
+            "beginner_mode": True,
+            "include_prompt_debug": True,
+        },
+    )
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["intent"] == "debt"
+    assert "tracked liabilities are $500" in body["summary"]
+    assert "20.0%" in body["beginner_explanation"]
+    assert body["sources"][0]["name"] == "CrocLens PostgreSQL portfolio records"
+    assert "manually entered" in body["data_limitations"][0]
+    assert "your persisted portfolio" in body["prompt_context"]["context_summary"]
+    assert "not financial advice" in body["safety_disclaimer"]
 
 
 def test_agent_registry_lists_expected_agents() -> None:

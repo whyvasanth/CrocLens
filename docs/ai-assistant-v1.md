@@ -4,7 +4,7 @@ Phase 9 adds the first API-backed Croc Guide assistant.
 
 ## Goal
 
-The assistant should answer beginner money questions safely using the CrocLens sample dashboard context.
+The assistant should answer beginner money questions safely. When a user is signed in, it uses that user's persisted PostgreSQL portfolio records. When no session is present, it falls back to CrocLens sample dashboard context.
 
 It does not call an external LLM yet.
 
@@ -12,11 +12,12 @@ It does not call an external LLM yet.
 
 ```text
 Croc Guide drawer
-  -> POST /api/v1/ai/assistant
-  -> FastAPI route
+  -> POST /api/backend/api/v1/ai/assistant
+  -> Next.js BFF forwards HttpOnly cookie session
+  -> FastAPI route with optional current user
   -> assistant service
   -> intent router
-  -> prompt context builder
+  -> portfolio context builder
   -> safety check
   -> structured response
 ```
@@ -42,6 +43,11 @@ Assistant v1 builds a prompt context with:
 - System safety rules
 - Portfolio context summary
 - User question
+
+Context sources:
+
+- Signed-in users: manually entered holdings and liabilities from PostgreSQL.
+- Demo visitors: CrocLens sample dashboard data.
 
 Later, this can become the input to an LLM.
 
