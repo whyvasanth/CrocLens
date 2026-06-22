@@ -26,7 +26,7 @@ export function DashboardShell() {
             <DashboardHeader
               description={
                 isSignedIn
-                  ? "Here is your PostgreSQL-backed wealth snapshot and beginner-friendly money update."
+                  ? "Here is your latest financial snapshot and beginner-friendly money update."
                   : "Here is a sample whole-wealth snapshot. Log in to see your own persisted portfolio records."
               }
               onAskClick={openGuide}

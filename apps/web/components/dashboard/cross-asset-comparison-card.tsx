@@ -45,7 +45,7 @@ export function CrossAssetComparisonCard({ assets, isLoading }: CrossAssetCompar
     <Card>
       <SectionTitle
         eyebrow="Cross-asset comparison"
-        title="API-backed tracked assets"
+        title="Tracked assets"
         action={<Link href="/portfolio" className="text-sm font-semibold text-croc-moss">View more</Link>}
       />
       <div className="mb-4 flex gap-6 border-b border-emerald-900/10 text-sm font-semibold text-stone-500">

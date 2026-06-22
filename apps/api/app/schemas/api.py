@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 ConfidenceLevel = Literal["low", "medium", "high"]
 TrendDirection = Literal["up", "down", "flat"]
-AssetDetailCategory = Literal["stock_etf", "crypto", "real_estate", "debt", "retirement"]
+AssetDetailCategory = Literal["stock_etf", "crypto", "real_estate", "debt", "retirement", "cash", "bond", "other"]
 AssistantIntent = Literal["portfolio", "debt", "retirement", "tax", "market", "risk", "education", "safety"]
 AgentRole = Literal[
     "intent_router",

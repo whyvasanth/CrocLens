@@ -55,6 +55,63 @@ def test_asset_detail_includes_beginner_fields_and_guardrails() -> None:
     assert "not financial advice" in body["educational_disclaimer"]
 
 
+def test_authenticated_asset_detail_uses_user_holding() -> None:
+    token = _signup_user(email="asset-detail-owner@example.com")
+    headers = {"Authorization": f"Bearer {token}"}
+    holding_response = client.post(
+        "/api/v1/portfolio/holdings",
+        headers=headers,
+        json={
+            "symbol": "VTI",
+            "name": "Total Stock Market ETF",
+            "asset_type": "ETFs",
+            "account_name": "Brokerage",
+            "quantity": 5,
+            "cost_basis": 1200,
+            "market_value": 1500,
+            "as_of_date": "2026-06-22",
+        },
+    )
+    holding_body = holding_response.json()
+
+    response = client.get(f"/api/v1/assets/{holding_body['id']}/detail", headers=headers)
+    body = response.json()
+
+    assert holding_response.status_code == 200
+    assert response.status_code == 200
+    assert body["id"] == holding_body["id"]
+    assert body["symbol"] == "VTI"
+    assert body["category"] == "stock_etf"
+    assert body["current_value"] == 1500
+    assert body["allocation_percent"] == 100
+    assert body["source"]["name"] == "CrocLens portfolio records"
+    assert "manually entered portfolio record" in body["data_limitations"][0]
+    assert "not financial advice" in body["educational_disclaimer"]
+
+
+def test_authenticated_asset_detail_is_user_isolated() -> None:
+    owner_token = _signup_user(email="asset-detail-record-owner@example.com")
+    other_token = _signup_user(email="asset-detail-record-other@example.com")
+    owner_headers = {"Authorization": f"Bearer {owner_token}"}
+    other_headers = {"Authorization": f"Bearer {other_token}"}
+    create_response = client.post(
+        "/api/v1/portfolio/holdings",
+        headers=owner_headers,
+        json={
+            "symbol": "CASH",
+            "name": "Owner cash",
+            "asset_type": "Cash",
+            "market_value": 1000,
+        },
+    )
+    holding_id = create_response.json()["id"]
+
+    response = client.get(f"/api/v1/assets/{holding_id}/detail", headers=other_headers)
+
+    assert create_response.status_code == 200
+    assert response.status_code == 404
+
+
 def test_assistant_response_includes_guardrail_fields() -> None:
     response = client.post(
         "/api/v1/ai/assistant",
@@ -154,7 +211,7 @@ def test_assistant_uses_authenticated_portfolio_context() -> None:
     assert body["intent"] == "debt"
     assert "tracked liabilities are $500" in body["summary"]
     assert "20.0%" in body["beginner_explanation"]
-    assert body["sources"][0]["name"] == "CrocLens PostgreSQL portfolio records"
+    assert body["sources"][0]["name"] == "CrocLens portfolio records"
     assert "manually entered" in body["data_limitations"][0]
     assert "your persisted portfolio" in body["prompt_context"]["context_summary"]
     assert "not financial advice" in body["safety_disclaimer"]
@@ -573,7 +630,7 @@ def test_portfolio_records_require_auth_and_use_signup_manual_assets() -> None:
     assert len(body["holdings"]) == 2
     assert body["summary"]["total_assets"] == 4000
     assert body["summary"]["net_worth"] == 4000
-    assert body["summary"]["sources"][0]["name"] == "CrocLens PostgreSQL portfolio records"
+    assert body["summary"]["sources"][0]["name"] == "CrocLens portfolio records"
 
 
 def test_authenticated_portfolio_crud_updates_summary() -> None:

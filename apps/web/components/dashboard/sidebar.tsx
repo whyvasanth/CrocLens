@@ -102,7 +102,7 @@ export function Sidebar({ account, isOpen, onClose }: SidebarProps) {
               <p className="text-sm font-semibold">Market is open</p>
             </div>
             <p className="mt-2 text-sm leading-6 text-emerald-50">
-              Sample data for Phase 1. Real market freshness arrives later.
+              Latest available dashboard data.
             </p>
           </div>
 

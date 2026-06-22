@@ -31,7 +31,10 @@ const categoryLabel: Record<AssetDetailCategory, string> = {
   crypto: "Crypto",
   real_estate: "Real estate",
   debt: "Debt / liability",
-  retirement: "Retirement"
+  retirement: "Retirement",
+  cash: "Cash",
+  bond: "Bond / Treasury",
+  other: "Other asset"
 };
 
 const categoryTone: Record<AssetDetailCategory, "green" | "gold" | "blue" | "coral" | "neutral"> = {
@@ -39,7 +42,10 @@ const categoryTone: Record<AssetDetailCategory, "green" | "gold" | "blue" | "cor
   crypto: "coral",
   real_estate: "blue",
   debt: "gold",
-  retirement: "green"
+  retirement: "green",
+  cash: "green",
+  bond: "blue",
+  other: "neutral"
 };
 
 const riskTone: Record<RiskLevel, "green" | "gold" | "coral"> = {
@@ -53,7 +59,10 @@ const categoryIcon = {
   crypto: Activity,
   real_estate: Building2,
   debt: Banknote,
-  retirement: Landmark
+  retirement: Landmark,
+  cash: Banknote,
+  bond: Landmark,
+  other: WalletCards
 };
 
 function LoadingDetail() {

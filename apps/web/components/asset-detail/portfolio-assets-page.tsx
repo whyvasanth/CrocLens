@@ -13,7 +13,8 @@ import {
   Plus,
   RefreshCcw,
   Save,
-  Trash2
+  Trash2,
+  WalletCards
 } from "lucide-react";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
@@ -48,7 +49,10 @@ const categoryLabel: Record<AssetDetailCategory, string> = {
   crypto: "Crypto",
   real_estate: "Real estate",
   debt: "Debt / liability",
-  retirement: "Retirement"
+  retirement: "Retirement",
+  cash: "Cash",
+  bond: "Bond / Treasury",
+  other: "Other asset"
 };
 
 const categoryIcon = {
@@ -56,7 +60,10 @@ const categoryIcon = {
   crypto: Activity,
   real_estate: Building2,
   debt: Banknote,
-  retirement: Landmark
+  retirement: Landmark,
+  cash: Banknote,
+  bond: Landmark,
+  other: WalletCards
 };
 
 const riskTone: Record<RiskLevel, "green" | "gold" | "coral"> = {
@@ -307,7 +314,7 @@ function PortfolioAssetsContent({
   return (
     <div className="mx-auto max-w-[1180px] space-y-5">
           <DashboardHeader
-            description="Track user-owned holdings and liabilities from PostgreSQL, then open beginner-friendly detail pages for context."
+            description="Track your holdings and liabilities, then open beginner-friendly detail pages for context."
             onAskClick={openGuide}
             onMenuClick={openSidebar}
             title="Portfolio"
@@ -330,7 +337,7 @@ function PortfolioAssetsContent({
 
           <Card>
             <SectionTitle
-              eyebrow="PostgreSQL portfolio"
+              eyebrow="Portfolio records"
               title="Your tracked wealth records"
               action={
                 <Pill tone={account ? "green" : "gold"}>
@@ -568,7 +575,7 @@ function SignedOutPortfolioPrompt() {
       <h2 className="text-base font-bold text-croc-ink">Sign in to track your own holdings and debts</h2>
       <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
         Demo visitors can still read the beginner asset guides below. Create an account or log in when you want
-        CrocLens to store portfolio records in PostgreSQL and calculate your personal net worth.
+        CrocLens to save portfolio records and calculate your personal net worth.
       </p>
       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
         <Link

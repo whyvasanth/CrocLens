@@ -95,7 +95,7 @@ def create_account(request: AccountCreateRequest, db: Session) -> AccountSession
         data_limitations=[
             "Local auth persists users and hashed passwords for development.",
             "Production still needs Cognito authorization-code flow with PKCE and server-managed secure cookies.",
-            "Manual assets from signup are stored as user-owned PostgreSQL holdings.",
+            "Manual assets from signup are stored as user-owned portfolio holdings.",
         ],
     )
 

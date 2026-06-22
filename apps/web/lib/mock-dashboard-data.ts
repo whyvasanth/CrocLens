@@ -233,7 +233,7 @@ export const retirementProgress = {
 
 export const sourceFreshness = {
   label: "Sample data",
-  detail: "Static mock dataset for Phase 1"
+  detail: "Static sample dataset"
 };
 
 export const portfolioSummary = {

@@ -54,7 +54,7 @@ export function PortfolioChart({ isLoading, portfolio }: PortfolioChartProps) {
         <>
           <div className="mb-2 flex flex-wrap items-end gap-3">
             <p className="text-4xl font-bold text-croc-ink">{formatCurrency(netWorth)}</p>
-            <Pill tone="green">API-backed</Pill>
+            <Pill tone="green">Saved records</Pill>
           </div>
           <p className="mb-4 text-sm font-semibold text-croc-moss">
             {formatCurrency(totalAssets)} assets minus {formatCurrency(totalLiabilities)} liabilities

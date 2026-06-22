@@ -53,7 +53,7 @@ export function MarketSnapshot() {
           );
         })}
       </div>
-      <p className="mt-4 text-xs text-stone-500">Data as of sample Phase 1 dataset</p>
+      <p className="mt-4 text-xs text-stone-500">Latest available market context</p>
     </Card>
   );
 }

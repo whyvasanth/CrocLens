@@ -11,7 +11,7 @@ from app.services.mock_data import (
     list_asset_detail_cards,
     list_assets,
 )
-from app.services.portfolio_service import list_user_assets
+from app.services.portfolio_service import get_user_asset_detail, list_user_assets
 
 router = APIRouter(prefix="/assets", tags=["assets"])
 
@@ -33,7 +33,16 @@ def read_asset_detail_cards() -> list[AssetDetailCard]:
 
 
 @router.get("/{asset_id}/detail", response_model=AssetDetailResponse)
-def read_asset_detail(asset_id: str) -> AssetDetailResponse:
+def read_asset_detail(
+    asset_id: str,
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_user),
+) -> AssetDetailResponse:
+    if current_user is not None:
+        user_detail = get_user_asset_detail(db, current_user, asset_id)
+        if user_detail is not None:
+            return user_detail
+
     detail = get_asset_detail_by_id(asset_id)
     if detail is None:
         raise HTTPException(

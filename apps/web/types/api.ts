@@ -1,6 +1,14 @@
 export type ConfidenceLevel = "low" | "medium" | "high";
 export type RiskLevel = "low" | "medium" | "high";
-export type AssetDetailCategory = "stock_etf" | "crypto" | "real_estate" | "debt" | "retirement";
+export type AssetDetailCategory =
+  | "stock_etf"
+  | "crypto"
+  | "real_estate"
+  | "debt"
+  | "retirement"
+  | "cash"
+  | "bond"
+  | "other";
 export type AssistantIntent = "portfolio" | "debt" | "retirement" | "tax" | "market" | "risk" | "education" | "safety";
 export type AgentRole =
   | "intent_router"
