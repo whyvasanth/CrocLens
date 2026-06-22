@@ -41,6 +41,21 @@ class Settings:
     rate_limit_per_minute: int = _getenv_int("RATE_LIMIT_PER_MINUTE", 300)
     demo_mode_enabled: bool = _getenv_bool("DEMO_MODE_ENABLED", True)
     log_level: str = _getenv("LOG_LEVEL", "INFO").upper()
+    market_provider_mode: str = _getenv("MARKET_PROVIDER_MODE", "foundation")
+    market_provider_timeout_seconds: int = _getenv_int("MARKET_PROVIDER_TIMEOUT_SECONDS", 10)
+    market_provider_retry_limit: int = _getenv_int("MARKET_PROVIDER_RETRY_LIMIT", 2)
+    market_provider_cache_ttl_seconds: int = _getenv_int(
+        "MARKET_PROVIDER_CACHE_TTL_SECONDS",
+        _getenv_int("MARKET_DATA_CACHE_SECONDS", 300),
+    )
+    market_provider_stale_after_seconds: int = _getenv_int("MARKET_PROVIDER_STALE_AFTER_SECONDS", 900)
+    market_provider_user_agent: str = _getenv("MARKET_PROVIDER_USER_AGENT", "CrocLens local development")
+    enable_yfinance_provider: bool = _getenv_bool("ENABLE_YFINANCE_PROVIDER", True)
+    enable_coingecko_provider: bool = _getenv_bool("ENABLE_COINGECKO_PROVIDER", True)
+    enable_fred_provider: bool = _getenv_bool("ENABLE_FRED_PROVIDER", True)
+    enable_treasury_provider: bool = _getenv_bool("ENABLE_TREASURY_PROVIDER", True)
+    enable_sec_provider: bool = _getenv_bool("ENABLE_SEC_PROVIDER", True)
+    sec_edgar_user_agent: str = _getenv("SEC_EDGAR_USER_AGENT")
     database_url: str = _getenv(
         "DATABASE_URL",
         "sqlite:///./croclens-local.db"

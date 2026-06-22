@@ -187,6 +187,19 @@ def test_data_pipeline_provider_registry_lists_sample_and_free_api() -> None:
     assert provider_ids == {"croclens_sample_market_file", "fred_macro", "treasury_fiscal_data", "fhfa_housing"}
 
 
+def test_data_provider_status_reports_provider_foundation() -> None:
+    response = client.get("/api/v1/data-providers/status")
+    body = response.json()
+    provider_names = {provider["provider_name"] for provider in body["providers"]}
+
+    assert response.status_code == 200
+    assert body["mode"] == "foundation"
+    assert {"yfinance", "coingecko", "fred", "treasury", "sec_edgar"}.issubset(provider_names)
+    assert all("capabilities" in provider for provider in body["providers"])
+    assert any(provider["provider_status"] == "not_configured" for provider in body["providers"])
+    assert "silently relabeled" in body["data_limitations"][1]
+
+
 def test_sample_market_ingestion_endpoint_returns_freshness_and_limitations() -> None:
     response = client.post("/api/v1/data-pipeline/market-data/sample-ingest")
     body = response.json()

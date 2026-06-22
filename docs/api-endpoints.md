@@ -47,6 +47,7 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/action-plans`
 - `POST /api/v1/ai/assistant`
 - `GET /api/v1/ai/agents`
+- `GET /api/v1/data-providers/status`
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
@@ -305,6 +306,7 @@ Phase 9 intent examples:
 ### Data Pipeline
 
 ```http
+GET /api/v1/data-providers/status
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
@@ -312,9 +314,12 @@ GET /api/v1/data-pipeline/market-data/latest
 
 Purpose:
 
+- Report normalized provider readiness for yfinance, CoinGecko, FRED public CSV, Treasury/Fiscal Data, and SEC EDGAR.
 - List planned and implemented data providers.
 - Run the deterministic sample market data ingestion pipeline.
 - Return latest normalized sample market observations.
+
+The provider status endpoint does not fetch live data in Phase 21A. It exposes configuration, capabilities, cache TTL, stale threshold, provider status, and data limitations so later market endpoints can depend on a clean provider contract.
 
 The sample ingestion response includes:
 

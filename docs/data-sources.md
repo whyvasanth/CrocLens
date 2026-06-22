@@ -62,18 +62,58 @@ Candidate sources:
 
 | Source | Use | Notes |
 | --- | --- | --- |
+| yfinance | Stocks, ETFs, indexes, historical prices, dividends, splits | No API key, unofficial Yahoo Finance wrapper, prototype/MVP only |
+| CoinGecko public endpoints | Common crypto price context | No-key public endpoint path only, rate limited |
 | SEC EDGAR | Company filings | Free, official, filing-focused |
-| FRED | Macroeconomic data | Free API key, strong macro coverage |
+| FRED public CSV | Macroeconomic data | No-key public CSV endpoints where available; observations may be revised |
 | Treasury/Fiscal Data | Treasury rates and public debt data | Free government source |
 | FHFA | Housing price index data | Useful for real estate context |
-| OpenFIGI | Symbol and security mapping | Free tier, useful for identifiers |
+| OpenFIGI | Symbol and security mapping | Optional only if no-cost access and terms fit the MVP |
 
 Current free-only policy:
 
 - Use local sample files first.
-- Prefer official public/government sources when real ingestion starts.
+- yfinance is the first stock/ETF/index MVP provider, but it must be labeled unofficial, delayed or incomplete, and educational only.
+- Prefer official public/government sources for filings, macro, Treasury, and housing context.
+- CoinGecko public no-key endpoints may be used only with rate-limit-aware caching and clear unavailability states.
 - Do not add ambiguous freemium or paid market data providers to the MVP.
-- Keep crypto prices sample/manual until a verified no-cost source is selected.
+
+## Phase 21A Provider Foundation
+
+Phase 21A adds a provider registry at:
+
+```http
+GET /api/v1/data-providers/status
+```
+
+The registry reports provider readiness, configuration, cache/stale settings, capabilities, and limitations for:
+
+- `yfinance`
+- `coingecko`
+- `fred`
+- `treasury`
+- `sec_edgar`
+
+This phase does not fetch live market data yet. It creates the contract that later phases will use.
+
+Provider responses must eventually include:
+
+- `provider_name`
+- `provider_status`
+- `data_as_of`
+- `retrieved_at`
+- `is_stale`
+- `is_sample_data`
+- `data_quality`
+- `confidence`
+- `source_url`
+- `data_limitations`
+- normalized error details when unavailable
+
+Important rule:
+
+- Provider failure must return cached/stale or unavailable data honestly.
+- CrocLens must never silently relabel failed live provider data as sample data or fresh data.
 
 ### Stage 4: Disallowed For MVP
 

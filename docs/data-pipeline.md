@@ -104,9 +104,34 @@ Each market observation includes:
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
+GET /api/v1/data-providers/status
 ```
 
-Crypto market data remains sample-only until we choose a verified no-cost source with acceptable terms.
+Phase 21A adds the normalized provider foundation. It reports yfinance, CoinGecko, FRED public CSV, Treasury/Fiscal Data, and SEC EDGAR readiness without making live network calls from tests.
+
+Crypto market data remains sample-only in the dashboard until the CoinGecko provider is implemented with no-key public endpoints, rate-limit-aware caching, and honest unavailable/stale states.
+
+## Provider Foundation
+
+New package:
+
+```text
+apps/api/app/providers/
+```
+
+Key files:
+
+- `models.py`: normalized quote, history, profile, filing, economic observation, and provider status models.
+- `exceptions.py`: typed provider failures such as timeout, rate limit, invalid symbol, malformed response, and unavailable provider.
+- `base.py`: shared provider runtime config, capability declarations, status reporting, and safe `asyncio.to_thread` helper for synchronous libraries.
+- `registry.py`: capability routing and provider status aggregation.
+
+Why this matters:
+
+- FastAPI routes should not import vendor clients directly.
+- Provider failures need normalized metadata.
+- Later stale-cache behavior needs a consistent result shape before persistence is added.
+- Tests can mock the registry without relying on internet access.
 
 ## Production Upgrade Path
 

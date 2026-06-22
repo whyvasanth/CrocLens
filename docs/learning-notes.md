@@ -554,3 +554,22 @@ Practice idea:
 Follow-up lesson:
 
 - Pages that support both demo visitors and signed-in users should branch on account state before calling protected APIs. This avoids noisy 401 failures and makes the UI explain what the user can do next.
+
+## Phase 21A: Market Provider Foundation
+
+What we learned:
+
+- A provider registry keeps FastAPI routes from depending directly on vendor clients.
+- Capability routing lets CrocLens ask for quote, history, filings, or macro data without assuming every provider supports every operation.
+- Provider status metadata is product safety: users need to know whether data is live, delayed, stale, sample, unavailable, or not configured.
+- Network-dependent provider tests should use mocks or status contracts, not live internet.
+
+Key terms:
+
+- Provider adapter: a small layer that converts one vendor's response into CrocLens' internal model.
+- Capability: an operation a provider supports, such as quote, history, crypto price, macro series, or SEC filings.
+- Stale threshold: how old cached data can be before CrocLens warns the user.
+
+Practice idea:
+
+- Add a fake in-memory provider in a test and verify the registry can route a quote capability to it.

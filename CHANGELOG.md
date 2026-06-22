@@ -74,6 +74,7 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Grounded Croc Guide assistant responses in authenticated PostgreSQL portfolio holdings and liabilities while preserving sample-mode fallback and financial safety guardrails.
 - Added inline edit/save flows for persisted Portfolio holdings and liabilities, with backend update coverage and frontend smoke-test checks.
 - Fixed the Portfolio page demo state so logged-out visitors no longer trigger protected record fetches or stale add-handler runtime errors.
+- Added Phase 21A normalized market provider foundation with provider contracts, status endpoint, capability routing, free-first provider registry, tests, and data-source documentation.
 
 ### Notes
 
