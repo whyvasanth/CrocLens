@@ -24,6 +24,7 @@ from app.schemas.api import (
     SourceMetadata,
 )
 from app.services.onboarding_service import create_onboarding_profile
+from app.services.portfolio_service import create_manual_asset_holdings_for_user
 
 LOCAL_SESSION_MINUTES = 60
 
@@ -84,6 +85,8 @@ def create_account(request: AccountCreateRequest, db: Session) -> AccountSession
             detail="An account with this email already exists.",
         ) from exc
 
+    create_manual_asset_holdings_for_user(db, user, request.onboarding_profile.manual_assets)
+
     return _build_session_response(
         db=db,
         user=user,
@@ -92,7 +95,7 @@ def create_account(request: AccountCreateRequest, db: Session) -> AccountSession
         data_limitations=[
             "Local auth persists users and hashed passwords for development.",
             "Production still needs Cognito authorization-code flow with PKCE and server-managed secure cookies.",
-            "Financial data entry and portfolio CRUD are implemented in the next slice.",
+            "Manual assets from signup are stored as user-owned PostgreSQL holdings.",
         ],
     )
 

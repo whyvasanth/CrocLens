@@ -49,11 +49,14 @@ CrocLens should eventually support:
 
 MVP:
 
-- Use local mock account creation and login endpoints only.
+- Use local persisted account creation and login endpoints for development only.
 - Collect onboarding profile data during account creation.
 - Redirect the old `/onboarding` page to `/signup` so onboarding is not a separate product surface.
 - Do not store real secrets or real financial credentials.
-- Do not claim mock sessions are production authentication.
+- Store bcrypt password hashes, never plaintext passwords.
+- Store local session records with expiration and revocation.
+- Keep the browser session token in an HttpOnly cookie managed by the Next.js BFF.
+- Do not claim local auth is production authentication.
 
 Later:
 
@@ -70,13 +73,22 @@ Current MVP auth endpoints:
 ```http
 POST /api/v1/auth/signup
 POST /api/v1/auth/login
+GET /api/v1/auth/me
+POST /api/v1/auth/logout
 ```
 
 Current limitation:
 
-- Signup and login return mock sessions only.
-- Passwords are accepted to model request contracts but are not persisted.
-- Production auth must be implemented before real users or real financial data.
+- Local sessions are development-only.
+- Production auth still needs Cognito or another mature provider with verified email, password reset, abuse controls, and JWT validation.
+- Local development portfolio records are suitable for learning and testing, not real financial data.
+
+Frontend BFF behavior:
+
+- Browser code calls same-origin routes such as `/api/auth/login` and `/api/backend/api/v1/portfolio/records`.
+- The BFF reads the `croclens_session` HttpOnly cookie server-side.
+- The BFF forwards the token to FastAPI as a bearer token.
+- Browser JavaScript cannot read the raw token.
 
 ## Secret Management
 

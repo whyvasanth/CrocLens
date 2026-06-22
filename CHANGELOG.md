@@ -67,12 +67,15 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added mock signup/login endpoints and frontend pages.
 - Moved onboarding collection into account creation and redirected the old onboarding route to signup.
 - Removed Croc Guide's background blur so dashboard content remains visible while chatting.
+- Added a Next.js BFF proxy for `/api/v1` calls so HttpOnly cookie sessions can authenticate backend data requests.
+- Added PostgreSQL-backed authenticated portfolio records for manual holdings and liabilities.
+- Added portfolio CRUD endpoints, user ownership checks, persisted signup manual assets, seeded test portfolio records, frontend Portfolio add/delete workflows, tests, and documentation.
 
 ### Notes
 
-- The backend uses static mock data only.
-- Database persistence is not implemented yet.
-- A live PostgreSQL database is not required yet; Phase 4 defines the schema and migration foundation.
+- Some backend areas still use static mock data, but auth and portfolio holdings/liabilities now use PostgreSQL in local Docker.
+- Database persistence is implemented for local users, sessions, portfolios, holdings, and liabilities.
+- Local Docker PostgreSQL is the active runtime database; tests may still use SQLite for speed.
 - Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
 - Phase 6 scores are educational heuristics and are intentionally simple for auditability.
 - Phase 7 detail pages use static sample data and educational explanations, not personalized advice.

@@ -2,9 +2,7 @@
 
 ## Current Status
 
-Phase 19 extends the FastAPI backend with an evaluation metrics endpoint for product quality, AI safety, data freshness, and reliability.
-
-Latest product refinement adds mock account endpoints so signup can collect onboarding profile data during account creation.
+The current MVP has FastAPI REST endpoints, local persisted authentication, a Next.js BFF proxy, and PostgreSQL-backed portfolio holdings/liabilities for authenticated users.
 
 The backend lives in:
 
@@ -30,6 +28,15 @@ GraphQL is not needed for the MVP.
 Phase 5 frontend integration currently uses:
 
 - `GET /api/v1/portfolio/summary`
+- `GET /api/v1/portfolio/records`
+- `GET /api/v1/portfolio/holdings`
+- `POST /api/v1/portfolio/holdings`
+- `PUT /api/v1/portfolio/holdings/{holding_id}`
+- `DELETE /api/v1/portfolio/holdings/{holding_id}`
+- `GET /api/v1/portfolio/liabilities`
+- `POST /api/v1/portfolio/liabilities`
+- `PUT /api/v1/portfolio/liabilities/{liability_id}`
+- `DELETE /api/v1/portfolio/liabilities/{liability_id}`
 - `GET /api/v1/assets`
 - `GET /api/v1/assets/detail-cards`
 - `GET /api/v1/assets/{asset_id}/detail`
@@ -57,16 +64,16 @@ Phase 5 frontend integration currently uses:
 - `DELETE /api/v1/privacy/data`
 - `GET /api/v1/evaluation/metrics`
 
-The frontend API base URL defaults to:
+Browser-facing frontend requests use a same-origin BFF proxy:
 
 ```text
-http://127.0.0.1:8000
+/api/backend/api/v1/...
 ```
 
-It can be overridden with:
+The BFF reads the HttpOnly `croclens_session` cookie and forwards it to FastAPI as a bearer token. The backend target can be overridden with:
 
 ```text
-NEXT_PUBLIC_CROCLENS_API_URL
+CROCLENS_API_URL
 ```
 
 ### Health
@@ -88,6 +95,8 @@ GET /api/v1/portfolio/summary
 Purpose:
 
 - Return net worth, total assets, liabilities, allocation, and score summaries.
+- Return PostgreSQL-backed user data when a valid session is present.
+- Return sample data for unauthenticated demo access.
 
 Phase 6 adds calculated fields:
 
@@ -104,6 +113,34 @@ Each score includes:
 - `value`
 - `explanation`
 - `formula`
+
+### Portfolio Records
+
+```http
+GET /api/v1/portfolio/records
+GET /api/v1/portfolio/holdings
+POST /api/v1/portfolio/holdings
+PUT /api/v1/portfolio/holdings/{holding_id}
+DELETE /api/v1/portfolio/holdings/{holding_id}
+GET /api/v1/portfolio/liabilities
+POST /api/v1/portfolio/liabilities
+PUT /api/v1/portfolio/liabilities/{liability_id}
+DELETE /api/v1/portfolio/liabilities/{liability_id}
+```
+
+Purpose:
+
+- Store and retrieve user-owned holdings and liabilities.
+- Recalculate total assets, liabilities, allocation, debt impact, and cross-asset scores from persisted records.
+- Return `401` when no valid session is provided.
+- Return `404` when a user attempts to access another user's record.
+
+Current scope:
+
+- Manual entry first.
+- No live brokerage connection.
+- No direct trading instructions.
+- Source metadata labels records as user-entered local development data.
 
 ### Assets
 
@@ -190,7 +227,9 @@ Purpose:
 
 - Model account creation and login without adding a paid auth provider.
 - Collect onboarding profile data during signup.
-- Return a mock session token and security limitations.
+- Return a local development session token to the Next.js BFF.
+- Store the browser session in an HttpOnly cookie from the frontend route handlers.
+- Keep the raw session token out of browser JavaScript.
 
 Signup request includes:
 
@@ -201,7 +240,7 @@ Signup request includes:
 
 Important limitation:
 
-- These are MVP mock endpoints. Production auth must hash passwords, persist users, verify email, protect sessions, add recovery flows, and apply rate limits.
+- Local auth is for development. Production auth should use Cognito or another mature provider with verified email, password reset, JWT validation, session expiration, and abuse controls.
 
 ### Action Plans
 

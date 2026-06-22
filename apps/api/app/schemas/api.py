@@ -98,6 +98,99 @@ class PortfolioSummaryResponse(BaseModel):
     educational_disclaimer: str
 
 
+AssetTypeInput = Literal[
+    "Stocks",
+    "ETFs",
+    "Mutual Funds",
+    "Crypto",
+    "Real Estate",
+    "Cash",
+    "Bonds",
+    "Treasuries",
+    "Retirement",
+    "Other",
+]
+LiabilityTypeInput = Literal["Mortgage", "Student loan", "Credit card", "Auto loan", "Personal loan", "Other"]
+
+
+class HoldingCreateRequest(BaseModel):
+    symbol: str = Field(min_length=1, max_length=40)
+    name: str = Field(min_length=2, max_length=255)
+    asset_type: AssetTypeInput
+    account_name: str | None = Field(default=None, max_length=120)
+    quantity: float = Field(default=0, ge=0)
+    cost_basis: float | None = Field(default=None, ge=0)
+    market_value: float = Field(ge=0)
+    as_of_date: str | None = None
+
+
+class HoldingUpdateRequest(BaseModel):
+    symbol: str | None = Field(default=None, min_length=1, max_length=40)
+    name: str | None = Field(default=None, min_length=2, max_length=255)
+    asset_type: AssetTypeInput | None = None
+    account_name: str | None = Field(default=None, max_length=120)
+    quantity: float | None = Field(default=None, ge=0)
+    cost_basis: float | None = Field(default=None, ge=0)
+    market_value: float | None = Field(default=None, ge=0)
+    as_of_date: str | None = None
+
+
+class HoldingResponse(BaseModel):
+    id: str
+    portfolio_id: str
+    asset_id: str
+    symbol: str
+    name: str
+    asset_type: str
+    account_name: str | None
+    quantity: float
+    cost_basis: float | None
+    market_value: float
+    allocation_percent: float = Field(ge=0, le=100)
+    as_of_date: str | None
+    source: SourceMetadata
+
+
+class LiabilityCreateRequest(BaseModel):
+    name: str = Field(min_length=2, max_length=160)
+    liability_type: LiabilityTypeInput
+    balance: float = Field(ge=0)
+    interest_rate: float | None = Field(default=None, ge=0, le=1)
+    minimum_payment: float | None = Field(default=None, ge=0)
+    due_day: int | None = Field(default=None, ge=1, le=31)
+
+
+class LiabilityUpdateRequest(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=160)
+    liability_type: LiabilityTypeInput | None = None
+    balance: float | None = Field(default=None, ge=0)
+    interest_rate: float | None = Field(default=None, ge=0, le=1)
+    minimum_payment: float | None = Field(default=None, ge=0)
+    due_day: int | None = Field(default=None, ge=1, le=31)
+
+
+class LiabilityResponse(BaseModel):
+    id: str
+    name: str
+    liability_type: str
+    balance: float
+    interest_rate: float | None
+    minimum_payment: float | None
+    due_day: int | None
+    source: SourceMetadata
+
+
+class PortfolioRecordsResponse(BaseModel):
+    holdings: list[HoldingResponse]
+    liabilities: list[LiabilityResponse]
+    summary: PortfolioSummaryResponse
+
+
+class DeleteRecordResponse(BaseModel):
+    status: Literal["deleted"]
+    id: str
+
+
 class AssetResponse(BaseModel):
     id: str
     symbol: str

@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Phase 4 implements the first database schema foundation.
+Phase 4 implemented the first database schema foundation. The production-MVP slices now use the schema for local persisted auth and user-owned portfolio holdings/liabilities.
 
 Implemented files:
 
@@ -12,7 +12,7 @@ Implemented files:
 - `apps/api/alembic.ini`
 - `apps/api/alembic/versions/20260505_0001_initial_schema.py`
 
-No live PostgreSQL instance is required yet. The schema and migration are ready for a future PostgreSQL database.
+Local Docker now runs PostgreSQL for development. Backend tests may still use SQLite for speed, but Alembic migrations and Docker are the source of truth for runtime behavior.
 
 ## Database Goal
 
@@ -70,6 +70,13 @@ Examples:
 - Cash amount
 - Bond face value
 
+Current implementation:
+
+- `POST /api/v1/portfolio/holdings` creates manual holdings for the authenticated user.
+- Signup manual assets are persisted as holdings.
+- Portfolio summary calculations aggregate holdings by asset type.
+- Ownership is enforced through `portfolios.user_id`.
+
 ### liabilities
 
 Stores what the user owes.
@@ -80,6 +87,12 @@ Examples:
 - Student loan
 - Credit card debt
 - Personal loan
+
+Current implementation:
+
+- `POST /api/v1/portfolio/liabilities` creates manual debts for the authenticated user.
+- Liabilities reduce net worth in `/api/v1/portfolio/summary`.
+- Ownership is enforced through `liabilities.user_id`.
 
 ### real_estate_properties
 
@@ -280,3 +293,24 @@ alembic -c apps/api/alembic.ini upgrade head
 The Phase 4 model uses string UUID-style primary keys for MVP portability.
 
 Production PostgreSQL could later use native `UUID` columns. That is a good improvement once the local development database setup is stable.
+
+## Runtime Persistence Notes
+
+The Next.js frontend does not read the local auth token directly. It calls `/api/backend/api/v1/...`, and the BFF route forwards the HttpOnly cookie token to FastAPI. That lets authenticated portfolio endpoints use PostgreSQL without exposing session tokens to browser JavaScript.
+
+Current persisted areas:
+
+- Local users and bcrypt password hashes.
+- Local auth sessions.
+- Default user portfolios.
+- Manual holdings.
+- Manual liabilities.
+
+Still sample-backed:
+
+- Market prices and chart history.
+- Tax lots.
+- Retirement plans.
+- Market news.
+- Watchlist intelligence.
+- Decision journal entries.

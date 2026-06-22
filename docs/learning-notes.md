@@ -468,3 +468,25 @@ Key terms:
 Practice idea:
 
 - Add a `docker compose config` check to your local pre-push routine and explain what it validates.
+
+## Production MVP Slice: BFF Portfolio Persistence
+
+What we learned:
+
+- Moving auth tokens into HttpOnly cookies improves browser security, but it changes how frontend API calls work.
+- A BFF route lets Next.js read the secure cookie server-side and forward the session token to FastAPI without exposing it to browser JavaScript.
+- User-owned financial records need ownership checks at the database query level, not only in frontend state.
+- Portfolio summaries should be calculated from persisted holdings and liabilities when the user is authenticated, while unauthenticated demo views can still use sample data.
+- Signup manual assets are more useful when they become real holdings instead of disappearing after onboarding.
+
+Key terms:
+
+- BFF: backend for frontend, a server-side layer tailored to the frontend app.
+- HttpOnly cookie: a browser cookie JavaScript cannot read.
+- Ownership check: a query condition that proves a record belongs to the current user.
+- Repository/service boundary: keeping database rules out of route handlers.
+- User-entered data: data manually provided by the user, with freshness and limitations clearly labeled.
+
+Practice idea:
+
+- Add edit support for holdings and liabilities in the Portfolio page using the existing `PUT` endpoints.

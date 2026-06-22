@@ -1,5 +1,9 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
+from app.api.dependencies import get_optional_user
+from app.db.session import get_db
+from app.models import User
 from app.schemas.api import AssetDetailCard, AssetDetailResponse, AssetResponse
 from app.services.mock_data import (
     get_asset_by_id,
@@ -7,12 +11,19 @@ from app.services.mock_data import (
     list_asset_detail_cards,
     list_assets,
 )
+from app.services.portfolio_service import list_user_assets
 
 router = APIRouter(prefix="/assets", tags=["assets"])
 
 
 @router.get("", response_model=list[AssetResponse])
-def read_assets() -> list[AssetResponse]:
+def read_assets(
+    db: Session = Depends(get_db),
+    current_user: User | None = Depends(get_optional_user),
+) -> list[AssetResponse]:
+    if current_user is not None:
+        return list_user_assets(db, current_user)
+
     return list_assets()
 
 

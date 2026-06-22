@@ -497,6 +497,103 @@ def test_auth_me_requires_and_accepts_session_token() -> None:
     assert body["email"] == "taylor@example.com"
 
 
+def test_portfolio_records_require_auth_and_use_signup_manual_assets() -> None:
+    missing_response = client.get("/api/v1/portfolio/records")
+    assert missing_response.status_code == 401
+
+    token = _signup_user(
+        email="portfolio-owner@example.com",
+        manual_assets=[
+            {"asset_class": "Cash", "label": "Emergency savings", "estimated_value": 2500},
+            {"asset_class": "ETFs", "label": "Starter ETF", "estimated_value": 1500},
+        ],
+    )
+
+    response = client.get("/api/v1/portfolio/records", headers={"Authorization": f"Bearer {token}"})
+    body = response.json()
+
+    assert response.status_code == 200
+    assert len(body["holdings"]) == 2
+    assert body["summary"]["total_assets"] == 4000
+    assert body["summary"]["net_worth"] == 4000
+    assert body["summary"]["sources"][0]["name"] == "CrocLens PostgreSQL portfolio records"
+
+
+def test_authenticated_portfolio_crud_updates_summary() -> None:
+    token = _signup_user(email="crud-owner@example.com")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    holding_response = client.post(
+        "/api/v1/portfolio/holdings",
+        headers=headers,
+        json={
+            "symbol": "vti",
+            "name": "Total Stock Market ETF",
+            "asset_type": "ETFs",
+            "account_name": "Brokerage",
+            "quantity": 2,
+            "cost_basis": 450,
+            "market_value": 500,
+            "as_of_date": "2026-06-22",
+        },
+    )
+    holding_body = holding_response.json()
+
+    liability_response = client.post(
+        "/api/v1/portfolio/liabilities",
+        headers=headers,
+        json={
+            "name": "Credit card balance",
+            "liability_type": "Credit card",
+            "balance": 125,
+            "interest_rate": 0.199,
+            "minimum_payment": 35,
+            "due_day": 22,
+        },
+    )
+
+    summary_response = client.get("/api/v1/portfolio/summary", headers=headers)
+    summary_body = summary_response.json()
+
+    assert holding_response.status_code == 200
+    assert holding_body["symbol"] == "VTI"
+    assert liability_response.status_code == 200
+    assert summary_response.status_code == 200
+    assert summary_body["total_assets"] == 500
+    assert summary_body["total_liabilities"] == 125
+    assert summary_body["net_worth"] == 375
+
+    delete_response = client.delete(f"/api/v1/portfolio/holdings/{holding_body['id']}", headers=headers)
+    assert delete_response.status_code == 200
+    assert delete_response.json()["status"] == "deleted"
+
+
+def test_portfolio_records_are_user_isolated() -> None:
+    owner_token = _signup_user(email="record-owner@example.com")
+    other_token = _signup_user(email="record-other@example.com")
+    owner_headers = {"Authorization": f"Bearer {owner_token}"}
+    other_headers = {"Authorization": f"Bearer {other_token}"}
+
+    create_response = client.post(
+        "/api/v1/portfolio/holdings",
+        headers=owner_headers,
+        json={
+            "symbol": "CASH",
+            "name": "Owner cash",
+            "asset_type": "Cash",
+            "market_value": 1000,
+        },
+    )
+    holding_id = create_response.json()["id"]
+
+    forbidden_delete = client.delete(f"/api/v1/portfolio/holdings/{holding_id}", headers=other_headers)
+    other_records = client.get("/api/v1/portfolio/records", headers=other_headers).json()
+
+    assert create_response.status_code == 200
+    assert forbidden_delete.status_code == 404
+    assert other_records["holdings"] == []
+
+
 def test_logout_invalidates_local_session() -> None:
     signup_response = client.post(
         "/api/v1/auth/signup",
@@ -567,3 +664,33 @@ def test_onboarding_profile_returns_risk_profile_and_guardrails() -> None:
     assert body["confidence"] == "medium"
     assert body["data_limitations"]
     assert "not financial advice" in body["educational_disclaimer"]
+
+
+def _signup_user(email: str, manual_assets: list[dict] | None = None) -> str:
+    response = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "display_name": "Portfolio Test User",
+            "email": email,
+            "password": "sample-pass-123",
+            "onboarding_profile": {
+                "investment_experience": "new",
+                "primary_goal": "learn",
+                "risk_tolerance": "medium",
+                "time_horizon": "medium",
+                "income_range": "prefer_not",
+                "emergency_cash_months": 3,
+                "has_retirement_account": False,
+                "employer_match": "not_applicable",
+                "retirement_contribution_percent": 0,
+                "has_mortgage": False,
+                "has_student_loans": False,
+                "has_credit_card_debt": False,
+                "has_high_interest_debt": False,
+                "manual_assets": manual_assets or [],
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    return response.json()["session_token"]

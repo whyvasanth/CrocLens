@@ -15,12 +15,18 @@ import type {
   DecisionJournalCreateRequest,
   DecisionJournalEntryResponse,
   DecisionJournalResponse,
+  DeleteRecordResponse,
   EvaluationMetricsResponse,
+  HoldingCreateRequest,
+  HoldingResponse,
+  LiabilityCreateRequest,
+  LiabilityResponse,
   LogoutResponse,
   MarketNewsImpactResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
   OnboardingProfileResponse,
+  PortfolioRecordsResponse,
   PortfolioSummaryResponse,
   PrivacySettingsRequest,
   PrivacySettingsResponse,
@@ -38,7 +44,15 @@ const API_BASE_URL =
   "http://localhost:8000";
 
 function buildRequestUrl(path: string) {
-  return path.startsWith("/api/auth") ? path : `${API_BASE_URL}${path}`;
+  if (path.startsWith("/api/auth")) {
+    return path;
+  }
+
+  if (path.startsWith("/api/v1")) {
+    return `/api/backend${path}`;
+  }
+
+  return `${API_BASE_URL}${path}`;
 }
 
 async function requestJson<T>(path: string, signal?: AbortSignal): Promise<T> {
@@ -80,6 +94,26 @@ export function getApiBaseUrl() {
 
 export function getPortfolioSummary(signal?: AbortSignal) {
   return requestJson<PortfolioSummaryResponse>("/api/v1/portfolio/summary", signal);
+}
+
+export function getPortfolioRecords(signal?: AbortSignal) {
+  return requestJson<PortfolioRecordsResponse>("/api/v1/portfolio/records", signal);
+}
+
+export function createHolding(request: HoldingCreateRequest, signal?: AbortSignal) {
+  return postJson<HoldingResponse, HoldingCreateRequest>("/api/v1/portfolio/holdings", request, signal);
+}
+
+export function deleteHolding(holdingId: string, signal?: AbortSignal) {
+  return deleteJson<DeleteRecordResponse>(`/api/v1/portfolio/holdings/${holdingId}`, signal);
+}
+
+export function createLiability(request: LiabilityCreateRequest, signal?: AbortSignal) {
+  return postJson<LiabilityResponse, LiabilityCreateRequest>("/api/v1/portfolio/liabilities", request, signal);
+}
+
+export function deleteLiability(liabilityId: string, signal?: AbortSignal) {
+  return deleteJson<DeleteRecordResponse>(`/api/v1/portfolio/liabilities/${liabilityId}`, signal);
 }
 
 export function getAssets(signal?: AbortSignal) {
@@ -131,7 +165,7 @@ export function getAgentRegistry(signal?: AbortSignal) {
 }
 
 async function putJson<TResponse, TRequest>(path: string, body: TRequest, signal?: AbortSignal): Promise<TResponse> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(buildRequestUrl(path), {
     body: JSON.stringify(body),
     headers: {
       Accept: "application/json",
@@ -149,7 +183,7 @@ async function putJson<TResponse, TRequest>(path: string, body: TRequest, signal
 }
 
 async function deleteJson<TResponse>(path: string, signal?: AbortSignal): Promise<TResponse> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(buildRequestUrl(path), {
     headers: {
       Accept: "application/json"
     },

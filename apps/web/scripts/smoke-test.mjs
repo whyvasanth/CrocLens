@@ -20,6 +20,7 @@ const requiredRoutes = [
   "apps/web/app/api/auth/logout/route.ts",
   "apps/web/app/api/auth/me/route.ts",
   "apps/web/app/api/auth/signup/route.ts",
+  "apps/web/app/api/backend/[...path]/route.ts",
   "apps/web/app/login/page.tsx",
   "apps/web/app/signup/page.tsx",
   "apps/web/app/dashboard/page.tsx",
@@ -55,6 +56,9 @@ const requiredEndpoints = [
   "/api/auth/logout",
   "/api/auth/me",
   "/api/v1/portfolio/summary",
+  "/api/v1/portfolio/records",
+  "/api/v1/portfolio/holdings",
+  "/api/v1/portfolio/liabilities",
   "/api/v1/market-news/impact-summary",
   "/api/v1/tax/insights",
   "/api/v1/retirement/plan",
@@ -86,6 +90,9 @@ assert.doesNotMatch(authPage, /localStorage/, "Auth page should not store sessio
 
 const authSharedRoute = read("apps/web/app/api/auth/_shared.ts");
 assert.match(authSharedRoute, /httpOnly:\s*true/, "BFF auth route should store the session in an HttpOnly cookie");
+
+const backendProxyRoute = read("apps/web/app/api/backend/[...path]/route.ts");
+assert.match(backendProxyRoute, /Authorization: `Bearer \$\{token\}`/, "BFF backend proxy should forward the HttpOnly session token server-side");
 
 const sidebarData = read("apps/web/lib/mock-dashboard-data.ts");
 assert.doesNotMatch(sidebarData, /label:\s*"Onboarding"/, "Onboarding should not be a separate primary nav item");

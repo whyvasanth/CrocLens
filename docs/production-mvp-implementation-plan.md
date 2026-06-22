@@ -130,11 +130,11 @@ Avoid by default: NAT Gateway, RDS provisioning, Application Load Balancer, Open
 3. Add local persisted authentication with password hashing, session validation, and auth dependencies.
 4. Add database migrations for auth fields and session metadata.
 5. Replace mock account endpoints with local-auth services while preserving future Cognito interfaces.
-6. Add protected `/me` and portfolio routes.
-7. Implement holdings/liabilities CRUD with repositories and ownership checks.
+6. Add protected `/me` and portfolio routes. Completed for local auth and PostgreSQL portfolio records.
+7. Implement holdings/liabilities CRUD with repositories and ownership checks. Completed for manual holdings and liabilities.
 8. Implement yfinance market-data provider, cache, validation, and normalized metadata.
 9. Calculate authenticated user portfolio summary from persisted data.
-10. Update dashboard to use authenticated user state, empty states, and mutation dialogs.
+10. Update dashboard to use authenticated user state, empty states, and mutation dialogs. Partially complete through BFF-backed Portfolio page CRUD; dashboard header and full empty-state polish remain.
 11. Add read-only public landing page and explicit recruiter demo mode.
 12. Ground Croc Guide in authenticated portfolio calculations with safety fields.
 13. Replace frontend smoke checks with Vitest/RTL and add Playwright where practical.

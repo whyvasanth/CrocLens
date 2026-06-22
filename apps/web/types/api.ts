@@ -62,6 +62,78 @@ export interface PortfolioSummaryResponse {
   educational_disclaimer: string;
 }
 
+export type AssetTypeInput =
+  | "Stocks"
+  | "ETFs"
+  | "Mutual Funds"
+  | "Crypto"
+  | "Real Estate"
+  | "Cash"
+  | "Bonds"
+  | "Treasuries"
+  | "Retirement"
+  | "Other";
+
+export type LiabilityTypeInput = "Mortgage" | "Student loan" | "Credit card" | "Auto loan" | "Personal loan" | "Other";
+
+export interface HoldingCreateRequest {
+  symbol: string;
+  name: string;
+  asset_type: AssetTypeInput;
+  account_name: string | null;
+  quantity: number;
+  cost_basis: number | null;
+  market_value: number;
+  as_of_date: string | null;
+}
+
+export interface HoldingResponse {
+  id: string;
+  portfolio_id: string;
+  asset_id: string;
+  symbol: string;
+  name: string;
+  asset_type: string;
+  account_name: string | null;
+  quantity: number;
+  cost_basis: number | null;
+  market_value: number;
+  allocation_percent: number;
+  as_of_date: string | null;
+  source: SourceMetadata;
+}
+
+export interface LiabilityCreateRequest {
+  name: string;
+  liability_type: LiabilityTypeInput;
+  balance: number;
+  interest_rate: number | null;
+  minimum_payment: number | null;
+  due_day: number | null;
+}
+
+export interface LiabilityResponse {
+  id: string;
+  name: string;
+  liability_type: string;
+  balance: number;
+  interest_rate: number | null;
+  minimum_payment: number | null;
+  due_day: number | null;
+  source: SourceMetadata;
+}
+
+export interface PortfolioRecordsResponse {
+  holdings: HoldingResponse[];
+  liabilities: LiabilityResponse[];
+  summary: PortfolioSummaryResponse;
+}
+
+export interface DeleteRecordResponse {
+  status: "deleted";
+  id: string;
+}
+
 export interface AssetResponse {
   id: string;
   symbol: string;
