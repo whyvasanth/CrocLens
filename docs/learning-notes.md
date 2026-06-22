@@ -615,3 +615,24 @@ Key terms:
 Practice idea:
 
 - Add a test that stores two providers for the same asset/date and confirms CrocLens keeps them as separate observations.
+
+## Phase 21D: Live Market And Portfolio History APIs
+
+What we learned:
+
+- Provider adapters become useful to the product only when exposed through small, validated API contracts.
+- Market endpoints should return unavailable or stale states honestly instead of throwing away useful cached data.
+- Portfolio refresh should separate provider-valued holdings from manual values so users understand what changed.
+- Portfolio history should be based on stored snapshots, not generated chart filler.
+- Dependency injection makes it easy to test live-data routes with fake providers.
+
+Key terms:
+
+- API surface: the set of endpoints a frontend or integration can call.
+- Dependency override: replacing a real service with a fake one in tests.
+- Provider-valued: a holding whose value came from quantity times latest available market price.
+- Manual value: a holding whose value remains user-entered because no supported provider exists.
+
+Practice idea:
+
+- Add a route test for `period=YTD` history and confirm the endpoint rejects an unsupported interval.

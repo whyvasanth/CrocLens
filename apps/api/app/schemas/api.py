@@ -40,6 +40,9 @@ PipelineRunStatus = Literal["completed", "completed_with_warnings", "failed"]
 ImpactDirection = Literal["positive", "negative", "mixed", "neutral"]
 ImpactLevel = Literal["low", "medium", "high"]
 HoldingTerm = Literal["short_term", "long_term"]
+MarketPeriod = Literal["1M", "3M", "6M", "YTD", "1Y", "5Y", "ALL"]
+MarketInterval = Literal["1d", "1wk", "1mo"]
+ValuationMethod = Literal["provider_valued", "manually_valued", "stale_value", "unavailable_value"]
 DecisionType = Literal[
     "buy",
     "sell",
@@ -471,6 +474,95 @@ class MarketDataIngestionResponse(BaseModel):
     confidence: ConfidenceLevel
     data_limitations: list[str]
     sources: list[SourceMetadata]
+    educational_disclaimer: str
+
+
+class MarketDataQualityMetadata(BaseModel):
+    provider_status: str
+    source_name: str
+    source_url: str | None = None
+    data_as_of: datetime | None = None
+    retrieved_at: datetime | None = None
+    is_stale: bool
+    is_sample_data: bool
+    data_quality: str
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    warning: str | None = None
+
+
+class MarketQuoteResponse(MarketDataQualityMetadata):
+    symbol: str
+    name: str
+    asset_type: str
+    price: float | None = None
+    currency: str | None = "USD"
+
+
+class MarketHistoryPointResponse(BaseModel):
+    observed_at: datetime
+    close: float = Field(ge=0)
+    source_name: str
+    data_quality: str
+    is_stale: bool
+
+
+class MarketHistoryResponse(MarketDataQualityMetadata):
+    symbol: str
+    name: str
+    asset_type: str
+    period: MarketPeriod
+    interval: MarketInterval
+    currency: str | None = "USD"
+    points: list[MarketHistoryPointResponse]
+
+
+class MarketSnapshotItemResponse(MarketDataQualityMetadata):
+    symbol: str
+    name: str
+    asset_class: str
+    metric_type: str
+    value: float
+    unit: str
+    currency: str | None = None
+    change_percent: float | None = None
+
+
+class MarketSnapshotResponse(BaseModel):
+    items: list[MarketSnapshotItemResponse]
+    provider_status: str
+    is_sample_data: bool
+    data_quality: str
+    data_limitations: list[str]
+    educational_disclaimer: str
+
+
+class PortfolioHistoryPointResponse(BaseModel):
+    snapshot_date: str
+    total_assets: float
+    total_liabilities: float
+    net_worth: float
+    source_name: str
+    data_quality: str
+
+
+class PortfolioHistoryResponse(BaseModel):
+    points: list[PortfolioHistoryPointResponse]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
+    educational_disclaimer: str
+
+
+class PortfolioRefreshPricesResponse(BaseModel):
+    status: Literal["completed", "completed_with_warnings"]
+    provider_name: str | None
+    counts: dict[str, int]
+    valuation_counts: dict[ValuationMethod, int]
+    snapshot: PortfolioHistoryPointResponse
+    summary: PortfolioSummaryResponse
+    warnings: list[str]
+    confidence: ConfidenceLevel
+    data_limitations: list[str]
     educational_disclaimer: str
 
 

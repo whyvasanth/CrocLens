@@ -173,6 +173,47 @@ python -m app.jobs.capture_net_worth_snapshots
 
 These are idempotent local entry points that can later map to cron, AWS EventBridge Scheduler, or Lambda.
 
+## Phase 21D Live Market API Surface
+
+Phase 21D exposes the persisted provider cache through REST endpoints.
+
+New endpoints:
+
+```http
+GET /api/v1/market/snapshot
+GET /api/v1/market/quotes/{symbol}
+GET /api/v1/market/history/{symbol}?period=1M&interval=1d
+POST /api/v1/portfolio/refresh-prices
+GET /api/v1/portfolio/history
+```
+
+Design decisions:
+
+- Quote and history endpoints use provider adapters through dependency injection.
+- Tests use fake providers, not live network calls.
+- Malformed ticker syntax returns `422`.
+- Provider timeout or empty response returns unavailable metadata instead of sample fallback.
+- Stale cached values are returned with `is_stale=true` and a warning.
+- Portfolio refresh values quantity-based public holdings from stored/provider quotes.
+- Manual values for cash, real estate, retirement, crypto, and unsupported assets are preserved.
+- Portfolio history comes from stored snapshots only.
+
+Supported history periods:
+
+- `1M`
+- `3M`
+- `6M`
+- `YTD`
+- `1Y`
+- `5Y`
+- `ALL`
+
+Supported intervals:
+
+- `1d`
+- `1wk`
+- `1mo`
+
 Why this matters:
 
 - FastAPI routes should not import vendor clients directly.

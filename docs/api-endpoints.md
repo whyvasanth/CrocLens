@@ -310,6 +310,11 @@ GET /api/v1/data-providers/status
 GET /api/v1/data-pipeline/providers
 POST /api/v1/data-pipeline/market-data/sample-ingest
 GET /api/v1/data-pipeline/market-data/latest
+GET /api/v1/market/snapshot
+GET /api/v1/market/quotes/{symbol}
+GET /api/v1/market/history/{symbol}?period=1M&interval=1d
+GET /api/v1/portfolio/history
+POST /api/v1/portfolio/refresh-prices
 ```
 
 Purpose:
@@ -322,6 +327,16 @@ Purpose:
 The provider status endpoint does not fetch live data by itself. It exposes configuration, capabilities, cache TTL, stale threshold, provider status, cache status, and data limitations.
 
 Phase 21B adds live-capable provider adapters behind this registry, but the public dashboard still waits for later persistence and market API endpoints before displaying live observations.
+
+Phase 21D adds the first live-market API surface:
+
+- `GET /api/v1/market/snapshot` returns the clearly labeled sample market snapshot used by the current dashboard.
+- `GET /api/v1/market/quotes/{symbol}` retrieves a quote through the provider registry, persists it, and returns stale/unavailable metadata honestly.
+- `GET /api/v1/market/history/{symbol}` supports `1M`, `3M`, `6M`, `YTD`, `1Y`, `5Y`, and `ALL` periods with `1d`, `1wk`, or `1mo` intervals.
+- `POST /api/v1/portfolio/refresh-prices` refreshes authenticated public holdings and preserves manual/private values.
+- `GET /api/v1/portfolio/history` returns stored net-worth snapshots only; it does not invent trend lines.
+
+Every response includes provider/sample/stale/data-quality metadata and educational limitations.
 
 The sample ingestion response includes:
 

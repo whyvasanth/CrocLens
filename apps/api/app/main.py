@@ -11,6 +11,7 @@ from app.api.routes import (
     evaluation,
     health,
     journal,
+    market,
     market_news,
     onboarding,
     portfolio,
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
     app.include_router(action_plans.router, prefix=settings.api_prefix)
     app.include_router(assistant.router, prefix=settings.api_prefix)
     app.include_router(data_pipeline.router, prefix=settings.api_prefix)
+    app.include_router(market.router, prefix=settings.api_prefix)
     app.include_router(evaluation.router, prefix=settings.api_prefix)
     app.include_router(market_news.router, prefix=settings.api_prefix)
     app.include_router(tax.router, prefix=settings.api_prefix)

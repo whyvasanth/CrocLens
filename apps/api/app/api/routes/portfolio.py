@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_optional_user, require_current_user
+from app.api.dependencies import get_optional_user, get_provider_registry, require_current_user
 from app.db.session import get_db
 from app.models import User
 from app.schemas.api import (
@@ -12,9 +12,12 @@ from app.schemas.api import (
     LiabilityCreateRequest,
     LiabilityResponse,
     LiabilityUpdateRequest,
+    PortfolioHistoryResponse,
+    PortfolioRefreshPricesResponse,
     PortfolioRecordsResponse,
     PortfolioSummaryResponse,
 )
+from app.providers.registry import ProviderRegistry
 from app.services.mock_data import get_portfolio_summary
 from app.services.portfolio_service import (
     create_holding,
@@ -28,6 +31,7 @@ from app.services.portfolio_service import (
     update_holding,
     update_liability,
 )
+from app.services.market_api_service import get_portfolio_history_response, refresh_portfolio_prices_response
 
 router = APIRouter(prefix="/portfolio", tags=["portfolio"])
 
@@ -49,6 +53,23 @@ def read_portfolio_records(
     current_user: User = Depends(require_current_user),
 ) -> PortfolioRecordsResponse:
     return get_portfolio_records(db, current_user)
+
+
+@router.get("/history", response_model=PortfolioHistoryResponse)
+def read_portfolio_history(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_current_user),
+) -> PortfolioHistoryResponse:
+    return get_portfolio_history_response(db, current_user)
+
+
+@router.post("/refresh-prices", response_model=PortfolioRefreshPricesResponse)
+async def refresh_portfolio_prices(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_current_user),
+    registry: ProviderRegistry = Depends(get_provider_registry),
+) -> PortfolioRefreshPricesResponse:
+    return await refresh_portfolio_prices_response(db, registry, current_user)
 
 
 @router.get("/holdings", response_model=list[HoldingResponse])

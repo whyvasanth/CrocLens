@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.models import User
+from app.providers.registry import ProviderRegistry, build_default_provider_registry
 from app.services.account_service import get_user_for_session_token
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -34,3 +35,7 @@ def require_current_user(current_user: User | None = Depends(get_current_user)) 
 
 def get_optional_user(current_user: User | None = Depends(get_current_user)) -> User | None:
     return current_user
+
+
+def get_provider_registry() -> ProviderRegistry:
+    return build_default_provider_registry()
