@@ -94,7 +94,7 @@ The registry reports provider readiness, configuration, cache/stale settings, ca
 - `treasury`
 - `sec_edgar`
 
-This phase does not fetch live market data yet. It creates the contract that later phases will use.
+This phase did not fetch live market data. It created the contract that later phases use.
 
 Provider responses must eventually include:
 
@@ -114,6 +114,28 @@ Important rule:
 
 - Provider failure must return cached/stale or unavailable data honestly.
 - CrocLens must never silently relabel failed live provider data as sample data or fresh data.
+
+## Phase 21B Free Live Provider Adapters
+
+Phase 21B adds live-capable adapters behind the normalized provider contracts.
+
+Implemented adapters:
+
+| Provider | Implemented capabilities | Notes |
+| --- | --- | --- |
+| `yfinance` | Quote, daily history, profile metadata, dividends, splits | Unofficial third-party wrapper; labeled delayed/educational |
+| `coingecko` | Public no-key crypto price and daily history for an allowlisted set | Rate-limited public endpoint; no paid API key required |
+| `fred` | Public CSV macro observations, including `DGS10` | No FRED key required because it uses public graph CSV |
+| `treasury` | Official Fiscal Data average Treasury interest rate context | Public government endpoint |
+| `sec_edgar` | Ticker-to-CIK profile lookup and recent filing metadata | Requires `SEC_EDGAR_USER_AGENT` for real SEC requests |
+
+The dashboard is not yet fully live-wired. That is intentional. Phase 21B proves provider normalization, error handling, and cache behavior first. Later phases persist observations and connect user-facing market views.
+
+Testing policy:
+
+- Unit tests mock all provider clients.
+- No automated test depends on external network availability.
+- Provider failures are represented as typed errors, not sample data.
 
 ### Stage 4: Disallowed For MVP
 

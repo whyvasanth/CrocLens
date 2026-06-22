@@ -250,7 +250,7 @@ def test_data_provider_status_reports_provider_foundation() -> None:
     provider_names = {provider["provider_name"] for provider in body["providers"]}
 
     assert response.status_code == 200
-    assert body["mode"] == "foundation"
+    assert body["mode"] == "mock_or_live"
     assert {"yfinance", "coingecko", "fred", "treasury", "sec_edgar"}.issubset(provider_names)
     assert all("capabilities" in provider for provider in body["providers"])
     assert any(provider["provider_status"] == "not_configured" for provider in body["providers"])

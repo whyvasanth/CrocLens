@@ -41,6 +41,7 @@ class ProviderHealth(BaseModel):
     stale_after_seconds: int = Field(ge=0)
     last_successful_request: datetime | None = None
     last_error: ProviderErrorDetails | None = None
+    cache_status: dict[str, int] = Field(default_factory=dict)
     data_limitations: list[str]
 
 
@@ -89,6 +90,17 @@ class MarketHistory(ProviderResult):
     interval: str
     currency: str | None = "USD"
     points: list[MarketHistoryPoint]
+
+
+class CorporateActionEvent(BaseModel):
+    observed_at: datetime
+    value: Decimal
+
+
+class CorporateAction(ProviderResult):
+    symbol: str
+    action_type: Literal["dividend", "split"]
+    events: list[CorporateActionEvent]
 
 
 class CompanyProfile(ProviderResult):

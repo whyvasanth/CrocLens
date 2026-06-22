@@ -107,9 +107,11 @@ GET /api/v1/data-pipeline/market-data/latest
 GET /api/v1/data-providers/status
 ```
 
-Phase 21A adds the normalized provider foundation. It reports yfinance, CoinGecko, FRED public CSV, Treasury/Fiscal Data, and SEC EDGAR readiness without making live network calls from tests.
+Phase 21A added the normalized provider foundation. Phase 21B adds live-capable provider adapters for yfinance, CoinGecko public endpoints, FRED public CSV, Treasury/Fiscal Data, and SEC EDGAR.
 
-Crypto market data remains sample-only in the dashboard until the CoinGecko provider is implemented with no-key public endpoints, rate-limit-aware caching, and honest unavailable/stale states.
+The automated tests still do not make live network calls. They mock provider clients and verify normalization, source labels, cache behavior, and error contracts.
+
+Crypto and market data remain sample-only in the main dashboard until persistence and live market API endpoints are added. Provider failures must produce unavailable or stale states, never hidden sample fallbacks.
 
 ## Provider Foundation
 
@@ -125,6 +127,12 @@ Key files:
 - `exceptions.py`: typed provider failures such as timeout, rate limit, invalid symbol, malformed response, and unavailable provider.
 - `base.py`: shared provider runtime config, capability declarations, status reporting, and safe `asyncio.to_thread` helper for synchronous libraries.
 - `registry.py`: capability routing and provider status aggregation.
+- `cache.py`: small in-memory TTL cache that prevents repeated identical free-provider calls inside one process.
+- `yfinance_provider.py`: quote, history, profile, dividend, and split adapter.
+- `coingecko_provider.py`: no-key public crypto price/history adapter.
+- `fred_provider.py`: no-key public CSV macro observation adapter.
+- `treasury_provider.py`: official Fiscal Data rate context adapter.
+- `sec_provider.py`: SEC ticker resolution and recent filings adapter gated by User-Agent configuration.
 
 Why this matters:
 
@@ -141,6 +149,7 @@ Later phases should add:
 - Scheduled ingestion jobs.
 - Provider-specific retry logic.
 - Provider response caching.
+- Durable stale-while-revalidate storage.
 - Rate-limit handling.
 - Dead-letter storage for failed records.
 - Data quality dashboards.

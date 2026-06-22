@@ -41,7 +41,7 @@ class Settings:
     rate_limit_per_minute: int = _getenv_int("RATE_LIMIT_PER_MINUTE", 300)
     demo_mode_enabled: bool = _getenv_bool("DEMO_MODE_ENABLED", True)
     log_level: str = _getenv("LOG_LEVEL", "INFO").upper()
-    market_provider_mode: str = _getenv("MARKET_PROVIDER_MODE", "foundation")
+    market_provider_mode: str = _getenv("MARKET_PROVIDER_MODE", "mock_or_live")
     market_provider_timeout_seconds: int = _getenv_int("MARKET_PROVIDER_TIMEOUT_SECONDS", 10)
     market_provider_retry_limit: int = _getenv_int("MARKET_PROVIDER_RETRY_LIMIT", 2)
     market_provider_cache_ttl_seconds: int = _getenv_int(

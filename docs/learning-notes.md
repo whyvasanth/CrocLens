@@ -573,3 +573,24 @@ Key terms:
 Practice idea:
 
 - Add a fake in-memory provider in a test and verify the registry can route a quote capability to it.
+
+## Phase 21B: Free Live Provider Adapters
+
+What we learned:
+
+- A provider adapter should normalize external data before application code sees it.
+- Free data sources still need cache protection, rate-limit handling, source URLs, and data limitations.
+- yfinance is useful for prototypes, but it must be labeled unofficial and delayed.
+- Official public sources like SEC EDGAR, FRED CSV, and Treasury Fiscal Data are better for filings and macro context.
+- Tests should mock provider clients so CI does not fail because a public endpoint is slow or rate-limited.
+
+Key terms:
+
+- Adapter: code that translates a vendor-specific response into a CrocLens model.
+- Allowlist: a small accepted set of inputs, such as supported crypto IDs.
+- Typed provider error: a predictable failure such as timeout, rate limit, invalid symbol, malformed response, or unavailable provider.
+- No-key endpoint: a public endpoint that does not require an API key, but may still have rate limits and terms.
+
+Practice idea:
+
+- Add one more FRED public CSV series, then test that it returns the correct label, unit, source URL, and latest observation.

@@ -8,6 +8,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 
 ### Added
 
+- Added Phase 21B live-capable free provider adapters for yfinance, CoinGecko public endpoints, FRED public CSV, Treasury/Fiscal Data, and SEC EDGAR.
+- Added provider in-memory TTL caching, normalized live-provider tests with mocked clients, and provider cache status metadata.
 - Established Phase 0 product and system design foundation.
 - Added project README with product vision, MVP strategy, tech stack, safety principles, and Git workflow.
 - Added architecture, roadmap, data source, security, AI agent, database, API, AWS, evaluation, and learning documentation.

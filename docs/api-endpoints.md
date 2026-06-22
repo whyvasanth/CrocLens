@@ -319,7 +319,9 @@ Purpose:
 - Run the deterministic sample market data ingestion pipeline.
 - Return latest normalized sample market observations.
 
-The provider status endpoint does not fetch live data in Phase 21A. It exposes configuration, capabilities, cache TTL, stale threshold, provider status, and data limitations so later market endpoints can depend on a clean provider contract.
+The provider status endpoint does not fetch live data by itself. It exposes configuration, capabilities, cache TTL, stale threshold, provider status, cache status, and data limitations.
+
+Phase 21B adds live-capable provider adapters behind this registry, but the public dashboard still waits for later persistence and market API endpoints before displaying live observations.
 
 The sample ingestion response includes:
 

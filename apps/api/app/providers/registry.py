@@ -26,9 +26,9 @@ class ProviderRegistry:
             mode=self.mode,
             providers=provider_statuses,
             data_limitations=[
-                "Phase 21A reports provider readiness only; it does not fetch live market data yet.",
+                "Phase 21B adds live-capable free providers, but dashboard market data is not fully live-wired yet.",
                 "Provider failures must never be silently relabeled as sample or live data.",
-                "Later phases will add persistence, stale-cache warnings, and live quote/history endpoints.",
+                "Later phases will add persisted observations, stale-cache warnings, and portfolio refresh endpoints.",
             ],
         )
 

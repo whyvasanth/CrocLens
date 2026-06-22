@@ -10,7 +10,7 @@ async def test_default_provider_registry_reports_free_first_providers() -> None:
     status = await registry.status()
     provider_names = {provider.provider_name for provider in status.providers}
 
-    assert status.mode == "foundation"
+    assert status.mode == "mock_or_live"
     assert provider_names == {"yfinance", "coingecko", "fred", "treasury", "sec_edgar"}
     assert "Provider failures must never be silently relabeled" in status.data_limitations[1]
     assert all(provider.cache_ttl_seconds >= 0 for provider in status.providers)
