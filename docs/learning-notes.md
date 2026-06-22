@@ -594,3 +594,24 @@ Key terms:
 Practice idea:
 
 - Add one more FRED public CSV series, then test that it returns the correct label, unit, source URL, and latest observation.
+
+## Phase 21C: Persisted Market Observations
+
+What we learned:
+
+- Provider adapters are not enough; financial products need durable observation storage.
+- Stale-while-revalidate is a safer user experience than pretending failed provider calls returned fresh data.
+- A quote cache needs lineage fields such as provider, source URL, data quality, retrieved time, and limitations.
+- Scheduled jobs should be idempotent so rerunning them does not duplicate observations.
+- Portfolio history should come from stored snapshots, not fake chart lines.
+
+Key terms:
+
+- Observation: one normalized data point, such as a price on a date.
+- Upsert: insert if missing, update if the same unique observation already exists.
+- Stale-while-revalidate: return known old data with a warning while attempting refresh.
+- Ingestion run: a durable record of one provider refresh attempt.
+
+Practice idea:
+
+- Add a test that stores two providers for the same asset/date and confirms CrocLens keeps them as separate observations.

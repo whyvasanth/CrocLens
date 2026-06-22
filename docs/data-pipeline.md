@@ -134,6 +134,45 @@ Key files:
 - `treasury_provider.py`: official Fiscal Data rate context adapter.
 - `sec_provider.py`: SEC ticker resolution and recent filings adapter gated by User-Agent configuration.
 
+## Phase 21C Persistence And Cache
+
+Phase 21C adds durable storage around the provider adapters.
+
+New tables:
+
+- `market_prices`: provider-aware quote/history observations with stale/sample/quality fields.
+- `provider_ingestion_runs`: one row per provider refresh job.
+- `provider_errors`: normalized failures without secrets or personal financial details.
+- `portfolio_net_worth_snapshots`: one net-worth snapshot per portfolio per day.
+
+Stale-while-revalidate flow:
+
+```text
+Check latest stored market observation
+  -> If fresh: return cached observation
+  -> If stale: try provider refresh
+      -> If provider succeeds: store fresh observation
+      -> If provider fails and stale data exists: return stale data with warning
+      -> If provider fails and nothing exists: return unavailable
+```
+
+Important:
+
+- No fake live fallback is inserted.
+- Sample data is never relabeled as live provider data.
+- Quantity-based public holdings can be revalued from stored quotes.
+- Manual/private values remain manual until a supported provider exists.
+
+Job entry points:
+
+```powershell
+python -m app.jobs.ingest_market_snapshot
+python -m app.jobs.refresh_portfolio_prices
+python -m app.jobs.capture_net_worth_snapshots
+```
+
+These are idempotent local entry points that can later map to cron, AWS EventBridge Scheduler, or Lambda.
+
 Why this matters:
 
 - FastAPI routes should not import vendor clients directly.
@@ -146,10 +185,9 @@ Why this matters:
 Later phases should add:
 
 - Database persistence into `market_prices`.
-- Scheduled ingestion jobs.
+- More scheduled ingestion jobs.
 - Provider-specific retry logic.
-- Provider response caching.
-- Durable stale-while-revalidate storage.
+- Redis or PostgreSQL-backed provider response caching beyond the current process.
 - Rate-limit handling.
 - Dead-letter storage for failed records.
 - Data quality dashboards.

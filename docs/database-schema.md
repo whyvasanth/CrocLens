@@ -169,6 +169,9 @@ Generic:
 - `assets`
 - `holdings`
 - `market_prices`
+- `provider_ingestion_runs`
+- `provider_errors`
+- `portfolio_net_worth_snapshots`
 - `asset_scores`
 
 Specific:
@@ -191,6 +194,9 @@ users
       -> assets
           -> market_prices
           -> asset_scores
+      -> portfolio_net_worth_snapshots
+  -> provider_errors
+      -> assets
   -> liabilities
   -> real_estate_properties
   -> retirement_accounts
@@ -201,7 +207,74 @@ users
       -> assets
 
 news_articles are stored separately and can be linked later by symbols or impact analysis.
+
+provider_ingestion_runs track scheduled or manual provider refresh jobs.
 ```
+
+## Market Observation Cache
+
+Phase 21C expands `market_prices` from a basic price table into a provider-aware observation cache.
+
+Each stored market observation includes:
+
+- `asset_id`
+- `price_date`
+- `close_price`
+- `currency`
+- `source_name`
+- `provider_status`
+- `data_quality`
+- `data_as_of`
+- `retrieved_at`
+- `is_stale`
+- `is_sample_data`
+- `source_url`
+- `data_limitations`
+- optional `raw_response_metadata`
+
+The uniqueness rule remains:
+
+```text
+asset_id + price_date + source_name
+```
+
+That prevents duplicate daily observations from the same provider while still allowing multiple providers later.
+
+## Provider Runs And Errors
+
+`provider_ingestion_runs` records every refresh attempt:
+
+- provider
+- operation
+- status
+- started and completed timestamps
+- requested, accepted, and rejected counts
+- error summary when a run fails
+
+`provider_errors` records normalized provider failures:
+
+- provider
+- operation
+- asset or symbol
+- error code
+- error message
+- retryability
+
+This matters because provider failure must not silently become sample data.
+
+## Net Worth Snapshots
+
+`portfolio_net_worth_snapshots` stores one snapshot per portfolio per day.
+
+It captures:
+
+- total assets
+- total liabilities
+- net worth
+- source name
+- data quality
+
+The table supports future portfolio history charts without inventing trend lines.
 
 ## Design Choices
 

@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import Date, DateTime, ForeignKey, Index, JSON, Numeric, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Index, JSON, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -197,6 +197,7 @@ class MarketPrice(TimestampMixin, Base):
     __table_args__ = (
         UniqueConstraint("asset_id", "price_date", "source_name", name="uq_market_prices_asset_date_source"),
         Index("ix_market_prices_asset_date", "asset_id", "price_date"),
+        Index("ix_market_prices_asset_provider_retrieved", "asset_id", "source_name", "retrieved_at"),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -204,7 +205,71 @@ class MarketPrice(TimestampMixin, Base):
     price_date: Mapped[date] = mapped_column(Date, nullable=False)
     close_price: Mapped[Decimal] = mapped_column(Numeric(18, 6), nullable=False)
     source_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    currency: Mapped[str] = mapped_column(String(8), default="USD", nullable=False)
+    data_as_of: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     retrieved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    provider_status: Mapped[str] = mapped_column(String(40), default="healthy", nullable=False)
+    data_quality: Mapped[str] = mapped_column(String(40), default="unknown", nullable=False)
+    is_stale: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_sample_data: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    source_url: Mapped[str | None] = mapped_column(String(500))
+    data_limitations: Mapped[dict] = mapped_column(JSON_TYPE, default=list, nullable=False)
+    raw_response_metadata: Mapped[dict] = mapped_column(JSON_TYPE, default=dict, nullable=False)
+
+
+class ProviderIngestionRun(TimestampMixin, Base):
+    __tablename__ = "provider_ingestion_runs"
+    __table_args__ = (
+        Index("ix_provider_ingestion_runs_provider_started", "provider_name", "started_at"),
+        Index("ix_provider_ingestion_runs_status", "status"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    provider_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    operation: Mapped[str] = mapped_column(String(120), nullable=False)
+    status: Mapped[str] = mapped_column(String(40), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    records_requested: Mapped[int] = mapped_column(default=0, nullable=False)
+    records_accepted: Mapped[int] = mapped_column(default=0, nullable=False)
+    records_rejected: Mapped[int] = mapped_column(default=0, nullable=False)
+    error_message: Mapped[str | None] = mapped_column(Text)
+    metadata_json: Mapped[dict] = mapped_column(JSON_TYPE, default=dict, nullable=False)
+
+
+class ProviderError(TimestampMixin, Base):
+    __tablename__ = "provider_errors"
+    __table_args__ = (
+        Index("ix_provider_errors_provider_created", "provider_name", "created_at"),
+        Index("ix_provider_errors_asset_provider", "asset_id", "provider_name"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    provider_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    operation: Mapped[str] = mapped_column(String(120), nullable=False)
+    asset_id: Mapped[str | None] = mapped_column(ForeignKey("assets.id"))
+    symbol_or_series: Mapped[str | None] = mapped_column(String(80))
+    error_code: Mapped[str] = mapped_column(String(80), nullable=False)
+    error_message: Mapped[str] = mapped_column(Text, nullable=False)
+    retryable: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class PortfolioNetWorthSnapshot(TimestampMixin, Base):
+    __tablename__ = "portfolio_net_worth_snapshots"
+    __table_args__ = (
+        UniqueConstraint("portfolio_id", "snapshot_date", name="uq_portfolio_snapshots_portfolio_date"),
+        Index("ix_portfolio_snapshots_portfolio_date", "portfolio_id", "snapshot_date"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    portfolio_id: Mapped[str] = mapped_column(ForeignKey("portfolios.id"), nullable=False)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), nullable=False)
+    snapshot_date: Mapped[date] = mapped_column(Date, nullable=False)
+    total_assets: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    total_liabilities: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    net_worth: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
+    source_name: Mapped[str] = mapped_column(String(120), nullable=False)
+    data_quality: Mapped[str] = mapped_column(String(40), default="manual", nullable=False)
 
 
 class NewsArticle(TimestampMixin, Base):
