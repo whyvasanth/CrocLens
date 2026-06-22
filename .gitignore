@@ -17,6 +17,11 @@ pnpm-debug.log*
 .api-dev*.log
 *.tsbuildinfo
 
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
 # OS and editor files
 .DS_Store
 Thumbs.db

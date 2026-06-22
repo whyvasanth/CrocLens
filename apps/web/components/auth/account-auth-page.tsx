@@ -7,7 +7,7 @@ import { ArrowRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { Card, Pill, SectionTitle } from "@/components/dashboard/ui";
 import { createAccount, loginAccount } from "@/lib/api-client";
 import type {
-  AccountSessionResponse,
+  BrowserAccountSessionResponse,
   EmployerMatchStatus,
   IncomeRange,
   InvestmentExperience,
@@ -45,24 +45,13 @@ interface AccountAuthPageProps {
   mode: "login" | "signup";
 }
 
-function saveSession(session: AccountSessionResponse) {
-  window.localStorage.setItem(
-    "croclens_session",
-    JSON.stringify({
-      token: session.session_token,
-      user: session.user,
-      saved_at: new Date().toISOString()
-    })
-  );
-}
-
 export function AccountAuthPage({ mode }: AccountAuthPageProps) {
   const router = useRouter();
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [profile, setProfile] = useState<OnboardingProfileRequest>(initialProfile);
-  const [session, setSession] = useState<AccountSessionResponse | null>(null);
+  const [session, setSession] = useState<BrowserAccountSessionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSignup = mode === "signup";
@@ -94,7 +83,6 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
           })
         : await loginAccount({ email, password });
 
-      saveSession(response);
       setSession(response);
 
       if (!isSignup) {

@@ -215,6 +215,10 @@ export interface AccountSessionResponse {
   security_note: string;
 }
 
+export type BrowserAccountSessionResponse = Omit<AccountSessionResponse, "session_token" | "token_type"> & {
+  token_type: "local_cookie_session";
+};
+
 export interface LogoutResponse {
   status: "logged_out";
 }

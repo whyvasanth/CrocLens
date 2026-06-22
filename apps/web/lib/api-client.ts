@@ -1,7 +1,6 @@
 import type {
   AccountCreateRequest,
   AccountLoginRequest,
-  AccountSessionResponse,
   AccountUserResponse,
   ActionPlanResponse,
   AgentRegistryResponse,
@@ -10,6 +9,7 @@ import type {
   AssetDetailCardResponse,
   AssetDetailResponse,
   AssetResponse,
+  BrowserAccountSessionResponse,
   DataExportResponse,
   DeleteDataResponse,
   DecisionJournalCreateRequest,
@@ -37,8 +37,12 @@ const API_BASE_URL =
   process.env.NEXT_PUBLIC_CROCLENS_API_URL ??
   "http://127.0.0.1:8000";
 
+function buildRequestUrl(path: string) {
+  return path.startsWith("/api/auth") ? path : `${API_BASE_URL}${path}`;
+}
+
 async function requestJson<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(buildRequestUrl(path), {
     headers: {
       Accept: "application/json"
     },
@@ -53,48 +57,11 @@ async function requestJson<T>(path: string, signal?: AbortSignal): Promise<T> {
 }
 
 async function postJson<TResponse, TRequest>(path: string, body: TRequest, signal?: AbortSignal): Promise<TResponse> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(buildRequestUrl(path), {
     body: JSON.stringify(body),
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json"
-    },
-    method: "POST",
-    signal
-  });
-
-  if (!response.ok) {
-    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
-  }
-
-  return response.json() as Promise<TResponse>;
-}
-
-async function requestJsonWithToken<T>(path: string, token: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`
-    },
-    signal
-  });
-
-  if (!response.ok) {
-    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
-  }
-
-  return response.json() as Promise<T>;
-}
-
-async function postJsonWithToken<TResponse>(
-  path: string,
-  token: string,
-  signal?: AbortSignal
-): Promise<TResponse> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`
     },
     method: "POST",
     signal
@@ -140,19 +107,19 @@ export function submitOnboardingProfile(profile: OnboardingProfileRequest, signa
 }
 
 export function createAccount(request: AccountCreateRequest, signal?: AbortSignal) {
-  return postJson<AccountSessionResponse, AccountCreateRequest>("/api/v1/auth/signup", request, signal);
+  return postJson<BrowserAccountSessionResponse, AccountCreateRequest>("/api/auth/signup", request, signal);
 }
 
 export function loginAccount(request: AccountLoginRequest, signal?: AbortSignal) {
-  return postJson<AccountSessionResponse, AccountLoginRequest>("/api/v1/auth/login", request, signal);
+  return postJson<BrowserAccountSessionResponse, AccountLoginRequest>("/api/auth/login", request, signal);
 }
 
-export function getCurrentAccount(token: string, signal?: AbortSignal) {
-  return requestJsonWithToken<AccountUserResponse>("/api/v1/auth/me", token, signal);
+export function getCurrentAccount(signal?: AbortSignal) {
+  return requestJson<AccountUserResponse>("/api/auth/me", signal);
 }
 
-export function logoutAccount(token: string, signal?: AbortSignal) {
-  return postJsonWithToken<LogoutResponse>("/api/v1/auth/logout", token, signal);
+export function logoutAccount(signal?: AbortSignal) {
+  return postJson<LogoutResponse, Record<string, never>>("/api/auth/logout", {}, signal);
 }
 
 export function askAssistant(request: AssistantRequest, signal?: AbortSignal) {

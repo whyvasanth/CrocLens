@@ -16,6 +16,10 @@ function assertFile(relativePath) {
 }
 
 const requiredRoutes = [
+  "apps/web/app/api/auth/login/route.ts",
+  "apps/web/app/api/auth/logout/route.ts",
+  "apps/web/app/api/auth/me/route.ts",
+  "apps/web/app/api/auth/signup/route.ts",
   "apps/web/app/login/page.tsx",
   "apps/web/app/signup/page.tsx",
   "apps/web/app/dashboard/page.tsx",
@@ -46,8 +50,10 @@ for (const file of requiredDeploymentFiles) {
 
 const apiClient = read("apps/web/lib/api-client.ts");
 const requiredEndpoints = [
-  "/api/v1/auth/signup",
-  "/api/v1/auth/login",
+  "/api/auth/signup",
+  "/api/auth/login",
+  "/api/auth/logout",
+  "/api/auth/me",
   "/api/v1/portfolio/summary",
   "/api/v1/market-news/impact-summary",
   "/api/v1/tax/insights",
@@ -76,6 +82,10 @@ assert.match(evaluationPage, /Quality gates/, "Evaluation metrics page should sh
 const authPage = read("apps/web/components/auth/account-auth-page.tsx");
 assert.match(authPage, /Create your account/, "Signup page should include account creation");
 assert.match(authPage, /onboarding_profile/, "Signup should collect onboarding profile data during account creation");
+assert.doesNotMatch(authPage, /localStorage/, "Auth page should not store session tokens in localStorage");
+
+const authSharedRoute = read("apps/web/app/api/auth/_shared.ts");
+assert.match(authSharedRoute, /httpOnly:\s*true/, "BFF auth route should store the session in an HttpOnly cookie");
 
 const sidebarData = read("apps/web/lib/mock-dashboard-data.ts");
 assert.doesNotMatch(sidebarData, /label:\s*"Onboarding"/, "Onboarding should not be a separate primary nav item");
