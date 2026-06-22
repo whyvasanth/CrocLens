@@ -23,7 +23,10 @@ DEFAULT_PRIVACY_SETTINGS = PrivacySettingsRequest()
 def get_security_status() -> SecurityStatusResponse:
     return SecurityStatusResponse(
         api_version=settings.api_version,
-        authentication_status="Planned: verified free authentication later; MVP uses sample data only.",
+        authentication_status=(
+            f"AUTH_MODE={settings.auth_mode}; local auth is "
+            f"{'enabled for development' if settings.is_local_auth_enabled else 'disabled'}."
+        ),
         rate_limit_per_minute=settings.rate_limit_per_minute,
         security_headers_enabled=[
             "X-CrocLens-Request-Id",
@@ -33,7 +36,11 @@ def get_security_status() -> SecurityStatusResponse:
             "Permissions-Policy",
         ],
         cors_origins=settings.cors_origins,
-        logging_summary="Request IDs, status codes, paths, and latency are logged; secrets and account numbers should not be logged.",
+        logging_summary=(
+            "Structured JSON request logs include timestamp, request ID, path, method, status code, duration, "
+            "user ID when available, and error category. Passwords, tokens, cookies, and full financial payloads "
+            "must not be logged."
+        ),
         prompt_injection_guardrails=[
             "Detect direct trading instructions and guaranteed-return language.",
             "Detect attempts to ignore system or developer instructions.",

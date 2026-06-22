@@ -19,13 +19,16 @@ from app.api.routes import (
     watchlist,
 )
 from app.core.config import settings
+from app.core.logging import configure_logging
 from app.core.middleware import SecurityHeadersAndRateLimitMiddleware
 
 
 def create_app() -> FastAPI:
+    configure_logging(settings.log_level)
+
     app = FastAPI(
         title="CrocLens API",
-        description="Mock REST API for the CrocLens beginner wealth intelligence platform.",
+        description="REST API for the CrocLens beginner wealth intelligence platform.",
         version=settings.api_version,
     )
 
