@@ -2,6 +2,7 @@ import type {
   AccountCreateRequest,
   AccountLoginRequest,
   AccountSessionResponse,
+  AccountUserResponse,
   ActionPlanResponse,
   AgentRegistryResponse,
   AssistantRequest,
@@ -15,6 +16,7 @@ import type {
   DecisionJournalEntryResponse,
   DecisionJournalResponse,
   EvaluationMetricsResponse,
+  LogoutResponse,
   MarketNewsImpactResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
@@ -68,6 +70,43 @@ async function postJson<TResponse, TRequest>(path: string, body: TRequest, signa
   return response.json() as Promise<TResponse>;
 }
 
+async function requestJsonWithToken<T>(path: string, token: string, signal?: AbortSignal): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+async function postJsonWithToken<TResponse>(
+  path: string,
+  token: string,
+  signal?: AbortSignal
+): Promise<TResponse> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    method: "POST",
+    signal
+  });
+
+  if (!response.ok) {
+    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+  }
+
+  return response.json() as Promise<TResponse>;
+}
+
 export function getApiBaseUrl() {
   return API_BASE_URL;
 }
@@ -106,6 +145,14 @@ export function createAccount(request: AccountCreateRequest, signal?: AbortSigna
 
 export function loginAccount(request: AccountLoginRequest, signal?: AbortSignal) {
   return postJson<AccountSessionResponse, AccountLoginRequest>("/api/v1/auth/login", request, signal);
+}
+
+export function getCurrentAccount(token: string, signal?: AbortSignal) {
+  return requestJsonWithToken<AccountUserResponse>("/api/v1/auth/me", token, signal);
+}
+
+export function logoutAccount(token: string, signal?: AbortSignal) {
+  return postJsonWithToken<LogoutResponse>("/api/v1/auth/logout", token, signal);
 }
 
 export function askAssistant(request: AssistantRequest, signal?: AbortSignal) {

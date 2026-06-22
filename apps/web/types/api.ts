@@ -206,13 +206,17 @@ export interface AccountSessionResponse {
   user: AccountUserResponse;
   onboarding_profile: OnboardingProfileResponse | null;
   session_token: string;
-  token_type: "mock_session";
+  token_type: "local_session" | "mock_session";
   expires_in_minutes: number;
   next_path: string;
   confidence: ConfidenceLevel;
   data_limitations: string[];
   sources: SourceMetadata[];
   security_note: string;
+}
+
+export interface LogoutResponse {
+  status: "logged_out";
 }
 
 export interface AssistantRequest {

@@ -6,6 +6,7 @@ from app.models.entities import (
     DecisionJournalEntry,
     Holding,
     Liability,
+    LocalAuthSession,
     MarketPrice,
     NewsArticle,
     Portfolio,
@@ -25,6 +26,7 @@ __all__ = [
     "DecisionJournalEntry",
     "Holding",
     "Liability",
+    "LocalAuthSession",
     "MarketPrice",
     "NewsArticle",
     "Portfolio",
@@ -35,4 +37,3 @@ __all__ = [
     "UserProfile",
     "WatchlistItem",
 ]
-

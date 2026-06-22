@@ -225,13 +225,17 @@ class AccountSessionResponse(BaseModel):
     user: AccountUserResponse
     onboarding_profile: OnboardingProfileResponse | None = None
     session_token: str
-    token_type: Literal["mock_session"]
+    token_type: Literal["local_session", "mock_session"]
     expires_in_minutes: int = Field(ge=1)
     next_path: str
     confidence: ConfidenceLevel
     data_limitations: list[str]
     sources: list[SourceMetadata]
     security_note: str
+
+
+class LogoutResponse(BaseModel):
+    status: Literal["logged_out"]
 
 
 class ActionPlanItem(BaseModel):

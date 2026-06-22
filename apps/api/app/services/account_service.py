@@ -1,78 +1,206 @@
-from datetime import UTC, datetime
 from uuid import uuid4
 
+from fastapi import HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
+from app.core.security import (
+    create_session_token,
+    hash_password,
+    hash_session_token,
+    utc_after_minutes,
+    utc_now,
+    verify_password,
+)
+from app.models import LocalAuthSession, Portfolio, User, UserProfile
 from app.schemas.api import (
     AccountCreateRequest,
     AccountLoginRequest,
     AccountSessionResponse,
     AccountUserResponse,
+    OnboardingProfileResponse,
     SourceMetadata,
 )
 from app.services.onboarding_service import create_onboarding_profile
 
+LOCAL_SESSION_MINUTES = 60
+
 ACCOUNT_SOURCE = SourceMetadata(
-    name="CrocLens mock account service",
-    freshness="Local deterministic MVP auth preview",
-    as_of="2026-05-07",
+    name="CrocLens local account service",
+    freshness="Persisted local development auth",
+    as_of="2026-06-22",
 )
 
 SECURITY_NOTE = (
-    "MVP account endpoints are local mock flows only. Production auth must hash passwords, persist users, "
-    "protect sessions, verify email, and add recovery controls."
+    "Local authentication is for development only. Production auth is designed to use Cognito with validated JWTs, "
+    "secure cookies, email verification, password reset, and session expiration."
 )
 
 
-def create_account(request: AccountCreateRequest) -> AccountSessionResponse:
+def create_account(request: AccountCreateRequest, db: Session) -> AccountSessionResponse:
+    _require_local_auth()
+    email = _normalize_email(request.email)
+    display_name = request.display_name.strip()
+
+    if _get_user_by_email(db, email) is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="An account with this email already exists.",
+        )
+
     onboarding_profile = create_onboarding_profile(request.onboarding_profile)
-    user = AccountUserResponse(
-        id=f"user_{uuid4().hex[:12]}",
-        display_name=request.display_name.strip(),
-        email=request.email.strip().lower(),
-        beginner_mode_enabled=True,
-        created_at=datetime.now(tz=UTC).isoformat(),
+    user = User(
+        id=str(uuid4()),
+        email=email,
+        full_name=display_name,
+        status="active",
+        auth_provider="local",
+        password_hash=hash_password(request.password),
+    )
+    user.profile = UserProfile(
+        id=str(uuid4()),
+        beginner_mode=True,
+        risk_tolerance=request.onboarding_profile.risk_tolerance,
+        time_horizon=request.onboarding_profile.time_horizon,
+        primary_goal=request.onboarding_profile.primary_goal,
+        household_income_range=request.onboarding_profile.income_range,
+    )
+    user.portfolios.append(
+        Portfolio(
+            id=str(uuid4()),
+            name="My CrocLens Portfolio",
+            base_currency="USD",
+        )
     )
 
-    return AccountSessionResponse(
+    db.add(user)
+    try:
+        db.flush()
+    except IntegrityError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="An account with this email already exists.",
+        ) from exc
+
+    return _build_session_response(
+        db=db,
         user=user,
         onboarding_profile=onboarding_profile,
-        session_token=f"mock_session_{uuid4().hex}",
-        token_type="mock_session",
-        expires_in_minutes=60,
-        next_path="/dashboard",
-        confidence="medium",
+        confidence="high",
         data_limitations=[
-            "This MVP does not persist accounts yet.",
-            "Passwords are accepted only to model the API contract; production must hash and store credentials safely.",
-            "The session token is a mock value and should not be used as real authentication.",
+            "Local auth persists users and hashed passwords for development.",
+            "Production still needs Cognito authorization-code flow with PKCE and server-managed secure cookies.",
+            "Financial data entry and portfolio CRUD are implemented in the next slice.",
         ],
-        sources=[ACCOUNT_SOURCE],
-        security_note=SECURITY_NOTE,
     )
 
 
-def login_account(request: AccountLoginRequest) -> AccountSessionResponse:
-    user_name = request.email.split("@")[0].replace(".", " ").replace("_", " ").title() or "CrocLens User"
-    user = AccountUserResponse(
-        id="user_sample_login",
-        display_name=user_name,
-        email=request.email.strip().lower(),
-        beginner_mode_enabled=True,
-        created_at=datetime.now(tz=UTC).isoformat(),
-    )
+def login_account(request: AccountLoginRequest, db: Session) -> AccountSessionResponse:
+    _require_local_auth()
+    email = _normalize_email(request.email)
+    user = _get_user_by_email(db, email)
 
-    return AccountSessionResponse(
+    if user is None or user.status != "active" or not verify_password(request.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password.",
+        )
+
+    return _build_session_response(
+        db=db,
         user=user,
         onboarding_profile=None,
-        session_token=f"mock_session_{uuid4().hex}",
-        token_type="mock_session",
-        expires_in_minutes=60,
-        next_path="/dashboard",
-        confidence="low",
+        confidence="high",
         data_limitations=[
-            "Login is a local mock preview and does not verify a stored password yet.",
-            "No account database or production session store is connected.",
-            "Use this only for MVP navigation and API contract testing.",
+            "Password verification uses bcrypt for local development.",
+            "This session is persisted locally and expires automatically.",
+            "Production should replace this local session token with a Cognito-backed secure cookie flow.",
         ],
+    )
+
+
+def get_user_for_session_token(token: str, db: Session) -> User | None:
+    token_hash = hash_session_token(token)
+    session = db.scalar(
+        select(LocalAuthSession)
+        .where(LocalAuthSession.token_hash == token_hash)
+        .where(LocalAuthSession.revoked_at.is_(None))
+        .where(LocalAuthSession.expires_at > utc_now())
+    )
+
+    if session is None or session.user.status != "active":
+        return None
+
+    return session.user
+
+
+def revoke_session_token(token: str, db: Session) -> None:
+    token_hash = hash_session_token(token)
+    session = db.scalar(
+        select(LocalAuthSession)
+        .where(LocalAuthSession.token_hash == token_hash)
+        .where(LocalAuthSession.revoked_at.is_(None))
+    )
+
+    if session is not None:
+        session.revoked_at = utc_now()
+        db.add(session)
+
+
+def build_account_user_response(user: User) -> AccountUserResponse:
+    return AccountUserResponse(
+        id=user.id,
+        display_name=user.full_name or user.email.split("@")[0],
+        email=user.email,
+        beginner_mode_enabled=user.profile.beginner_mode if user.profile else True,
+        created_at=user.created_at.isoformat(),
+    )
+
+
+def _build_session_response(
+    db: Session,
+    user: User,
+    onboarding_profile: OnboardingProfileResponse | None,
+    confidence: str,
+    data_limitations: list[str],
+) -> AccountSessionResponse:
+    token = create_session_token()
+    session = LocalAuthSession(
+        id=str(uuid4()),
+        user_id=user.id,
+        token_hash=hash_session_token(token),
+        expires_at=utc_after_minutes(LOCAL_SESSION_MINUTES),
+    )
+    db.add(session)
+    db.flush()
+
+    return AccountSessionResponse(
+        user=build_account_user_response(user),
+        onboarding_profile=onboarding_profile,
+        session_token=token,
+        token_type="local_session",
+        expires_in_minutes=LOCAL_SESSION_MINUTES,
+        next_path="/dashboard",
+        confidence=confidence,
+        data_limitations=data_limitations,
         sources=[ACCOUNT_SOURCE],
         security_note=SECURITY_NOTE,
     )
+
+
+def _get_user_by_email(db: Session, email: str) -> User | None:
+    return db.scalar(select(User).where(User.email == email).where(User.auth_provider == "local"))
+
+
+def _normalize_email(email: str) -> str:
+    return email.strip().lower()
+
+
+def _require_local_auth() -> None:
+    if not settings.is_local_auth_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Local authentication is disabled for this environment.",
+        )

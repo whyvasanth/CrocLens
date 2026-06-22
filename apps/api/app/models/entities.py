@@ -1,11 +1,13 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import Date, DateTime, ForeignKey, Index, Numeric, String, Text, UniqueConstraint
+from sqlalchemy import Date, DateTime, ForeignKey, Index, JSON, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
+
+JSON_TYPE = JSON().with_variant(JSONB, "postgresql")
 
 
 class User(TimestampMixin, Base):
@@ -15,9 +17,38 @@ class User(TimestampMixin, Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     full_name: Mapped[str | None] = mapped_column(String(160))
     status: Mapped[str] = mapped_column(String(40), default="active", nullable=False)
+    auth_provider: Mapped[str] = mapped_column(String(40), default="local", nullable=False)
+    external_auth_subject: Mapped[str | None] = mapped_column(String(255), unique=True, index=True)
+    password_hash: Mapped[str | None] = mapped_column(String(255))
 
-    profile: Mapped["UserProfile | None"] = relationship(back_populates="user")
-    portfolios: Mapped[list["Portfolio"]] = relationship(back_populates="user")
+    profile: Mapped["UserProfile | None"] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    portfolios: Mapped[list["Portfolio"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+    local_sessions: Mapped[list["LocalAuthSession"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+
+class LocalAuthSession(TimestampMixin, Base):
+    __tablename__ = "local_auth_sessions"
+    __table_args__ = (
+        UniqueConstraint("token_hash", name="uq_local_auth_sessions_token_hash"),
+        Index("ix_local_auth_sessions_user_expires", "user_id", "expires_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    user: Mapped["User"] = relationship(back_populates="local_sessions")
 
 
 class UserProfile(TimestampMixin, Base):
@@ -143,7 +174,7 @@ class ActionPlan(TimestampMixin, Base):
     priority: Mapped[str] = mapped_column(String(40), default="medium", nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     confidence: Mapped[str] = mapped_column(String(40), default="medium", nullable=False)
-    data_limitations: Mapped[dict] = mapped_column(JSONB, default=list, nullable=False)
+    data_limitations: Mapped[dict] = mapped_column(JSON_TYPE, default=list, nullable=False)
 
 
 class AgentOutput(TimestampMixin, Base):
@@ -154,10 +185,10 @@ class AgentOutput(TimestampMixin, Base):
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
     agent_name: Mapped[str] = mapped_column(String(120), nullable=False)
     intent: Mapped[str | None] = mapped_column(String(120))
-    output_json: Mapped[dict] = mapped_column(JSONB, nullable=False)
+    output_json: Mapped[dict] = mapped_column(JSON_TYPE, nullable=False)
     confidence: Mapped[str] = mapped_column(String(40), default="medium", nullable=False)
-    data_limitations: Mapped[dict] = mapped_column(JSONB, default=list, nullable=False)
-    sources: Mapped[dict] = mapped_column(JSONB, default=list, nullable=False)
+    data_limitations: Mapped[dict] = mapped_column(JSON_TYPE, default=list, nullable=False)
+    sources: Mapped[dict] = mapped_column(JSON_TYPE, default=list, nullable=False)
     safety_status: Mapped[str] = mapped_column(String(40), default="passed", nullable=False)
 
 
@@ -186,7 +217,7 @@ class NewsArticle(TimestampMixin, Base):
     source_name: Mapped[str] = mapped_column(String(120), nullable=False)
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     summary: Mapped[str | None] = mapped_column(Text)
-    related_symbols: Mapped[dict] = mapped_column(JSONB, default=list, nullable=False)
+    related_symbols: Mapped[dict] = mapped_column(JSON_TYPE, default=list, nullable=False)
 
 
 class WatchlistItem(TimestampMixin, Base):

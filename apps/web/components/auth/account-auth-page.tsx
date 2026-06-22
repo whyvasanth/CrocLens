@@ -38,10 +38,7 @@ const initialProfile: OnboardingProfileRequest = {
   has_student_loans: true,
   has_credit_card_debt: true,
   has_high_interest_debt: true,
-  manual_assets: [
-    { asset_class: "Cash", label: "Emergency savings", estimated_value: 4500 },
-    { asset_class: "Retirement", label: "401(k)", estimated_value: 12000 }
-  ]
+  manual_assets: []
 };
 
 interface AccountAuthPageProps {
@@ -61,9 +58,9 @@ function saveSession(session: AccountSessionResponse) {
 
 export function AccountAuthPage({ mode }: AccountAuthPageProps) {
   const router = useRouter();
-  const [displayName, setDisplayName] = useState("Maya Rivera");
-  const [email, setEmail] = useState("maya@example.com");
-  const [password, setPassword] = useState("sample-pass-123");
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [profile, setProfile] = useState<OnboardingProfileRequest>(initialProfile);
   const [session, setSession] = useState<AccountSessionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -132,7 +129,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
             <p className="mt-4 text-sm leading-6 text-emerald-50">
               {isSignup
                 ? "CrocLens collects goals, risk comfort, retirement context, debt, and manual assets during account creation so there is no separate onboarding page."
-                : "This MVP login uses a local mock session. Production auth will add password hashing, persistence, email verification, and secure sessions."}
+                : "This MVP login uses persisted local authentication. Production auth will add Cognito, email verification, password reset, and secure cookie sessions."}
             </p>
           </div>
 
@@ -141,7 +138,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
               "Beginner mode is enabled by default.",
               "Account setup includes risk profile context.",
               "This is educational software, not financial advice.",
-              "No paid auth provider is connected in the MVP."
+              "No paid auth provider is required for local development."
             ].map((item) => (
               <div className="flex gap-3 rounded-lg border border-white/10 bg-white/10 p-3" key={item}>
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-200" />
@@ -156,7 +153,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
             <SectionTitle
               eyebrow={isSignup ? "Account" : "Login"}
               title={isSignup ? "Create your account" : "Log in"}
-              action={<Pill tone="blue">MVP mock auth</Pill>}
+              action={<Pill tone="blue">Local auth</Pill>}
             />
             <div className="grid gap-4 md:grid-cols-2">
               {isSignup ? (
@@ -353,7 +350,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
               <div className="flex gap-3">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-croc-moss" />
                 <p className="text-sm leading-6 text-stone-600">
-                  MVP account flow only. Production needs password hashing, real sessions, email verification, and secure persistence.
+                  Local account flow for development. Production will use Cognito, verified tokens, and secure cookie sessions.
                 </p>
               </div>
               <button

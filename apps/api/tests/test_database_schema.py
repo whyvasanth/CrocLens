@@ -4,6 +4,7 @@ from app import models  # noqa: F401
 
 EXPECTED_TABLES = {
     "users",
+    "local_auth_sessions",
     "user_profiles",
     "portfolios",
     "holdings",
@@ -34,4 +35,3 @@ def test_core_foreign_keys_are_declared() -> None:
     assert {fk.column.table.name for fk in holdings.foreign_keys} == {"assets", "portfolios"}
     assert {fk.column.table.name for fk in tax_lots.foreign_keys} == {"holdings"}
     assert {fk.column.table.name for fk in market_prices.foreign_keys} == {"assets"}
-

@@ -349,14 +349,40 @@ def test_signup_collects_account_and_onboarding_profile() -> None:
 
     assert response.status_code == 200
     assert body["user"]["email"] == "maya@example.com"
-    assert body["token_type"] == "mock_session"
+    assert body["token_type"] == "local_session"
     assert body["next_path"] == "/dashboard"
     assert body["onboarding_profile"]["risk_profile"] == "Cautious Beginner"
-    assert "mock" in body["security_note"].lower()
+    assert "local authentication" in body["security_note"].lower()
     assert body["data_limitations"]
 
 
-def test_login_returns_mock_session_without_claiming_real_auth() -> None:
+def test_login_verifies_persisted_local_account() -> None:
+    signup_response = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "display_name": "Maya Rivera",
+            "email": "maya@example.com",
+            "password": "sample-pass-123",
+            "onboarding_profile": {
+                "investment_experience": "new",
+                "primary_goal": "debt_payoff",
+                "risk_tolerance": "medium",
+                "time_horizon": "medium",
+                "income_range": "50k_100k",
+                "emergency_cash_months": 2,
+                "has_retirement_account": True,
+                "employer_match": "not_sure",
+                "retirement_contribution_percent": 4,
+                "has_mortgage": False,
+                "has_student_loans": True,
+                "has_credit_card_debt": True,
+                "has_high_interest_debt": True,
+                "manual_assets": [],
+            },
+        },
+    )
+    assert signup_response.status_code == 200
+
     response = client.post(
         "/api/v1/auth/login",
         json={"email": "maya@example.com", "password": "sample-pass-123"},
@@ -366,8 +392,143 @@ def test_login_returns_mock_session_without_claiming_real_auth() -> None:
     assert response.status_code == 200
     assert body["user"]["email"] == "maya@example.com"
     assert body["onboarding_profile"] is None
-    assert body["token_type"] == "mock_session"
-    assert "does not verify" in body["data_limitations"][0]
+    assert body["token_type"] == "local_session"
+    assert "bcrypt" in body["data_limitations"][0].lower()
+
+
+def test_login_rejects_invalid_password() -> None:
+    signup_response = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "display_name": "Jordan Lee",
+            "email": "jordan@example.com",
+            "password": "sample-pass-123",
+            "onboarding_profile": {
+                "investment_experience": "new",
+                "primary_goal": "learn",
+                "risk_tolerance": "medium",
+                "time_horizon": "medium",
+                "income_range": "prefer_not",
+                "emergency_cash_months": 3,
+                "has_retirement_account": False,
+                "employer_match": "not_applicable",
+                "retirement_contribution_percent": 0,
+                "has_mortgage": False,
+                "has_student_loans": False,
+                "has_credit_card_debt": False,
+                "has_high_interest_debt": False,
+                "manual_assets": [],
+            },
+        },
+    )
+    assert signup_response.status_code == 200
+
+    response = client.post(
+        "/api/v1/auth/login",
+        json={"email": "jordan@example.com", "password": "wrong-pass-123"},
+    )
+
+    assert response.status_code == 401
+
+
+def test_duplicate_signup_returns_conflict() -> None:
+    payload = {
+        "display_name": "Alex Morgan",
+        "email": "alex@example.com",
+        "password": "sample-pass-123",
+        "onboarding_profile": {
+            "investment_experience": "new",
+            "primary_goal": "learn",
+            "risk_tolerance": "medium",
+            "time_horizon": "medium",
+            "income_range": "prefer_not",
+            "emergency_cash_months": 3,
+            "has_retirement_account": False,
+            "employer_match": "not_applicable",
+            "retirement_contribution_percent": 0,
+            "has_mortgage": False,
+            "has_student_loans": False,
+            "has_credit_card_debt": False,
+            "has_high_interest_debt": False,
+            "manual_assets": [],
+        },
+    }
+
+    assert client.post("/api/v1/auth/signup", json=payload).status_code == 200
+    response = client.post("/api/v1/auth/signup", json=payload)
+
+    assert response.status_code == 409
+
+
+def test_auth_me_requires_and_accepts_session_token() -> None:
+    missing_response = client.get("/api/v1/auth/me")
+    assert missing_response.status_code == 401
+
+    signup_response = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "display_name": "Taylor Green",
+            "email": "taylor@example.com",
+            "password": "sample-pass-123",
+            "onboarding_profile": {
+                "investment_experience": "some",
+                "primary_goal": "retirement",
+                "risk_tolerance": "medium",
+                "time_horizon": "long",
+                "income_range": "50k_100k",
+                "emergency_cash_months": 4,
+                "has_retirement_account": True,
+                "employer_match": "yes",
+                "retirement_contribution_percent": 6,
+                "has_mortgage": False,
+                "has_student_loans": False,
+                "has_credit_card_debt": False,
+                "has_high_interest_debt": False,
+                "manual_assets": [],
+            },
+        },
+    )
+    token = signup_response.json()["session_token"]
+
+    response = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+    body = response.json()
+
+    assert response.status_code == 200
+    assert body["email"] == "taylor@example.com"
+
+
+def test_logout_invalidates_local_session() -> None:
+    signup_response = client.post(
+        "/api/v1/auth/signup",
+        json={
+            "display_name": "Sam Rivera",
+            "email": "sam@example.com",
+            "password": "sample-pass-123",
+            "onboarding_profile": {
+                "investment_experience": "some",
+                "primary_goal": "build_wealth",
+                "risk_tolerance": "medium",
+                "time_horizon": "long",
+                "income_range": "50k_100k",
+                "emergency_cash_months": 5,
+                "has_retirement_account": True,
+                "employer_match": "yes",
+                "retirement_contribution_percent": 6,
+                "has_mortgage": False,
+                "has_student_loans": False,
+                "has_credit_card_debt": False,
+                "has_high_interest_debt": False,
+                "manual_assets": [],
+            },
+        },
+    )
+    token = signup_response.json()["session_token"]
+
+    logout_response = client.post("/api/v1/auth/logout", headers={"Authorization": f"Bearer {token}"})
+    assert logout_response.status_code == 200
+
+    me_response = client.get("/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert me_response.status_code == 401
 
 
 def test_onboarding_profile_returns_risk_profile_and_guardrails() -> None:
