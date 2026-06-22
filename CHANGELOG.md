@@ -12,6 +12,9 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added provider in-memory TTL caching, normalized live-provider tests with mocked clients, and provider cache status metadata.
 - Added Phase 21C persisted market observation cache with provider run/error tables, net-worth snapshots, stale-while-revalidate service logic, idempotent jobs, and tests.
 - Added Phase 21D market quote/history, market snapshot, portfolio refresh-prices, and portfolio history API endpoints with stale/unavailable metadata and mocked-provider tests.
+- Added Phase 22 public landing page, explicit Demo Mode banner, grouped beginner navigation, endpoint-backed market snapshot card, and account-aware net-worth history chart behavior.
+- Moved evaluation metrics to `/internal/evaluation-metrics` so internal quality views are not part of beginner navigation.
+- Added signup password confirmation and friendlier account validation while preserving secure cookie sessions.
 - Established Phase 0 product and system design foundation.
 - Added project README with product vision, MVP strategy, tech stack, safety principles, and Git workflow.
 - Added architecture, roadmap, data source, security, AI agent, database, API, AWS, evaluation, and learning documentation.
@@ -85,7 +88,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Some backend areas still use static mock data, but auth and portfolio holdings/liabilities now use PostgreSQL in local Docker.
 - Database persistence is implemented for local users, sessions, portfolios, holdings, and liabilities.
 - Local Docker PostgreSQL is the active runtime database; tests may still use SQLite for speed.
-- Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
+- Market snapshot now loads from `/api/v1/market/snapshot` and shows provider/sample/freshness labels.
+- Signed-in net-worth chart history now uses stored portfolio snapshots when available; demo visitors still see clearly labeled sample history.
 - Phase 6 scores are educational heuristics and are intentionally simple for auditability.
 - Phase 7 detail pages use static sample data and educational explanations, not personalized advice.
 - Phase 8 risk profiles are educational starting points, not personalized investment recommendations.
@@ -95,4 +99,4 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Phase 18 CI is manual-only and should be used only where GitHub Actions remains free or included for the repo/account.
 - Phase 19 metrics use deterministic sample values; no paid analytics, paid monitoring, or external tracking tool is connected.
 - Phase 20 blocks AWS and paid cloud by default; local Docker is the active deployment path.
-- Current auth is mock-only and must be replaced before real users or real financial data.
+- Current local auth uses hashed passwords, database sessions, and HttpOnly cookies for development; production auth hardening is still required before real users or real financial data.

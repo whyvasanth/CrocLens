@@ -1,5 +1,5 @@
-import { EvaluationMetricsPage } from "@/components/features/evaluation-metrics-page";
+import { redirect } from "next/navigation";
 
 export default function MetricsPage() {
-  return <EvaluationMetricsPage />;
+  redirect("/internal/evaluation-metrics");
 }

@@ -470,3 +470,42 @@ Branch:
 Commit:
 
 - `docs: add free-only deployment and cost-control plan`
+
+## Phase 21A-21D: Market Provider, Persistence, And Live API Foundation
+
+Goal:
+
+- Add a free-first provider architecture, live-capable public providers, persisted market observations, and portfolio history APIs.
+
+Status:
+
+- Implemented with normalized provider contracts, yfinance/public provider adapters, provider health/status, market observation persistence, stale-while-revalidate cache behavior, portfolio price refresh, and stored net-worth snapshots. Tests mock provider clients so CI does not depend on live internet access.
+
+Branch:
+
+- `main`
+
+Commit:
+
+- `feat(data): add normalized market provider foundation`
+- `feat(data): integrate free live market providers`
+- `feat(data): persist and cache market observations`
+- `feat(api): expose live market and portfolio history APIs`
+
+## Phase 22: Dashboard And Product Experience
+
+Goal:
+
+- Make CrocLens feel like a coherent beginner-first product instead of a prototype dashboard.
+
+Status:
+
+- Implemented with a public landing page, clearly labeled Demo Mode, grouped navigation, endpoint-backed market snapshot, account-aware portfolio history chart, internal evaluation metrics route, cleaner auth copy, password confirmation, and collapsed Croc Guide evidence details.
+
+Branch:
+
+- `main`
+
+Commit:
+
+- `feat(web): create polished beginner-first product experience`

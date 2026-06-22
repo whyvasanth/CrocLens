@@ -210,11 +210,11 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
             )}
 
             {answer?.agent_trace.length ? (
-              <div className="rounded-lg border border-emerald-900/10 bg-white p-4">
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold text-croc-ink">Agent trace</p>
-                  <Pill tone="blue">{answer.agent_trace.length} steps</Pill>
-                </div>
+              <details className="rounded-lg border border-emerald-900/10 bg-white p-4">
+                <summary className="flex cursor-pointer items-center justify-between gap-3">
+                  <span className="text-sm font-semibold text-croc-ink">How CrocLens reached this</span>
+                  <Pill tone="blue">{answer.agent_trace.length} checks</Pill>
+                </summary>
                 <div className="space-y-3">
                   {answer.agent_trace.map((step, index) => (
                     <div className="flex gap-3" key={`${step.agent}-${index}`}>
@@ -236,7 +236,7 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
                     </div>
                   ))}
                 </div>
-              </div>
+              </details>
             ) : null}
 
             {error ? (

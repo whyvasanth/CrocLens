@@ -21,6 +21,7 @@ const requiredRoutes = [
   "apps/web/app/api/auth/me/route.ts",
   "apps/web/app/api/auth/signup/route.ts",
   "apps/web/app/api/backend/[...path]/route.ts",
+  "apps/web/app/page.tsx",
   "apps/web/app/login/page.tsx",
   "apps/web/app/signup/page.tsx",
   "apps/web/app/dashboard/page.tsx",
@@ -30,6 +31,7 @@ const requiredRoutes = [
   "apps/web/app/journal/page.tsx",
   "apps/web/app/watchlist/page.tsx",
   "apps/web/app/evaluation-metrics/page.tsx",
+  "apps/web/app/internal/evaluation-metrics/page.tsx",
   "apps/web/app/settings/page.tsx"
 ];
 
@@ -65,6 +67,8 @@ const requiredEndpoints = [
   "/api/v1/journal/entries",
   "/api/v1/watchlist",
   "/api/v1/evaluation/metrics",
+  "/api/v1/market/snapshot",
+  "/api/v1/portfolio/history",
   "/api/v1/security/status",
   "/api/v1/privacy/settings",
   "/api/v1/privacy/export",
@@ -77,6 +81,13 @@ for (const endpoint of requiredEndpoints) {
 
 assert.match(apiClient, /function updateHolding/, "Portfolio API client should support holding updates");
 assert.match(apiClient, /function updateLiability/, "Portfolio API client should support liability updates");
+assert.match(apiClient, /function getMarketSnapshot/, "Dashboard should call the market snapshot API");
+assert.match(apiClient, /function getPortfolioHistory/, "Dashboard should call the portfolio history API");
+
+const landingPage = read("apps/web/app/page.tsx");
+assert.match(landingPage, /Try Demo/, "Landing page should expose demo mode");
+assert.match(landingPage, /Create Free Account/, "Landing page should expose account creation");
+assert.match(landingPage, /Educational information only/, "Landing page should include financial safety copy");
 
 const portfolioPage = read("apps/web/components/asset-detail/portfolio-assets-page.tsx");
 assert.match(portfolioPage, /Save holding/, "Portfolio page should expose holding edit/save flow");
@@ -96,6 +107,7 @@ assert.match(evaluationPage, /Quality gates/, "Evaluation metrics page should sh
 const authPage = read("apps/web/components/auth/account-auth-page.tsx");
 assert.match(authPage, /Create your account/, "Signup page should include account creation");
 assert.match(authPage, /onboarding_profile/, "Signup should collect onboarding profile data during account creation");
+assert.match(authPage, /Confirm password/, "Signup should require password confirmation");
 assert.doesNotMatch(authPage, /localStorage/, "Auth page should not store session tokens in localStorage");
 
 const authSharedRoute = read("apps/web/app/api/auth/_shared.ts");
@@ -112,12 +124,25 @@ assert.doesNotMatch(sidebarData, /label:\s*"Onboarding"/, "Onboarding should not
 
 const guidePanel = read("apps/web/components/dashboard/croc-guide-panel.tsx");
 assert.doesNotMatch(guidePanel, /backdrop-blur/, "Croc Guide should not blur dashboard content when open");
+assert.doesNotMatch(guidePanel, /Agent trace/, "Croc Guide should not expose internal agent trace by default");
+assert.match(guidePanel, /How CrocLens reached this/, "Croc Guide should offer collapsed evidence details");
 
 const dashboardShell = read("apps/web/components/dashboard/dashboard-shell.tsx");
 assert.doesNotMatch(dashboardShell, /Good morning, Maya/, "Dashboard greeting should use the signed-in account or portfolio user name");
+assert.match(dashboardShell, /Demo data/, "Dashboard should clearly label demo mode for signed-out visitors");
 
 const sidebar = read("apps/web/components/dashboard/sidebar.tsx");
 assert.doesNotMatch(sidebar, /Maya Rivera/, "Sidebar account panel should not be hardcoded to the sample user");
+assert.doesNotMatch(sidebar, /Market is open/, "Sidebar should not hard-code market-open status");
+assert.doesNotMatch(sidebar, /evaluation-metrics/, "Internal metrics should not appear in beginner navigation");
+
+const marketSnapshotCard = read("apps/web/components/dashboard/market-snapshot.tsx");
+assert.match(marketSnapshotCard, /getMarketSnapshot/, "Market snapshot card should use the backend market endpoint");
+assert.doesNotMatch(marketSnapshotCard, /href="#"/, "Market snapshot should not use dead links");
+
+const portfolioChart = read("apps/web/components/dashboard/portfolio-chart.tsx");
+assert.match(portfolioChart, /getPortfolioHistory/, "Portfolio chart should load stored history for signed-in users");
+assert.match(portfolioChart, /No saved net worth history yet/, "Portfolio chart should not draw fake authenticated history");
 
 const dataSources = read("docs/data-sources.md");
 assert.match(dataSources, /must not require paid providers/i, "Data docs should enforce free-only providers");

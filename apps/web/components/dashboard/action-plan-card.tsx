@@ -1,4 +1,5 @@
 import { Check, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { Card, Pill, SectionTitle } from "@/components/dashboard/ui";
 import type { ActionPlanResponse } from "@/types/api";
 
@@ -62,14 +63,13 @@ export function ActionPlanCard({ actionPlan, isLoading }: ActionPlanCardProps) {
           {actionPlan.educational_disclaimer} {actionPlan.data_limitations[0]}
         </p>
       ) : null}
-      <button
+      <Link
+        href="/action-plans"
         className="mt-5 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-croc-mint px-4 text-sm font-semibold text-croc-moss transition hover:bg-croc-lime/70"
-        suppressHydrationWarning
-        type="button"
       >
         Go to Action Plans
         <ChevronRight className="h-4 w-4" />
-      </button>
+      </Link>
     </Card>
   );
 }

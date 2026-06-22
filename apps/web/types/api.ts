@@ -416,6 +416,56 @@ export interface MarketNewsImpactResponse {
   educational_disclaimer: string;
 }
 
+export interface MarketDataQualityMetadata {
+  provider_status: string;
+  source_name: string;
+  source_url: string | null;
+  data_as_of: string | null;
+  retrieved_at: string | null;
+  is_stale: boolean;
+  is_sample_data: boolean;
+  data_quality: string;
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  warning: string | null;
+}
+
+export interface MarketSnapshotItemResponse extends MarketDataQualityMetadata {
+  symbol: string;
+  name: string;
+  asset_class: string;
+  metric_type: string;
+  value: number;
+  unit: string;
+  currency: string | null;
+  change_percent: number | null;
+}
+
+export interface MarketSnapshotResponse {
+  items: MarketSnapshotItemResponse[];
+  provider_status: string;
+  is_sample_data: boolean;
+  data_quality: string;
+  data_limitations: string[];
+  educational_disclaimer: string;
+}
+
+export interface PortfolioHistoryPointResponse {
+  snapshot_date: string;
+  total_assets: number;
+  total_liabilities: number;
+  net_worth: number;
+  source_name: string;
+  data_quality: string;
+}
+
+export interface PortfolioHistoryResponse {
+  points: PortfolioHistoryPointResponse[];
+  confidence: ConfidenceLevel;
+  data_limitations: string[];
+  educational_disclaimer: string;
+}
+
 export interface TaxLotResponse {
   id: string;
   symbol: string;

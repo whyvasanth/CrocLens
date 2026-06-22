@@ -326,7 +326,7 @@ Purpose:
 
 The provider status endpoint does not fetch live data by itself. It exposes configuration, capabilities, cache TTL, stale threshold, provider status, cache status, and data limitations.
 
-Phase 21B adds live-capable provider adapters behind this registry, but the public dashboard still waits for later persistence and market API endpoints before displaying live observations.
+Phase 21B adds live-capable provider adapters behind this registry. Phase 21C and 21D add persisted observations and market API endpoints that frontend surfaces can call without touching provider clients directly.
 
 Phase 21D adds the first live-market API surface:
 
@@ -337,6 +337,13 @@ Phase 21D adds the first live-market API surface:
 - `GET /api/v1/portfolio/history` returns stored net-worth snapshots only; it does not invent trend lines.
 
 Every response includes provider/sample/stale/data-quality metadata and educational limitations.
+
+Phase 22 frontend behavior:
+
+- The dashboard market snapshot card calls `GET /api/v1/market/snapshot` and displays provider status, sample/stale labels, loading, and error states.
+- The dashboard net-worth chart calls `GET /api/v1/portfolio/history` for signed-in users and shows an empty state when no stored snapshots exist.
+- Demo visitors still see clearly labeled sample history, separate from persisted account data.
+- Internal evaluation metrics live at `/internal/evaluation-metrics` and are not shown in beginner navigation.
 
 The sample ingestion response includes:
 

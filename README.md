@@ -130,14 +130,16 @@ Completed phases:
 - Phase 18: Testing and CI
 - Phase 19: Evaluation metrics
 - Phase 20: Free-only deployment plan
+- Phase 21A-21D: Market provider foundation, free provider adapters, persisted market observations, and live market/portfolio history APIs
+- Phase 22: Public landing page, demo mode, dashboard product polish, and real market snapshot wiring
 
 Current status:
 
-- MVP foundation complete through Phase 20
+- MVP foundation complete through Phase 22
 
 Next work:
 
-- Choose the next product slice deliberately before adding paid infrastructure, real user data, or external APIs.
+- Persist more user-specific workflows, then ground Croc Guide more deeply in the user's saved records and provider freshness metadata.
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -190,7 +192,8 @@ Phase 17 adds security headers, request IDs, rate limiting, prompt-injection che
 Phase 18 adds backend agent-output tests, frontend smoke tests, and a manual-only free-usage GitHub Actions CI workflow.
 Phase 19 adds an internal evaluation metrics dashboard for product quality, AI safety, data freshness, and reliability.
 Phase 20 adds local Docker deployment files and a free-only deployment plan that blocks AWS and paid cloud by default.
-Latest refinement adds mock signup/login pages, collects onboarding information during account creation, and keeps Croc Guide from blurring the dashboard while chat is open.
+Phase 21A-21D add free-first market provider contracts, live-capable yfinance/public provider adapters, persisted market observations, and portfolio history endpoints.
+Phase 22 adds a public landing page, explicit Demo Mode, grouped beginner navigation, endpoint-backed market snapshot data, account-aware net-worth history behavior, and friendlier signup validation.
 
 Install dependencies:
 
@@ -207,10 +210,10 @@ npm run dev:web
 Open:
 
 ```text
-http://localhost:3000/dashboard
+http://localhost:3000
 ```
 
-The dashboard fetches portfolio summary, assets, and action plan data from the backend API. Market snapshot and chart history still use sample frontend data until later data-pipeline phases.
+The public home page links to Demo Mode and account creation. The dashboard fetches portfolio summary, assets, action plan data, and market snapshot data from the backend API. Signed-in net-worth history uses stored snapshots when available; demo visitors see clearly labeled sample history.
 
 Optional frontend API override:
 
@@ -220,6 +223,7 @@ set NEXT_PUBLIC_CROCLENS_API_URL=http://127.0.0.1:8000
 
 Current frontend routes:
 
+- `/`
 - `/login`
 - `/signup`
 - `/dashboard`
@@ -232,7 +236,8 @@ Current frontend routes:
 - `/journal`
 - `/retirement`
 - `/tax-planner`
-- `/evaluation-metrics`
+- `/internal/evaluation-metrics`
+- `/evaluation-metrics` redirects to `/internal/evaluation-metrics`
 - `/settings`
 - `/assets/asset_stock_bucket`
 - `/assets/asset_etf_bucket`

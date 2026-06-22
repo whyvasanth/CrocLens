@@ -25,9 +25,11 @@ import type {
   LiabilityUpdateRequest,
   LogoutResponse,
   MarketNewsImpactResponse,
+  MarketSnapshotResponse,
   OnboardingOptionsResponse,
   OnboardingProfileRequest,
   OnboardingProfileResponse,
+  PortfolioHistoryResponse,
   PortfolioRecordsResponse,
   PortfolioSummaryResponse,
   PrivacySettingsRequest,
@@ -210,6 +212,14 @@ async function deleteJson<TResponse>(path: string, signal?: AbortSignal): Promis
 
 export function getMarketNewsImpact(signal?: AbortSignal) {
   return requestJson<MarketNewsImpactResponse>("/api/v1/market-news/impact-summary", signal);
+}
+
+export function getMarketSnapshot(signal?: AbortSignal) {
+  return requestJson<MarketSnapshotResponse>("/api/v1/market/snapshot", signal);
+}
+
+export function getPortfolioHistory(signal?: AbortSignal) {
+  return requestJson<PortfolioHistoryResponse>("/api/v1/portfolio/history", signal);
 }
 
 export function getTaxInsights(signal?: AbortSignal) {

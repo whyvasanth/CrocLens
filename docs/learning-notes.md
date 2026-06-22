@@ -636,3 +636,24 @@ Key terms:
 Practice idea:
 
 - Add a route test for `period=YTD` history and confirm the endpoint rejects an unsupported interval.
+
+## Phase 22: Beginner Product Experience
+
+What we learned:
+
+- A public landing page and demo mode make a portfolio project easier for recruiters and new users to evaluate.
+- Demo data must be visibly separate from persisted user records so users do not confuse examples with their own finances.
+- A dashboard should call backend product APIs, not vendor APIs or frontend-only mock imports, when provider metadata matters.
+- Internal evaluation surfaces belong under internal routes, not in beginner navigation.
+- Auth copy should explain user value and safety without exposing implementation language in the normal customer experience.
+
+Key terms:
+
+- Demo mode: a clearly labeled sample experience that does not write to a real account.
+- Empty state: UI shown when real user data does not exist yet.
+- Internal route: a page intended for operators or developers, separate from primary user navigation.
+- Product copy: user-facing language that explains behavior without implementation jargon.
+
+Practice idea:
+
+- Add a small "data details" popover to the market snapshot card that shows provider, retrieved time, and limitations for each row.

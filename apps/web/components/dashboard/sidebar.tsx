@@ -3,11 +3,51 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { ChevronDown, HelpCircle, LogOut, X } from "lucide-react";
+import {
+  Bell,
+  ChartPie,
+  ChevronDown,
+  HelpCircle,
+  Home,
+  LogOut,
+  NotebookPen,
+  PiggyBank,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  WalletCards,
+  X
+} from "lucide-react";
 import { clsx } from "clsx";
 import { logoutAccount } from "@/lib/api-client";
-import { sidebarItems } from "@/lib/mock-dashboard-data";
 import type { AccountUserResponse } from "@/types/api";
+
+const navigationGroups = [
+  {
+    label: "Core",
+    items: [
+      { label: "Dashboard", href: "/dashboard", icon: Home },
+      { label: "Portfolio", href: "/portfolio", icon: WalletCards },
+      { label: "Compare", href: "/compare-assets", icon: ChartPie },
+      { label: "Watchlist", href: "/watchlist", icon: Bell }
+    ]
+  },
+  {
+    label: "Planning",
+    items: [
+      { label: "Action Plans", href: "/action-plans", icon: Sparkles },
+      { label: "Retirement", href: "/retirement", icon: PiggyBank },
+      { label: "Tax", href: "/tax-planner", icon: ShieldCheck },
+      { label: "Journal", href: "/journal", icon: NotebookPen }
+    ]
+  },
+  {
+    label: "Account",
+    items: [
+      { label: "Settings", href: "/settings", icon: Settings }
+    ]
+  }
+];
 
 interface SidebarProps {
   account: AccountUserResponse | null;
@@ -69,40 +109,49 @@ export function Sidebar({ account, isOpen, onClose }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="mt-7 space-y-1" aria-label="Primary navigation">
-          {sidebarItems.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              pathname === item.href ||
-              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+        <nav className="mt-7 space-y-5" aria-label="Primary navigation">
+          {navigationGroups.map((group) => (
+            <div key={group.label}>
+              <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wide text-emerald-100/75">
+                {group.label}
+              </p>
+              <div className="space-y-1">
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== "/dashboard" && pathname.startsWith(item.href));
 
-            return (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={onClose}
-                className={clsx(
-                  "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition",
-                  isActive
-                    ? "bg-emerald-400/90 text-white shadow-lg shadow-emerald-950/20"
-                    : "text-emerald-50 hover:bg-white/10"
-                )}
-              >
-                <Icon className="h-5 w-5" />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
+                  return (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      onClick={onClose}
+                      className={clsx(
+                        "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition",
+                        isActive
+                          ? "bg-emerald-400/90 text-white shadow-lg shadow-emerald-950/20"
+                          : "text-emerald-50 hover:bg-white/10"
+                      )}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
 
         <div className="mt-auto space-y-4">
           <div className="rounded-lg border border-white/10 bg-white/10 p-4">
             <div className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-emerald-300" />
-              <p className="text-sm font-semibold">Market is open</p>
+              <p className="text-sm font-semibold">Latest available data</p>
             </div>
             <p className="mt-2 text-sm leading-6 text-emerald-50">
-              Latest available dashboard data.
+              Market freshness is labeled inside each card.
             </p>
           </div>
 

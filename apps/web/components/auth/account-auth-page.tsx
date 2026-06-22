@@ -50,6 +50,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [profile, setProfile] = useState<OnboardingProfileRequest>(initialProfile);
   const [session, setSession] = useState<BrowserAccountSessionResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -70,18 +71,41 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
+    const trimmedName = displayName.trim();
+
+    if (isSignup && trimmedName.length < 2) {
+      setError("Please enter your name so CrocLens can personalize the dashboard.");
+      return;
+    }
+
+    if (!normalizedEmail.includes("@")) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 12) {
+      setError("Use a password with at least 12 characters.");
+      return;
+    }
+
+    if (isSignup && password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
       const response = isSignup
         ? await createAccount({
-            display_name: displayName,
-            email,
+            display_name: trimmedName,
+            email: normalizedEmail,
             password,
             onboarding_profile: profile
           })
-        : await loginAccount({ email, password });
+        : await loginAccount({ email: normalizedEmail, password });
 
       setSession(response);
 
@@ -99,7 +123,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
     <main className="min-h-screen bg-croc-cream px-4 py-6 md:px-6">
       <div className="mx-auto grid max-w-[1180px] gap-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(440px,1.05fr)]">
         <section className="rounded-lg bg-[radial-gradient(circle_at_top_left,#0b7a5c,#052f28_60%,#03231e)] p-6 text-white shadow-card">
-          <Link href="/dashboard" className="flex items-center gap-3" aria-label="CrocLens dashboard">
+          <Link href="/" className="flex items-center gap-3" aria-label="CrocLens home">
             <span className="grid h-12 w-12 place-items-center rounded-lg bg-croc-lime text-2xl font-bold text-white">
               C
             </span>
@@ -117,7 +141,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
             <p className="mt-4 text-sm leading-6 text-emerald-50">
               {isSignup
                 ? "CrocLens collects goals, risk comfort, retirement context, debt, and manual assets during account creation so there is no separate onboarding page."
-                : "This MVP login uses persisted local authentication. Production auth will add Cognito, email verification, password reset, and secure cookie sessions."}
+                : "Log in to continue tracking your portfolio, debts, goals, and Croc Guide conversations from this device."}
             </p>
           </div>
 
@@ -126,7 +150,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
               "Beginner mode is enabled by default.",
               "Account setup includes risk profile context.",
               "This is educational software, not financial advice.",
-              "No paid auth provider is required for local development."
+              "Your session uses a secure browser cookie."
             ].map((item) => (
               <div className="flex gap-3 rounded-lg border border-white/10 bg-white/10 p-3" key={item}>
                 <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-200" />
@@ -141,7 +165,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
             <SectionTitle
               eyebrow={isSignup ? "Account" : "Login"}
               title={isSignup ? "Create your account" : "Log in"}
-              action={<Pill tone="blue">Local auth</Pill>}
+              action={<Pill tone="blue">Secure session</Pill>}
             />
             <div className="grid gap-4 md:grid-cols-2">
               {isSignup ? (
@@ -169,13 +193,30 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
                 <span className={labelClass}>Password</span>
                 <input
                   className={fieldClass}
+                  minLength={12}
                   onChange={(event) => setPassword(event.target.value)}
                   suppressHydrationWarning
                   type="password"
                   value={password}
                 />
               </label>
+              {isSignup ? (
+                <label>
+                  <span className={labelClass}>Confirm password</span>
+                  <input
+                    className={fieldClass}
+                    minLength={12}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    suppressHydrationWarning
+                    type="password"
+                    value={confirmPassword}
+                  />
+                </label>
+              ) : null}
             </div>
+            <p className="mt-3 text-xs leading-5 text-stone-500">
+              Passwords must be at least 12 characters.
+            </p>
           </Card>
 
           {isSignup ? (
@@ -338,7 +379,7 @@ export function AccountAuthPage({ mode }: AccountAuthPageProps) {
               <div className="flex gap-3">
                 <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-croc-moss" />
                 <p className="text-sm leading-6 text-stone-600">
-                  Local account flow for development. Production will use Cognito, verified tokens, and secure cookie sessions.
+                  CrocLens keeps account setup simple and uses a secure cookie session in the browser.
                 </p>
               </div>
               <button
