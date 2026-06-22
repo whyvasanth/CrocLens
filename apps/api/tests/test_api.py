@@ -595,6 +595,25 @@ def test_authenticated_portfolio_crud_updates_summary() -> None:
             "due_day": 22,
         },
     )
+    liability_body = liability_response.json()
+
+    update_holding_response = client.put(
+        f"/api/v1/portfolio/holdings/{holding_body['id']}",
+        headers=headers,
+        json={
+            "market_value": 750,
+            "quantity": 3,
+            "account_name": "Updated brokerage",
+        },
+    )
+    update_liability_response = client.put(
+        f"/api/v1/portfolio/liabilities/{liability_body['id']}",
+        headers=headers,
+        json={
+            "balance": 200,
+            "minimum_payment": 45,
+        },
+    )
 
     summary_response = client.get("/api/v1/portfolio/summary", headers=headers)
     summary_body = summary_response.json()
@@ -602,10 +621,16 @@ def test_authenticated_portfolio_crud_updates_summary() -> None:
     assert holding_response.status_code == 200
     assert holding_body["symbol"] == "VTI"
     assert liability_response.status_code == 200
+    assert update_holding_response.status_code == 200
+    assert update_holding_response.json()["market_value"] == 750
+    assert update_holding_response.json()["account_name"] == "Updated brokerage"
+    assert update_liability_response.status_code == 200
+    assert update_liability_response.json()["balance"] == 200
+    assert update_liability_response.json()["minimum_payment"] == 45
     assert summary_response.status_code == 200
-    assert summary_body["total_assets"] == 500
-    assert summary_body["total_liabilities"] == 125
-    assert summary_body["net_worth"] == 375
+    assert summary_body["total_assets"] == 750
+    assert summary_body["total_liabilities"] == 200
+    assert summary_body["net_worth"] == 550
 
     delete_response = client.delete(f"/api/v1/portfolio/holdings/{holding_body['id']}", headers=headers)
     assert delete_response.status_code == 200

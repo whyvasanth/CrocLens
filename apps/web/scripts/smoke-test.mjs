@@ -75,6 +75,14 @@ for (const endpoint of requiredEndpoints) {
   assert.match(apiClient, new RegExp(endpoint.replaceAll("/", "\\/")), `${endpoint} should be wired in api-client.ts`);
 }
 
+assert.match(apiClient, /function updateHolding/, "Portfolio API client should support holding updates");
+assert.match(apiClient, /function updateLiability/, "Portfolio API client should support liability updates");
+
+const portfolioPage = read("apps/web/components/asset-detail/portfolio-assets-page.tsx");
+assert.match(portfolioPage, /Save holding/, "Portfolio page should expose holding edit/save flow");
+assert.match(portfolioPage, /Save liability/, "Portfolio page should expose liability edit/save flow");
+assert.match(portfolioPage, /aria-label=\{`Edit \$\{label\}`\}/, "Portfolio records should include an edit action");
+
 const settingsPage = read("apps/web/components/features/settings-privacy-page.tsx");
 assert.match(settingsPage, /Export preview/, "Settings page should include export preview");
 assert.match(settingsPage, /Delete preview/, "Settings page should include delete preview");

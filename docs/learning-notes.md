@@ -531,3 +531,22 @@ Key terms:
 Practice idea:
 
 - Add one new assistant question path that uses the largest tracked asset class from the authenticated portfolio.
+
+## Production MVP Slice: Portfolio Record Editing
+
+What we learned:
+
+- A complete CRUD workflow needs create, read, update, and delete paths tested together because summary calculations depend on all four.
+- Inline edit forms are a pragmatic MVP choice when the same fields are used for create and update.
+- The frontend should reuse typed API contracts instead of building ad hoc request objects for each button.
+- Backend ownership checks still matter on update routes, not only delete routes.
+
+Key terms:
+
+- Update contract: the request shape used to modify an existing record.
+- Inline edit: editing a record in the same page context instead of opening a separate page.
+- Recalculation: refreshing derived totals after a persisted mutation.
+
+Practice idea:
+
+- Add a `last edited` timestamp to holdings and liabilities, then show it in the Portfolio row metadata.

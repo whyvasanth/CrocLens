@@ -72,6 +72,7 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added portfolio CRUD endpoints, user ownership checks, persisted signup manual assets, seeded test portfolio records, frontend Portfolio add/delete workflows, tests, and documentation.
 - Made the dashboard and sidebar account-aware, replaced hardcoded Maya profile text, added real logout behavior, and improved empty states for authenticated portfolio records.
 - Grounded Croc Guide assistant responses in authenticated PostgreSQL portfolio holdings and liabilities while preserving sample-mode fallback and financial safety guardrails.
+- Added inline edit/save flows for persisted Portfolio holdings and liabilities, with backend update coverage and frontend smoke-test checks.
 
 ### Notes
 

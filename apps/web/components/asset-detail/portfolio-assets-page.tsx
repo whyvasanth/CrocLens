@@ -9,8 +9,10 @@ import {
   Building2,
   Landmark,
   LineChart,
+  Pencil,
   Plus,
   RefreshCcw,
+  Save,
   Trash2
 } from "lucide-react";
 import { AppShell } from "@/components/dashboard/app-shell";
@@ -22,7 +24,9 @@ import {
   deleteHolding,
   deleteLiability,
   getAssetDetailCards,
-  getPortfolioRecords
+  getPortfolioRecords,
+  updateHolding,
+  updateLiability
 } from "@/lib/api-client";
 import { formatCurrency } from "@/lib/formatters";
 import type {
@@ -30,7 +34,9 @@ import type {
   AssetDetailCategory,
   AssetTypeInput,
   HoldingCreateRequest,
+  HoldingResponse,
   LiabilityCreateRequest,
+  LiabilityResponse,
   LiabilityTypeInput,
   PortfolioRecordsResponse,
   RiskLevel
@@ -109,6 +115,8 @@ export function PortfolioAssetsPage() {
   const [records, setRecords] = useState<PortfolioRecordsResponse | null>(null);
   const [holdingDraft, setHoldingDraft] = useState<HoldingCreateRequest>(emptyHolding);
   const [liabilityDraft, setLiabilityDraft] = useState<LiabilityCreateRequest>(emptyLiability);
+  const [editingHoldingId, setEditingHoldingId] = useState<string | null>(null);
+  const [editingLiabilityId, setEditingLiabilityId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -141,36 +149,48 @@ export function PortfolioAssetsPage() {
     return () => controller.abort();
   }, [refreshKey]);
 
-  async function handleAddHolding(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmitHolding(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
     setError(null);
     try {
-      await createHolding({
+      const request = {
         ...holdingDraft,
         account_name: holdingDraft.account_name || null,
         symbol: holdingDraft.symbol.trim().toUpperCase(),
         name: holdingDraft.name.trim()
-      });
-      setHoldingDraft(emptyHolding);
+      };
+
+      if (editingHoldingId) {
+        await updateHolding(editingHoldingId, request);
+      } else {
+        await createHolding(request);
+      }
+
+      resetHoldingForm();
       setRefreshKey((value) => value + 1);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to add holding.");
+      setError(caught instanceof Error ? caught.message : "Unable to save holding.");
     } finally {
       setIsSaving(false);
     }
   }
 
-  async function handleAddLiability(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmitLiability(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
     setError(null);
     try {
-      await createLiability(liabilityDraft);
-      setLiabilityDraft(emptyLiability);
+      if (editingLiabilityId) {
+        await updateLiability(editingLiabilityId, liabilityDraft);
+      } else {
+        await createLiability(liabilityDraft);
+      }
+
+      resetLiabilityForm();
       setRefreshKey((value) => value + 1);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Unable to add liability.");
+      setError(caught instanceof Error ? caught.message : "Unable to save liability.");
     } finally {
       setIsSaving(false);
     }
@@ -181,6 +201,9 @@ export function PortfolioAssetsPage() {
     setError(null);
     try {
       await deleteHolding(holdingId);
+      if (editingHoldingId === holdingId) {
+        resetHoldingForm();
+      }
       setRefreshKey((value) => value + 1);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to delete holding.");
@@ -194,12 +217,51 @@ export function PortfolioAssetsPage() {
     setError(null);
     try {
       await deleteLiability(liabilityId);
+      if (editingLiabilityId === liabilityId) {
+        resetLiabilityForm();
+      }
       setRefreshKey((value) => value + 1);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to delete liability.");
     } finally {
       setIsSaving(false);
     }
+  }
+
+  function startEditingHolding(holding: HoldingResponse) {
+    setEditingHoldingId(holding.id);
+    setHoldingDraft({
+      symbol: holding.symbol,
+      name: holding.name,
+      asset_type: holding.asset_type as AssetTypeInput,
+      account_name: holding.account_name ?? "",
+      quantity: holding.quantity,
+      cost_basis: holding.cost_basis,
+      market_value: holding.market_value,
+      as_of_date: holding.as_of_date
+    });
+  }
+
+  function startEditingLiability(liability: LiabilityResponse) {
+    setEditingLiabilityId(liability.id);
+    setLiabilityDraft({
+      name: liability.name,
+      liability_type: liability.liability_type as LiabilityTypeInput,
+      balance: liability.balance,
+      interest_rate: liability.interest_rate,
+      minimum_payment: liability.minimum_payment,
+      due_day: liability.due_day
+    });
+  }
+
+  function resetHoldingForm() {
+    setEditingHoldingId(null);
+    setHoldingDraft(emptyHolding);
+  }
+
+  function resetLiabilityForm() {
+    setEditingLiabilityId(null);
+    setLiabilityDraft(emptyLiability);
   }
 
   return (
@@ -259,9 +321,10 @@ export function PortfolioAssetsPage() {
                         records.holdings.map((holding) => (
                           <RecordRow
                             key={holding.id}
-                            label={`${holding.symbol} · ${holding.name}`}
-                            meta={`${holding.asset_type}${holding.account_name ? ` · ${holding.account_name}` : ""}`}
+                            label={`${holding.symbol} - ${holding.name}`}
+                            meta={`${holding.asset_type}${holding.account_name ? ` - ${holding.account_name}` : ""}`}
                             value={formatCurrency(holding.market_value)}
+                            onEdit={() => startEditingHolding(holding)}
                             onDelete={() => removeHolding(holding.id)}
                           />
                         ))
@@ -281,6 +344,7 @@ export function PortfolioAssetsPage() {
                             label={liability.name}
                             meta={liability.liability_type}
                             value={formatCurrency(liability.balance)}
+                            onEdit={() => startEditingLiability(liability)}
                             onDelete={() => removeLiability(liability.id)}
                           />
                         ))
@@ -296,8 +360,11 @@ export function PortfolioAssetsPage() {
 
           <div className="grid gap-5 xl:grid-cols-2">
             <Card>
-              <SectionTitle eyebrow="Add asset" title="Create a holding" />
-              <form className="grid gap-3 md:grid-cols-2" onSubmit={handleAddHolding}>
+              <SectionTitle
+                eyebrow={editingHoldingId ? "Edit asset" : "Add asset"}
+                title={editingHoldingId ? "Update holding" : "Create a holding"}
+              />
+              <form className="grid gap-3 md:grid-cols-2" onSubmit={handleSubmitHolding}>
                 <TextField label="Symbol" value={holdingDraft.symbol} onChange={(value) => setHoldingDraft({ ...holdingDraft, symbol: value })} />
                 <TextField label="Name" value={holdingDraft.name} onChange={(value) => setHoldingDraft({ ...holdingDraft, name: value })} />
                 <SelectField
@@ -321,21 +388,36 @@ export function PortfolioAssetsPage() {
                   value={holdingDraft.quantity}
                   onChange={(value) => setHoldingDraft({ ...holdingDraft, quantity: value })}
                 />
-                <button
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-4 text-sm font-semibold text-white disabled:opacity-60 md:col-span-2"
-                  disabled={isSaving}
-                  suppressHydrationWarning
-                  type="submit"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add holding
-                </button>
+                <div className="flex flex-col gap-2 md:col-span-2 sm:flex-row">
+                  <button
+                    className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-4 text-sm font-semibold text-white disabled:opacity-60"
+                    disabled={isSaving}
+                    suppressHydrationWarning
+                    type="submit"
+                  >
+                    {editingHoldingId ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    {editingHoldingId ? "Save holding" : "Add holding"}
+                  </button>
+                  {editingHoldingId ? (
+                    <button
+                      className="inline-flex min-h-10 items-center justify-center rounded-lg border border-emerald-900/10 bg-white px-4 text-sm font-semibold text-croc-moss transition hover:bg-croc-cream"
+                      onClick={resetHoldingForm}
+                      suppressHydrationWarning
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  ) : null}
+                </div>
               </form>
             </Card>
 
             <Card>
-              <SectionTitle eyebrow="Add debt" title="Create a liability" />
-              <form className="grid gap-3 md:grid-cols-2" onSubmit={handleAddLiability}>
+              <SectionTitle
+                eyebrow={editingLiabilityId ? "Edit debt" : "Add debt"}
+                title={editingLiabilityId ? "Update liability" : "Create a liability"}
+              />
+              <form className="grid gap-3 md:grid-cols-2" onSubmit={handleSubmitLiability}>
                 <TextField label="Name" value={liabilityDraft.name} onChange={(value) => setLiabilityDraft({ ...liabilityDraft, name: value })} />
                 <SelectField
                   label="Type"
@@ -354,15 +436,27 @@ export function PortfolioAssetsPage() {
                   value={liabilityDraft.interest_rate ?? 0}
                   onChange={(value) => setLiabilityDraft({ ...liabilityDraft, interest_rate: value })}
                 />
-                <button
-                  className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-4 text-sm font-semibold text-white disabled:opacity-60 md:col-span-2"
-                  disabled={isSaving}
-                  suppressHydrationWarning
-                  type="submit"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add liability
-                </button>
+                <div className="flex flex-col gap-2 md:col-span-2 sm:flex-row">
+                  <button
+                    className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg bg-croc-emerald px-4 text-sm font-semibold text-white disabled:opacity-60"
+                    disabled={isSaving}
+                    suppressHydrationWarning
+                    type="submit"
+                  >
+                    {editingLiabilityId ? <Save className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    {editingLiabilityId ? "Save liability" : "Add liability"}
+                  </button>
+                  {editingLiabilityId ? (
+                    <button
+                      className="inline-flex min-h-10 items-center justify-center rounded-lg border border-emerald-900/10 bg-white px-4 text-sm font-semibold text-croc-moss transition hover:bg-croc-cream"
+                      onClick={resetLiabilityForm}
+                      suppressHydrationWarning
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  ) : null}
+                </div>
               </form>
             </Card>
           </div>
@@ -427,11 +521,13 @@ function SummaryTile({ label, value }: { label: string; value: string }) {
 function RecordRow({
   label,
   meta,
+  onEdit,
   onDelete,
   value
 }: {
   label: string;
   meta: string;
+  onEdit: () => void;
   onDelete: () => void;
   value: string;
 }) {
@@ -443,6 +539,15 @@ function RecordRow({
       </div>
       <div className="flex shrink-0 items-center gap-2">
         <p className="text-sm font-bold text-croc-ink">{value}</p>
+        <button
+          aria-label={`Edit ${label}`}
+          className="grid h-9 w-9 place-items-center rounded-lg text-stone-500 transition hover:bg-emerald-50 hover:text-croc-moss"
+          onClick={onEdit}
+          suppressHydrationWarning
+          type="button"
+        >
+          <Pencil className="h-4 w-4" />
+        </button>
         <button
           aria-label={`Delete ${label}`}
           className="grid h-9 w-9 place-items-center rounded-lg text-stone-500 transition hover:bg-rose-50 hover:text-rose-700"

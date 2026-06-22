@@ -19,8 +19,10 @@ import type {
   EvaluationMetricsResponse,
   HoldingCreateRequest,
   HoldingResponse,
+  HoldingUpdateRequest,
   LiabilityCreateRequest,
   LiabilityResponse,
+  LiabilityUpdateRequest,
   LogoutResponse,
   MarketNewsImpactResponse,
   OnboardingOptionsResponse,
@@ -104,12 +106,20 @@ export function createHolding(request: HoldingCreateRequest, signal?: AbortSigna
   return postJson<HoldingResponse, HoldingCreateRequest>("/api/v1/portfolio/holdings", request, signal);
 }
 
+export function updateHolding(holdingId: string, request: HoldingUpdateRequest, signal?: AbortSignal) {
+  return putJson<HoldingResponse, HoldingUpdateRequest>(`/api/v1/portfolio/holdings/${holdingId}`, request, signal);
+}
+
 export function deleteHolding(holdingId: string, signal?: AbortSignal) {
   return deleteJson<DeleteRecordResponse>(`/api/v1/portfolio/holdings/${holdingId}`, signal);
 }
 
 export function createLiability(request: LiabilityCreateRequest, signal?: AbortSignal) {
   return postJson<LiabilityResponse, LiabilityCreateRequest>("/api/v1/portfolio/liabilities", request, signal);
+}
+
+export function updateLiability(liabilityId: string, request: LiabilityUpdateRequest, signal?: AbortSignal) {
+  return putJson<LiabilityResponse, LiabilityUpdateRequest>(`/api/v1/portfolio/liabilities/${liabilityId}`, request, signal);
 }
 
 export function deleteLiability(liabilityId: string, signal?: AbortSignal) {

@@ -87,6 +87,17 @@ export interface HoldingCreateRequest {
   as_of_date: string | null;
 }
 
+export interface HoldingUpdateRequest {
+  symbol?: string | null;
+  name?: string | null;
+  asset_type?: AssetTypeInput | null;
+  account_name?: string | null;
+  quantity?: number | null;
+  cost_basis?: number | null;
+  market_value?: number | null;
+  as_of_date?: string | null;
+}
+
 export interface HoldingResponse {
   id: string;
   portfolio_id: string;
@@ -110,6 +121,15 @@ export interface LiabilityCreateRequest {
   interest_rate: number | null;
   minimum_payment: number | null;
   due_day: number | null;
+}
+
+export interface LiabilityUpdateRequest {
+  name?: string | null;
+  liability_type?: LiabilityTypeInput | null;
+  balance?: number | null;
+  interest_rate?: number | null;
+  minimum_payment?: number | null;
+  due_day?: number | null;
 }
 
 export interface LiabilityResponse {

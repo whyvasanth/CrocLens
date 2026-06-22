@@ -138,6 +138,7 @@ Purpose:
 Current scope:
 
 - Manual entry first.
+- The Portfolio page uses these endpoints for add, edit, delete, and post-mutation summary refreshes.
 - No live brokerage connection.
 - No direct trading instructions.
 - Source metadata labels records as user-entered local development data.
