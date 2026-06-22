@@ -82,6 +82,8 @@ const portfolioPage = read("apps/web/components/asset-detail/portfolio-assets-pa
 assert.match(portfolioPage, /Save holding/, "Portfolio page should expose holding edit/save flow");
 assert.match(portfolioPage, /Save liability/, "Portfolio page should expose liability edit/save flow");
 assert.match(portfolioPage, /aria-label=\{`Edit \$\{label\}`\}/, "Portfolio records should include an edit action");
+assert.match(portfolioPage, /Sign in to track your own holdings and debts/, "Portfolio page should show a signed-out tracking prompt");
+assert.doesNotMatch(portfolioPage, /handleAddHolding/, "Portfolio page should not reference the removed add-only holding handler");
 
 const settingsPage = read("apps/web/components/features/settings-privacy-page.tsx");
 assert.match(settingsPage, /Export preview/, "Settings page should include export preview");
@@ -98,6 +100,9 @@ assert.doesNotMatch(authPage, /localStorage/, "Auth page should not store sessio
 
 const authSharedRoute = read("apps/web/app/api/auth/_shared.ts");
 assert.match(authSharedRoute, /httpOnly:\s*true/, "BFF auth route should store the session in an HttpOnly cookie");
+
+const authMeRoute = read("apps/web/app/api/auth/me/route.ts");
+assert.match(authMeRoute, /NextResponse\.json\(null\)/, "BFF auth me route should return a neutral signed-out state for demo visitors");
 
 const backendProxyRoute = read("apps/web/app/api/backend/[...path]/route.ts");
 assert.match(backendProxyRoute, /Authorization: `Bearer \$\{token\}`/, "BFF backend proxy should forward the HttpOnly session token server-side");

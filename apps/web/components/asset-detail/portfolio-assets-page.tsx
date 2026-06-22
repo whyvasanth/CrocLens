@@ -30,6 +30,7 @@ import {
 } from "@/lib/api-client";
 import { formatCurrency } from "@/lib/formatters";
 import type {
+  AccountUserResponse,
   AssetDetailCardResponse,
   AssetDetailCategory,
   AssetTypeInput,
@@ -111,6 +112,26 @@ const emptyLiability: LiabilityCreateRequest = {
 };
 
 export function PortfolioAssetsPage() {
+  return (
+    <AppShell>
+      {(controls) => <PortfolioAssetsContent {...controls} />}
+    </AppShell>
+  );
+}
+
+interface PortfolioAssetsContentProps {
+  account: AccountUserResponse | null;
+  isAccountLoading: boolean;
+  openGuide: () => void;
+  openSidebar: () => void;
+}
+
+function PortfolioAssetsContent({
+  account,
+  isAccountLoading,
+  openGuide,
+  openSidebar
+}: PortfolioAssetsContentProps) {
   const [detailCards, setDetailCards] = useState<AssetDetailCardResponse[]>([]);
   const [records, setRecords] = useState<PortfolioRecordsResponse | null>(null);
   const [holdingDraft, setHoldingDraft] = useState<HoldingCreateRequest>(emptyHolding);
@@ -127,10 +148,29 @@ export function PortfolioAssetsPage() {
     setIsLoading(true);
     setError(null);
 
-    Promise.all([
-      getPortfolioRecords(controller.signal),
+    if (isAccountLoading) {
+      return () => controller.abort();
+    }
+
+    if (!account) {
+      setRecords(null);
       getAssetDetailCards(controller.signal)
-    ])
+        .then(setDetailCards)
+        .catch((requestError: Error) => {
+          if (!controller.signal.aborted) {
+            setError(requestError.message);
+          }
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) {
+            setIsLoading(false);
+          }
+        });
+
+      return () => controller.abort();
+    }
+
+    Promise.all([getPortfolioRecords(controller.signal), getAssetDetailCards(controller.signal)])
       .then(([portfolioRecords, cards]) => {
         setRecords(portfolioRecords);
         setDetailCards(cards);
@@ -147,7 +187,7 @@ export function PortfolioAssetsPage() {
       });
 
     return () => controller.abort();
-  }, [refreshKey]);
+  }, [account, isAccountLoading, refreshKey]);
 
   async function handleSubmitHolding(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -265,9 +305,7 @@ export function PortfolioAssetsPage() {
   }
 
   return (
-    <AppShell>
-      {({ openGuide, openSidebar }) => (
-        <div className="mx-auto max-w-[1180px] space-y-5">
+    <div className="mx-auto max-w-[1180px] space-y-5">
           <DashboardHeader
             description="Track user-owned holdings and liabilities from PostgreSQL, then open beginner-friendly detail pages for context."
             onAskClick={openGuide}
@@ -294,7 +332,11 @@ export function PortfolioAssetsPage() {
             <SectionTitle
               eyebrow="PostgreSQL portfolio"
               title="Your tracked wealth records"
-              action={<Pill tone="green">{records ? "User-owned data" : "Loading"}</Pill>}
+              action={
+                <Pill tone={account ? "green" : "gold"}>
+                  {isAccountLoading || isLoading ? "Loading" : account ? "User-owned data" : "Sign in to edit"}
+                </Pill>
+              }
             />
 
             {isLoading ? (
@@ -356,8 +398,11 @@ export function PortfolioAssetsPage() {
                 </div>
               </>
             ) : null}
+
+            {!isLoading && !records ? <SignedOutPortfolioPrompt /> : null}
           </Card>
 
+          {account ? (
           <div className="grid gap-5 xl:grid-cols-2">
             <Card>
               <SectionTitle
@@ -460,6 +505,7 @@ export function PortfolioAssetsPage() {
               </form>
             </Card>
           </div>
+          ) : null}
 
           <Card>
             <SectionTitle
@@ -503,9 +549,7 @@ export function PortfolioAssetsPage() {
               })}
             </div>
           </Card>
-        </div>
-      )}
-    </AppShell>
+    </div>
   );
 }
 
@@ -514,6 +558,32 @@ function SummaryTile({ label, value }: { label: string; value: string }) {
     <div className="rounded-lg border border-emerald-900/10 bg-croc-cream p-4">
       <p className="text-xs font-semibold uppercase text-croc-moss">{label}</p>
       <p className="mt-2 text-2xl font-bold text-croc-ink">{value}</p>
+    </div>
+  );
+}
+
+function SignedOutPortfolioPrompt() {
+  return (
+    <div className="rounded-lg border border-emerald-900/10 bg-croc-cream p-4">
+      <h2 className="text-base font-bold text-croc-ink">Sign in to track your own holdings and debts</h2>
+      <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
+        Demo visitors can still read the beginner asset guides below. Create an account or log in when you want
+        CrocLens to store portfolio records in PostgreSQL and calculate your personal net worth.
+      </p>
+      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+        <Link
+          className="inline-flex min-h-10 items-center justify-center rounded-lg bg-croc-emerald px-4 text-sm font-semibold text-white"
+          href="/signup"
+        >
+          Create account
+        </Link>
+        <Link
+          className="inline-flex min-h-10 items-center justify-center rounded-lg border border-emerald-900/10 bg-white px-4 text-sm font-semibold text-croc-moss"
+          href="/login"
+        >
+          Log in
+        </Link>
+      </div>
     </div>
   );
 }

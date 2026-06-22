@@ -159,7 +159,7 @@ export function loginAccount(request: AccountLoginRequest, signal?: AbortSignal)
 }
 
 export function getCurrentAccount(signal?: AbortSignal) {
-  return requestJson<AccountUserResponse>("/api/auth/me", signal);
+  return requestJson<AccountUserResponse | null>("/api/auth/me", signal);
 }
 
 export function logoutAccount(signal?: AbortSignal) {

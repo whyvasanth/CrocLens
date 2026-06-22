@@ -550,3 +550,7 @@ Key terms:
 Practice idea:
 
 - Add a `last edited` timestamp to holdings and liabilities, then show it in the Portfolio row metadata.
+
+Follow-up lesson:
+
+- Pages that support both demo visitors and signed-in users should branch on account state before calling protected APIs. This avoids noisy 401 failures and makes the UI explain what the user can do next.

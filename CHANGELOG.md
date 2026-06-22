@@ -73,6 +73,7 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Made the dashboard and sidebar account-aware, replaced hardcoded Maya profile text, added real logout behavior, and improved empty states for authenticated portfolio records.
 - Grounded Croc Guide assistant responses in authenticated PostgreSQL portfolio holdings and liabilities while preserving sample-mode fallback and financial safety guardrails.
 - Added inline edit/save flows for persisted Portfolio holdings and liabilities, with backend update coverage and frontend smoke-test checks.
+- Fixed the Portfolio page demo state so logged-out visitors no longer trigger protected record fetches or stale add-handler runtime errors.
 
 ### Notes
 
