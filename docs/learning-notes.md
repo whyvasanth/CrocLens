@@ -699,3 +699,24 @@ Key terms:
 Practice idea:
 
 - Add one more evidence item for emergency cash months, then test both the signed-in and demo responses.
+
+## Phase 25: Testing And CI
+
+What we learned:
+
+- Source-string smoke tests are useful, but they do not prove that users can actually interact with the product.
+- Component behavior tests catch practical regressions such as broken validation, redirects, API calls, and drawer interactions.
+- API-client routing tests protect the secure cookie/BFF pattern by proving browser code calls Next.js server routes instead of handling tokens directly.
+- Playwright smoke tests verify critical public flows in a real browser.
+- CI should run the same checks a reviewer would run locally: backend tests, migration discovery, frontend typecheck, unit tests, smoke tests, and production build.
+
+Key terms:
+
+- Vitest: a fast JavaScript/TypeScript test runner.
+- React Testing Library: a tool for testing components through user-visible behavior.
+- BFF route: a backend-for-frontend route that keeps sensitive session handling on the server side.
+- Playwright: a browser automation tool for end-to-end testing.
+
+Practice idea:
+
+- Add a dashboard component test that verifies stale market data shows a warning instead of pretending data is fresh.

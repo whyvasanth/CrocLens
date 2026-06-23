@@ -19,6 +19,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added authenticated CRUD endpoints, user ownership checks, frontend save/delete actions, and backend tests for persisted planning and research workflows.
 - Added Phase 24 grounded Croc Guide context builder that uses authenticated portfolio, liability, watchlist, journal, action-plan, retirement, tax-lot, and market freshness records.
 - Expanded assistant responses with observations, why-it-matters, considerations, evidence, source freshness, sample/stale flags, and safer non-echoing safety categories.
+- Added Phase 25 frontend behavior tests with Vitest, React Testing Library, user-event, and Playwright smoke coverage.
+- Updated GitHub Actions to run on pull requests, pushes to `main`, and manual dispatch with backend tests, Alembic validation, frontend typecheck, tests, build, and browser smoke checks.
 - Established Phase 0 product and system design foundation.
 - Added project README with product vision, MVP strategy, tech stack, safety principles, and Git workflow.
 - Added architecture, roadmap, data source, security, AI agent, database, API, AWS, evaluation, and learning documentation.
@@ -100,7 +102,7 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Phase 9 assistant responses are rule-based and educational; no external LLM is called yet.
 - Phase 10 agent orchestration is deterministic; LangGraph or model-backed nodes can be introduced later.
 - Phase 11 market data uses a local sample file by default; no live paid or ambiguous market data provider is connected.
-- Phase 18 CI is manual-only and should be used only where GitHub Actions remains free or included for the repo/account.
+- GitHub Actions now runs automatically on pull requests and pushes to `main`; monitor included minutes and disable automatic triggers if they could create cost.
 - Phase 19 metrics use deterministic sample values; no paid analytics, paid monitoring, or external tracking tool is connected.
 - Phase 20 blocks AWS and paid cloud by default; local Docker is the active deployment path.
 - Current local auth uses hashed passwords, database sessions, and HttpOnly cookies for development; production auth hardening is still required before real users or real financial data.

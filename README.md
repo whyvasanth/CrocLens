@@ -134,14 +134,15 @@ Completed phases:
 - Phase 22: Public landing page, demo mode, dashboard product polish, and real market snapshot wiring
 - Phase 23: User-specific persistence for planning and research workflows
 - Phase 24: Grounded Croc Guide responses from saved user data
+- Phase 25: Behavioral tests and automatic quality gates
 
 Current status:
 
-- MVP foundation complete through Phase 24
+- MVP foundation complete through Phase 25
 
 Next work:
 
-- Add stronger behavioral tests and CI gates around the user flows.
+- Prepare the cost-conscious AWS deployment files and runbook.
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -198,6 +199,7 @@ Phase 21A-21D add free-first market provider contracts, live-capable yfinance/pu
 Phase 22 adds a public landing page, explicit Demo Mode, grouped beginner navigation, endpoint-backed market snapshot data, account-aware net-worth history behavior, and friendlier signup validation.
 Phase 23 persists watchlist items, decision journal entries, action plans, retirement accounts, tax lots, and privacy settings for authenticated users while keeping demo/sample fallbacks clearly labeled.
 Phase 24 grounds Croc Guide in saved user records and provider freshness metadata, then returns observations, evidence, considerations, confidence, stale/sample flags, and educational disclaimers.
+Phase 25 adds Vitest behavior tests, React Testing Library component tests, API-client BFF routing tests, Playwright smoke coverage, and automatic GitHub Actions quality gates.
 
 Install dependencies:
 
@@ -358,7 +360,11 @@ Run frontend checks:
 
 ```bash
 npm.cmd run typecheck:web
+npm.cmd run test:unit --workspace @croclens/web
 npm.cmd run test:web
+npm.cmd run build:web
+npm.cmd audit --omit=dev
+npm.cmd run test:e2e --workspace @croclens/web
 ```
 
 CI:
@@ -367,7 +373,7 @@ CI:
 .github/workflows/ci.yml
 ```
 
-The workflow is manual-only. Use GitHub Actions only when it stays within free or included usage for your repository/account.
+The workflow runs on pull requests, pushes to `main`, and manual dispatch. Use GitHub Actions only when it stays within free or included usage for your repository/account.
 
 Portfolio calculation docs:
 
@@ -425,5 +431,6 @@ Branch strategy:
 - `phase-18-testing`
 - `phase-19-evaluation-metrics`
 - `phase-20-deployment-plan`
+- `main` currently contains the completed local MVP phases because this repository is being built directly on main by request.
 
-Each phase should end with one branch, one clean commit, and one pull request.
+The original learning workflow used one branch per phase. This local MVP build is currently committing directly to `main` by request, so each phase should still keep one clean, reviewable commit.

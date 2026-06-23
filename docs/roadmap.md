@@ -545,3 +545,21 @@ Branch:
 Commit:
 
 - `feat(ai): ground Croc Guide in user and market data`
+
+## Phase 25: Testing And CI
+
+Goal:
+
+- Replace source-string-only frontend smoke checks with behavior tests and automatic quality gates.
+
+Status:
+
+- Implemented with Vitest, React Testing Library, user-event, API-client routing tests, Playwright landing-page smoke coverage, frontend build validation, backend pytest, and Alembic migration discovery in GitHub Actions.
+
+Branch:
+
+- `main`
+
+Commit:
+
+- `test(ci): add behavioral tests and automatic quality gates`
