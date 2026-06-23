@@ -527,3 +527,21 @@ Branch:
 Commit:
 
 - `feat(product): persist user planning and research workflows`
+
+## Phase 24: Grounded Croc Guide
+
+Goal:
+
+- Refactor Croc Guide so answers are grounded in saved user records, provider freshness metadata, and explicit evidence.
+
+Status:
+
+- Implemented a grounded context builder for authenticated portfolio, liabilities, goals, watchlist, journal, action plans, retirement accounts, tax lots, and stored market observations. Assistant responses now include observations, why-it-matters, considerations, evidence, data quality, provider status, stale/sample flags, limitations, and educational disclaimers.
+
+Branch:
+
+- `main`
+
+Commit:
+
+- `feat(ai): ground Croc Guide in user and market data`

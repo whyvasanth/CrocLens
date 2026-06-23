@@ -149,7 +149,7 @@ def build_agent_trace(
             agent="intent_router",
             title=get_agent_title("intent_router"),
             status="used",
-            input_summary=f"Question: {question}",
+            input_summary="User question was classified without returning raw prompt text.",
             output_summary=f"Routed request to the {intent} path.",
             tools_used=[],
         )

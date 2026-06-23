@@ -121,7 +121,14 @@ def test_assistant_response_includes_guardrail_fields() -> None:
 
     assert response.status_code == 200
     assert body["intent"] == "market"
-    assert body["confidence"] == "medium"
+    assert body["confidence"] in {"low", "medium"}
+    assert body["observations"]
+    assert body["why_it_matters"]
+    assert body["considerations"]
+    assert body["evidence"]
+    assert body["is_sample_data"] is True
+    assert body["data_quality"] == "sample"
+    assert body["provider_status"] == "sample"
     assert body["data_limitations"]
     assert body["safety"]["passed"] is True
     assert [step["agent"] for step in body["agent_trace"]] == [
@@ -148,13 +155,17 @@ def test_assistant_reframes_unsafe_trading_question() -> None:
     assert response.status_code == 200
     assert body["intent"] == "safety"
     assert body["safety"]["passed"] is False
-    assert body["safety"]["flags"]
+    assert "direct_trading_instruction" in body["safety"]["flags"]
+    assert "return_claim" in body["safety"]["flags"]
     assert [step["agent"] for step in body["agent_trace"]] == [
         "intent_router",
         "safety_compliance_guardrail",
     ]
     assert body["prompt_context"]["prompt_version"].startswith("assistant_v")
-    assert "cannot tell you to buy or sell" in body["summary"].lower()
+    assert body["prompt_context"]["user_question"] == "[redacted]"
+    assert "educational review" in body["summary"].lower()
+    assert "should i buy" not in str(body).lower()
+    assert "guaranteed to make money" not in str(body).lower()
 
 
 def test_assistant_detects_prompt_injection_language() -> None:
@@ -170,7 +181,8 @@ def test_assistant_detects_prompt_injection_language() -> None:
     assert response.status_code == 200
     assert body["intent"] == "safety"
     assert body["safety"]["passed"] is False
-    assert "ignore previous instructions" in body["safety"]["flags"]
+    assert "prompt_injection_attempt" in body["safety"]["flags"]
+    assert "ignore previous instructions" not in str(body).lower()
 
 
 def test_assistant_uses_authenticated_portfolio_context() -> None:
@@ -195,6 +207,72 @@ def test_assistant_uses_authenticated_portfolio_context() -> None:
         },
     )
     assert liability_response.status_code == 200
+    holding_response = client.post(
+        "/api/v1/portfolio/holdings",
+        headers=headers,
+        json={
+            "symbol": "VTI",
+            "name": "Total Stock Market ETF",
+            "asset_type": "ETFs",
+            "quantity": 5,
+            "cost_basis": 1200,
+            "market_value": 1300,
+        },
+    )
+    assert holding_response.status_code == 200
+    holding_id = holding_response.json()["id"]
+
+    watchlist_response = client.post(
+        "/api/v1/watchlist",
+        headers=headers,
+        json={
+            "symbol": "BND",
+            "name": "Total bond ETF",
+            "asset_type": "etf",
+            "why_watching": "I want to learn how bonds could affect portfolio risk.",
+        },
+    )
+    assert watchlist_response.status_code == 200
+
+    journal_response = client.post(
+        "/api/v1/journal/entries",
+        headers=headers,
+        json={
+            "decision_type": "watch",
+            "title": "Review ETF mix",
+            "reason": "I want a written note before changing my allocation.",
+            "expected_outcome": "Understand whether the ETF mix matches my goal.",
+            "risk_considered": "Markets can fall and ETF overlap can hide concentration.",
+            "review_date": "2026-09-01",
+        },
+    )
+    assert journal_response.status_code == 200
+
+    retirement_response = client.post(
+        "/api/v1/retirement/accounts",
+        headers=headers,
+        json={
+            "account_type": "401(k)",
+            "provider_name": "Employer plan",
+            "current_balance": 15000,
+            "contribution_percent": 6,
+            "employer_match_percent": 4,
+        },
+    )
+    assert retirement_response.status_code == 200
+
+    tax_lot_response = client.post(
+        "/api/v1/tax/lots",
+        headers=headers,
+        json={
+            "holding_id": holding_id,
+            "acquired_date": "2025-01-15",
+            "quantity": 5,
+            "cost_basis": 1500,
+            "account_tax_type": "taxable",
+        },
+    )
+    assert tax_lot_response.status_code == 200
 
     response = client.post(
         "/api/v1/ai/assistant",
@@ -210,10 +288,13 @@ def test_assistant_uses_authenticated_portfolio_context() -> None:
     assert response.status_code == 200
     assert body["intent"] == "debt"
     assert "tracked liabilities are $500" in body["summary"]
-    assert "20.0%" in body["beginner_explanation"]
-    assert body["sources"][0]["name"] == "CrocLens portfolio records"
-    assert "manually entered" in body["data_limitations"][0]
-    assert "your persisted portfolio" in body["prompt_context"]["context_summary"]
+    assert "13.2%" in " ".join(body["observations"])
+    assert body["sources"][0]["name"] == "CrocLens grounded context"
+    assert "saved CrocLens records" in body["prompt_context"]["context_summary"]
+    assert body["is_sample_data"] is False
+    assert body["data_quality"] in {"user_entered", "mixed_user_and_provider"}
+    evidence_labels = {item["label"] for item in body["evidence"]}
+    assert {"Watchlist", "Decision journal", "Retirement", "Tax lots"}.issubset(evidence_labels)
     assert "not financial advice" in body["safety_disclaimer"]
 
 

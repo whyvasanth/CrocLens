@@ -22,17 +22,17 @@ Phase 9 implements the first real assistant structure without calling an externa
 Implemented pieces:
 
 - Rule-based intent routing
-- Prompt context builder
+- Grounded context builder
 - Prompt versioning
 - Safety checks for direct trading and guaranteed-return wording
 - Structured assistant response fields
 - Croc Guide frontend integration
-- Authenticated portfolio grounding from PostgreSQL holdings and liabilities when a session is present
+- Authenticated grounding from portfolio, liabilities, profile, watchlist, journal, action plans, retirement accounts, tax lots, and stored market freshness when a session is present
 
 The current prompt version is:
 
 ```text
-assistant_v2_portfolio_grounded_2026_06_22
+assistant_v3_grounded_context_2026_06_23
 ```
 
 The assistant can route:
@@ -55,11 +55,11 @@ Current flow:
 ```text
 User question
   -> Intent Router Agent
-  -> Portfolio context builder, using authenticated PostgreSQL records when available
+  -> Grounded context builder, using authenticated records when available
   -> Specialist Agent
   -> Action Plan Agent
   -> Safety/Compliance Guardrail Agent
-  -> Croc Guide response with agent trace
+  -> Croc Guide response with evidence, source freshness, and collapsed trace metadata
 ```
 
 For safety-sensitive questions, the flow skips the specialist and goes directly from the Intent Router Agent to the Safety/Compliance Guardrail Agent.
@@ -91,16 +91,59 @@ Why deterministic first:
 - Clear trace output
 - Same contract can later be implemented with LangGraph nodes
 
+## Phase 24 Grounded Croc Guide
+
+Phase 24 keeps Croc Guide deterministic by default but grounds responses in the user's saved records.
+
+Context inputs:
+
+- Current authenticated user and risk profile
+- Holdings and liabilities
+- Allocation, concentration, risk, and diversification scores
+- Stored market observation freshness
+- Watchlist items
+- Decision journal status
+- Action plan lifecycle status
+- Retirement accounts
+- Tax lots
+
+Safety boundaries:
+
+- Croc Guide does not call paid LLMs by default.
+- Croc Guide does not expose internal prompts.
+- Unsafe requests return safe categories such as `direct_trading_instruction`, `return_claim`, or `prompt_injection_attempt`.
+- Raw user prompt text is not copied into the returned trace.
+- Missing data is described as missing rather than replaced with hidden sample data.
+
 ## AI Output Contract
 
-Every AI output should eventually follow a structure like this:
+Every assistant output should follow a structure like this:
 
 ```json
 {
   "summary": "Beginner-friendly explanation.",
+  "observations": ["Fact from saved records."],
+  "why_it_matters": "Plain-language reason this matters.",
   "considerations": ["Educational item to review."],
+  "evidence": [
+    {
+      "label": "Net worth",
+      "value": "$12,500",
+      "source_name": "CrocLens portfolio records",
+      "data_as_of": "2026-06-23",
+      "is_sample_data": false,
+      "data_quality": "user_entered",
+      "provider_status": "manual_only",
+      "is_stale": false
+    }
+  ],
   "confidence": "medium",
-  "data_limitations": ["Uses sample data."],
+  "data_as_of": "2026-06-23",
+  "is_sample_data": false,
+  "data_quality": "user_entered",
+  "provider_status": "manual_only",
+  "is_stale": false,
+  "data_limitations": ["Uses saved records only."],
   "sources": [
     {
       "name": "Manual entry",
@@ -121,6 +164,8 @@ The assistant must:
 - Refuse direct buy/sell commands.
 - Avoid guaranteed returns.
 - Avoid pretending to be a licensed advisor.
+- Avoid echoing prompt-injection or trading-command text back to the user.
+- Include evidence and data freshness when available.
 
 ## Agent List
 

@@ -263,11 +263,16 @@ Important limitation:
 ```http
 GET /api/v1/action-plans
 POST /api/v1/action-plans/generate
+POST /api/v1/action-plans/items/{item_id}/complete
+POST /api/v1/action-plans/items/{item_id}/dismiss
+POST /api/v1/action-plans/items/{item_id}/reopen
 ```
 
 Purpose:
 
-- Return educational action plans and generate a mock plan from sample data.
+- Return educational action plans from saved user records when authenticated.
+- Generate demo/sample action plans for visitors.
+- Let authenticated users complete, dismiss, and reopen action items.
 
 ### AI Assistant
 
@@ -294,15 +299,34 @@ Required safety fields in the response:
 
 - `intent`
 - `summary`
+- `observations`
+- `why_it_matters`
+- `considerations`
 - `beginner_explanation`
 - `suggested_next_steps`
+- `evidence`
 - `confidence`
+- `data_as_of`
+- `retrieved_at`
+- `is_sample_data`
+- `data_quality`
+- `provider_status`
+- `is_stale`
 - `data_limitations`
 - `sources`
 - `safety`
 - `agent_trace`
 - `prompt_context`
+- `educational_disclaimer`
 - `safety_disclaimer`
+
+Phase 24 behavior:
+
+- Authenticated answers use saved portfolio holdings, liabilities, goals, watchlist items, decision journal entries, action plans, retirement accounts, tax lots, and stored market freshness metadata.
+- Demo answers remain clearly labeled as sample data.
+- Unsafe requests return safe categories instead of echoing unsafe user wording.
+- `prompt_context.user_question` is redacted when debug context is requested.
+- The frontend shows evidence and source details in a collapsed "How CrocLens reached this" section.
 
 `GET /api/v1/ai/agents` returns the Phase 10 agent registry, including implemented and stubbed agents.
 

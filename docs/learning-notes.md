@@ -678,3 +678,24 @@ Key terms:
 Practice idea:
 
 - Add an edit flow for watchlist notes in the frontend, then verify another user cannot update that item through the API.
+
+## Phase 24: Grounded Croc Guide
+
+What we learned:
+
+- An assistant should not invent context; it should build a grounded context object from trusted application services and user-owned database rows.
+- LLM-ready does not mean LLM-required. Croc Guide can stay deterministic while returning a production-shaped response contract.
+- Safety is stronger when the system returns safe categories instead of repeating unsafe user wording.
+- Evidence belongs in the user experience, but technical internals should stay collapsed and non-essential.
+- Missing or stale data should be disclosed directly instead of hidden behind sample fallback.
+
+Key terms:
+
+- Grounded context: the structured facts an assistant is allowed to use for one response.
+- Evidence item: a user-visible fact with source, freshness, sample/stale status, and limitations.
+- Non-echoing safety: flagging unsafe requests without repeating the unsafe phrase back to the user.
+- Redacted prompt context: debug metadata that does not expose raw user prompt text or internal instructions.
+
+Practice idea:
+
+- Add one more evidence item for emergency cash months, then test both the signed-in and demo responses.

@@ -186,9 +186,39 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
                   <Pill tone={answer.safety.passed ? "green" : "gold"}>
                     {answer.safety.passed ? "Safety passed" : "Safety reframed"}
                   </Pill>
+                  <Pill tone={answer.is_sample_data ? "gold" : "blue"}>
+                    {answer.is_sample_data ? "Demo data" : "Saved records"}
+                  </Pill>
+                  <Pill tone={answer.is_stale ? "gold" : "green"}>
+                    {answer.is_stale ? "Stale data" : answer.provider_status}
+                  </Pill>
                 </div>
                 <h3 className="mt-4 text-sm font-bold text-croc-ink">{answer.summary}</h3>
                 <p className="mt-2 text-sm leading-6 text-stone-600">{answer.beginner_explanation}</p>
+                <div className="mt-4 rounded-lg bg-white/80 p-3">
+                  <p className="text-xs font-bold uppercase tracking-wide text-croc-moss">Why it matters</p>
+                  <p className="mt-1 text-xs leading-5 text-stone-600">{answer.why_it_matters}</p>
+                </div>
+                {answer.observations.length ? (
+                  <div className="mt-4 space-y-2">
+                    {answer.observations.slice(0, 4).map((observation) => (
+                      <div className="flex gap-2" key={observation}>
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-croc-moss" />
+                        <p className="text-xs leading-5 text-stone-600">{observation}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                {answer.considerations.length ? (
+                  <div className="mt-4 rounded-lg border border-emerald-900/10 bg-white p-3">
+                    <p className="text-xs font-bold uppercase tracking-wide text-croc-moss">Considerations</p>
+                    <div className="mt-2 space-y-2">
+                      {answer.considerations.slice(0, 3).map((item) => (
+                        <p className="text-xs leading-5 text-stone-600" key={item}>{item}</p>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
                 <div className="mt-4 space-y-2">
                   {answer.suggested_next_steps.map((step) => (
                     <div className="flex gap-2" key={step}>
@@ -198,7 +228,7 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
                   ))}
                 </div>
                 <p className="mt-4 text-xs leading-5 text-stone-500">
-                  {answer.data_limitations[0]} {answer.safety_disclaimer}
+                  {answer.data_limitations[0]} {answer.educational_disclaimer}
                 </p>
               </article>
             ) : (
@@ -209,29 +239,30 @@ export function CrocGuidePanel({ isOpen, onClose }: CrocGuidePanelProps) {
               </div>
             )}
 
-            {answer?.agent_trace.length ? (
+            {answer?.evidence.length ? (
               <details className="rounded-lg border border-emerald-900/10 bg-white p-4">
                 <summary className="flex cursor-pointer items-center justify-between gap-3">
                   <span className="text-sm font-semibold text-croc-ink">How CrocLens reached this</span>
-                  <Pill tone="blue">{answer.agent_trace.length} checks</Pill>
+                  <Pill tone="blue">{answer.evidence.length} facts</Pill>
                 </summary>
                 <div className="space-y-3">
-                  {answer.agent_trace.map((step, index) => (
-                    <div className="flex gap-3" key={`${step.agent}-${index}`}>
+                  {answer.evidence.map((item, index) => (
+                    <div className="flex gap-3" key={`${item.label}-${index}`}>
                       <span className="mt-1 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-croc-mint text-xs font-bold text-croc-moss">
                         {index + 1}
                       </span>
                       <div className="min-w-0 flex-1 border-b border-emerald-900/10 pb-3 last:border-0 last:pb-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="text-xs font-bold text-croc-ink">{step.title}</p>
-                          <Pill tone={step.status === "used" ? "green" : "neutral"}>{step.status}</Pill>
+                          <p className="text-xs font-bold text-croc-ink">{item.label}</p>
+                          <Pill tone={item.is_sample_data ? "gold" : "green"}>{item.data_quality}</Pill>
+                          {item.is_stale ? <Pill tone="gold">stale</Pill> : null}
                         </div>
-                        <p className="mt-1 text-xs leading-5 text-stone-600">{step.output_summary}</p>
-                        {step.tools_used.length ? (
-                          <p className="mt-1 text-[11px] leading-4 text-stone-500">
-                            Tools: {step.tools_used.join(", ")}
-                          </p>
-                        ) : null}
+                        <p className="mt-1 text-xs leading-5 text-stone-600">{item.value}</p>
+                        <p className="mt-1 text-[11px] leading-4 text-stone-500">
+                          {item.source_name}
+                          {item.data_as_of ? ` · as of ${item.data_as_of}` : ""}
+                          {item.retrieved_at ? ` · retrieved ${item.retrieved_at}` : ""}
+                        </p>
                       </div>
                     </div>
                   ))}

@@ -133,14 +133,15 @@ Completed phases:
 - Phase 21A-21D: Market provider foundation, free provider adapters, persisted market observations, and live market/portfolio history APIs
 - Phase 22: Public landing page, demo mode, dashboard product polish, and real market snapshot wiring
 - Phase 23: User-specific persistence for planning and research workflows
+- Phase 24: Grounded Croc Guide responses from saved user data
 
 Current status:
 
-- MVP foundation complete through Phase 23
+- MVP foundation complete through Phase 24
 
 Next work:
 
-- Ground Croc Guide more deeply in the user's saved records and provider freshness metadata.
+- Add stronger behavioral tests and CI gates around the user flows.
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -182,7 +183,7 @@ Phase 6 adds transparent portfolio and cross-asset scoring logic.
 Phase 7 adds API-backed beginner detail pages for stocks/ETFs, crypto, real estate, debt, and retirement accounts.
 Phase 8 adds an API-backed onboarding flow that turns goals, risk comfort, retirement, debt, and manual assets into a beginner risk profile.
 Phase 9 connects Croc Guide to the assistant API with rule-based intent routing, prompt context, and safety checks.
-Phase 10 adds a lightweight multi-agent orchestrator and visible agent trace for Croc Guide responses.
+Phase 10 adds a lightweight multi-agent orchestrator, and Phase 24 keeps the user-facing guide focused on collapsed evidence instead of technical trace details.
 Phase 11 adds a sample market data ingestion pipeline, data quality checks, freshness metadata, and a free-only provider registry.
 Phase 12 adds a market news impact workflow that maps sample headlines to affected holdings with safe educational wording.
 Phase 13 adds an educational tax-aware module with sample tax lots, unrealized gain/loss, holding-period labels, and wash-sale warning language.
@@ -196,6 +197,7 @@ Phase 20 adds local Docker deployment files and a free-only deployment plan that
 Phase 21A-21D add free-first market provider contracts, live-capable yfinance/public provider adapters, persisted market observations, and portfolio history endpoints.
 Phase 22 adds a public landing page, explicit Demo Mode, grouped beginner navigation, endpoint-backed market snapshot data, account-aware net-worth history behavior, and friendlier signup validation.
 Phase 23 persists watchlist items, decision journal entries, action plans, retirement accounts, tax lots, and privacy settings for authenticated users while keeping demo/sample fallbacks clearly labeled.
+Phase 24 grounds Croc Guide in saved user records and provider freshness metadata, then returns observations, evidence, considerations, confidence, stale/sample flags, and educational disclaimers.
 
 Install dependencies:
 
@@ -332,11 +334,12 @@ Current backend endpoints:
 Assistant v1 supports:
 
 - Rule-based intent routing
-- Multi-agent trace steps
+- Grounded context from authenticated user records
+- Collapsed evidence and source details
 - Safe response wording
 - Prompt context shape for future LLM calls
-- Safety checks for direct trading or guaranteed-return language
-- Confidence, data limitations, sources, and disclaimer fields
+- Safety checks that return safe categories instead of echoing unsafe wording
+- Confidence, data limitations, sources, sample/stale flags, and disclaimer fields
 
 Database schema:
 

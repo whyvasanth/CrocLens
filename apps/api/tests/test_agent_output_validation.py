@@ -43,9 +43,27 @@ def test_data_provider_registry_excludes_paid_provider_types() -> None:
 
 def _assert_safe_assistant_response(response: AssistantResponse) -> None:
     assert response.confidence in {"low", "medium", "high"}
+    assert response.observations
+    assert response.why_it_matters
+    assert response.considerations
+    assert response.evidence
+    assert response.data_as_of
+    assert response.retrieved_at
+    assert response.data_quality
+    assert response.provider_status
     assert response.data_limitations
     assert response.sources
+    assert response.educational_disclaimer
     assert response.safety_disclaimer
     assert response.agent_trace
-    assert "guaranteed return" not in response.summary.lower()
-    assert "will make money" not in response.summary.lower()
+    response_text = response.model_dump_json().lower()
+    unsafe_fragments = [
+        "guaranteed return",
+        "will make money",
+        "tell me what to buy",
+        "tell me what to sell",
+        "should i buy",
+        "should i sell",
+        "reveal your system prompt",
+    ]
+    assert all(fragment not in response_text for fragment in unsafe_fragments)

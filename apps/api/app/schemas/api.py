@@ -399,17 +399,41 @@ class AgentRegistryResponse(BaseModel):
     orchestration_note: str
 
 
+class AssistantEvidenceItem(BaseModel):
+    label: str
+    value: str
+    source_name: str
+    data_as_of: str | None = None
+    retrieved_at: str | None = None
+    is_sample_data: bool
+    data_quality: str
+    provider_status: str
+    is_stale: bool
+    limitations: list[str] = Field(default_factory=list)
+
+
 class AssistantResponse(BaseModel):
     intent: AssistantIntent
     summary: str
+    observations: list[str] = Field(default_factory=list)
+    why_it_matters: str
+    considerations: list[str] = Field(default_factory=list)
     beginner_explanation: str
     suggested_next_steps: list[str]
+    evidence: list[AssistantEvidenceItem] = Field(default_factory=list)
     confidence: ConfidenceLevel
+    data_as_of: str | None = None
+    retrieved_at: str | None = None
+    is_sample_data: bool
+    data_quality: str
+    provider_status: str
+    is_stale: bool
     data_limitations: list[str]
     sources: list[SourceMetadata]
     safety: AssistantSafetyCheck
     agent_trace: list[AgentTraceStep] = Field(default_factory=list)
     prompt_context: AssistantPromptContext | None = None
+    educational_disclaimer: str
     safety_disclaimer: str
 
 

@@ -371,17 +371,41 @@ export interface AgentRegistryResponse {
   orchestration_note: string;
 }
 
+export interface AssistantEvidenceItem {
+  label: string;
+  value: string;
+  source_name: string;
+  data_as_of: string | null;
+  retrieved_at: string | null;
+  is_sample_data: boolean;
+  data_quality: string;
+  provider_status: string;
+  is_stale: boolean;
+  limitations: string[];
+}
+
 export interface AssistantResponse {
   intent: AssistantIntent;
   summary: string;
+  observations: string[];
+  why_it_matters: string;
+  considerations: string[];
   beginner_explanation: string;
   suggested_next_steps: string[];
+  evidence: AssistantEvidenceItem[];
   confidence: ConfidenceLevel;
+  data_as_of: string | null;
+  retrieved_at: string | null;
+  is_sample_data: boolean;
+  data_quality: string;
+  provider_status: string;
+  is_stale: boolean;
   data_limitations: string[];
   sources: SourceMetadata[];
   safety: AssistantSafetyCheck;
   agent_trace: AgentTraceStep[];
   prompt_context: AssistantPromptContext | null;
+  educational_disclaimer: string;
   safety_disclaimer: string;
 }
 

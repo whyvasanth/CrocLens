@@ -91,7 +91,18 @@ It starts simple:
 User question -> rule-based mock response -> safety wrapper -> API response
 ```
 
-It grows later:
+Phase 24 grounds the assistant before adding paid or model-backed intelligence:
+
+```text
+User question
+  -> intent routing
+  -> user-owned context builder
+  -> deterministic specialist response
+  -> safety wrapper
+  -> evidence-rich Croc Guide response
+```
+
+It can grow later:
 
 ```text
 User question
