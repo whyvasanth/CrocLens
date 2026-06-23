@@ -1,11 +1,11 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { NotebookPen, RefreshCw } from "lucide-react";
+import { NotebookPen, RefreshCw, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Card, Pill, SectionTitle } from "@/components/dashboard/ui";
-import { createDecisionJournalEntry, getDecisionJournal } from "@/lib/api-client";
+import { createDecisionJournalEntry, deleteDecisionJournalEntry, getDecisionJournal } from "@/lib/api-client";
 import type { DecisionJournalCreateRequest, DecisionJournalEntryResponse, DecisionJournalResponse, DecisionType } from "@/types/api";
 
 const initialForm: DecisionJournalCreateRequest = {
@@ -24,6 +24,7 @@ export function DecisionJournalPage() {
   const [form, setForm] = useState<DecisionJournalCreateRequest>(initialForm);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   async function loadJournal(signal?: AbortSignal) {
     setIsLoading(true);
@@ -47,20 +48,39 @@ export function DecisionJournalPage() {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setIsSaving(true);
     try {
       const created = await createDecisionJournalEntry({
         ...form,
         asset_symbol: form.asset_symbol?.trim() ? form.asset_symbol : null
       });
-      setPreviewEntry(created);
+      if (data?.sources[0]?.name === "CrocLens decision journal records") {
+        setPreviewEntry(null);
+        setForm(initialForm);
+        await loadJournal();
+      } else {
+        setPreviewEntry(created);
+      }
     } catch {
       setError("Check that every journal field has enough detail.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function onDelete(entryId: string) {
+    setError(null);
+    try {
+      await deleteDecisionJournalEntry(entryId);
+      await loadJournal();
+    } catch {
+      setError("CrocLens could not remove that journal entry.");
     }
   }
 
   return (
     <AppShell>
-      {({ openGuide, openSidebar }) => (
+      {({ account, openGuide, openSidebar }) => (
         <div className="mx-auto max-w-[1180px] space-y-5">
           <DashboardHeader
             description="Record the reason, expected outcome, risk, and review date before judging a decision."
@@ -74,7 +94,7 @@ export function DecisionJournalPage() {
               <SectionTitle
                 eyebrow="Learning loop"
                 title={isLoading ? "Loading journal" : "Recorded decisions"}
-                action={<Pill tone="blue">Process over outcome</Pill>}
+                action={<Pill tone={account ? "green" : "blue"}>{account ? "Saved entries" : "Process over outcome"}</Pill>}
               />
               <p className="text-sm leading-6 text-stone-600">{data?.beginner_summary}</p>
               <div className="mt-5 space-y-3">
@@ -85,7 +105,20 @@ export function DecisionJournalPage() {
                         <p className="font-bold text-croc-ink">{entry.title}</p>
                         <p className="text-xs font-semibold uppercase text-croc-moss">{entry.decision_type.replaceAll("_", " ")}</p>
                       </div>
-                      <Pill tone="green">{entry.status}</Pill>
+                      <div className="flex items-center gap-2">
+                        <Pill tone="green">{entry.status}</Pill>
+                        {account ? (
+                          <button
+                            aria-label={`Delete journal entry ${entry.title}`}
+                            className="grid h-9 w-9 place-items-center rounded-lg border border-emerald-900/10 text-stone-500 hover:text-rose-700"
+                            onClick={() => void onDelete(entry.id)}
+                            suppressHydrationWarning
+                            type="button"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        ) : null}
+                      </div>
                     </div>
                     <p className="mt-3 text-sm leading-6 text-stone-600">{entry.feedback_summary}</p>
                   </div>
@@ -140,7 +173,7 @@ export function DecisionJournalPage() {
                   type="submit"
                 >
                   <NotebookPen className="h-4 w-4" />
-                  Preview feedback
+                  {isSaving ? "Saving..." : account ? "Save entry" : "Preview feedback"}
                 </button>
                 {error ? (
                   <button

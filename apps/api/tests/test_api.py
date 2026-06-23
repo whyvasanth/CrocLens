@@ -371,6 +371,216 @@ def test_watchlist_returns_intelligence_and_preview_create() -> None:
     assert create_body["opportunity_notes"]
 
 
+def test_authenticated_watchlist_persists_updates_deletes_and_isolates_users() -> None:
+    owner_token = _signup_user(email="watchlist-owner@example.com")
+    other_token = _signup_user(email="watchlist-other@example.com")
+    owner_headers = {"Authorization": f"Bearer {owner_token}"}
+    other_headers = {"Authorization": f"Bearer {other_token}"}
+
+    create_response = client.post(
+        "/api/v1/watchlist",
+        headers=owner_headers,
+        json={
+            "symbol": "vti",
+            "name": "Total market ETF",
+            "asset_type": "etf",
+            "why_watching": "I want to learn broad market ETF behavior before deciding anything.",
+        },
+    )
+    created = create_response.json()
+
+    assert create_response.status_code == 200
+    assert created["symbol"] == "VTI"
+    assert created["source"]["name"] == "CrocLens watchlist records"
+
+    list_response = client.get("/api/v1/watchlist", headers=owner_headers)
+    assert list_response.status_code == 200
+    assert [item["id"] for item in list_response.json()["items"]] == [created["id"]]
+
+    duplicate_response = client.post(
+        "/api/v1/watchlist",
+        headers=owner_headers,
+        json={
+            "symbol": "VTI",
+            "name": "Total market ETF",
+            "asset_type": "etf",
+            "why_watching": "I want to compare fees, overlap, taxes, and time horizon.",
+        },
+    )
+    assert duplicate_response.status_code == 409
+
+    update_response = client.put(
+        f"/api/v1/watchlist/{created['id']}",
+        headers=owner_headers,
+        json={"why_watching": "I want to compare ETF diversification with my saved goals."},
+    )
+    assert update_response.status_code == 200
+    assert "saved goals" in update_response.json()["why_watching"]
+
+    other_delete_response = client.delete(f"/api/v1/watchlist/{created['id']}", headers=other_headers)
+    assert other_delete_response.status_code == 404
+
+    delete_response = client.delete(f"/api/v1/watchlist/{created['id']}", headers=owner_headers)
+    assert delete_response.status_code == 200
+    assert client.get("/api/v1/watchlist", headers=owner_headers).json()["items"] == []
+
+
+def test_authenticated_journal_persists_updates_deletes_and_isolates_users() -> None:
+    owner_token = _signup_user(email="journal-owner@example.com")
+    other_token = _signup_user(email="journal-other@example.com")
+    owner_headers = {"Authorization": f"Bearer {owner_token}"}
+    other_headers = {"Authorization": f"Bearer {other_token}"}
+
+    create_response = client.post(
+        "/api/v1/journal/entries",
+        headers=owner_headers,
+        json={
+            "decision_type": "watch",
+            "title": "Watch a broad ETF",
+            "asset_symbol": "VTI",
+            "reason": "I want to understand broad ETF behavior before making any decision.",
+            "expected_outcome": "Learn whether this topic fits my time horizon and risk comfort.",
+            "risk_considered": "Markets can fall, and taxes or fees may affect the outcome.",
+            "review_date": "2026-08-01",
+        },
+    )
+    created = create_response.json()
+
+    assert create_response.status_code == 200
+    assert created["asset_symbol"] == "VTI"
+
+    update_response = client.put(
+        f"/api/v1/journal/entries/{created['id']}",
+        headers=owner_headers,
+        json={
+            "status": "reviewed",
+            "actual_outcome": "I learned more about fund overlap.",
+            "reflection": "Next time I should compare expense ratio and tax location.",
+        },
+    )
+    updated = update_response.json()
+
+    assert update_response.status_code == 200
+    assert updated["status"] == "reviewed"
+    assert updated["actual_outcome"]
+
+    other_delete_response = client.delete(f"/api/v1/journal/entries/{created['id']}", headers=other_headers)
+    assert other_delete_response.status_code == 404
+
+    delete_response = client.delete(f"/api/v1/journal/entries/{created['id']}", headers=owner_headers)
+    assert delete_response.status_code == 200
+    assert client.get("/api/v1/journal/entries", headers=owner_headers).json()["entries"] == []
+
+
+def test_authenticated_action_plans_are_user_specific_and_lifecycle_mutable() -> None:
+    token = _signup_user(email="action-plan-owner@example.com")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    list_response = client.get("/api/v1/action-plans", headers=headers)
+    body = list_response.json()
+    first_item = body["items"][0]
+
+    assert list_response.status_code == 200
+    assert first_item["safe_wording_note"]
+
+    complete_response = client.post(f"/api/v1/action-plans/items/{first_item['id']}/complete", headers=headers)
+    assert complete_response.status_code == 200
+    assert complete_response.json()["item"]["status"] == "completed"
+
+    dismiss_response = client.post(f"/api/v1/action-plans/items/{first_item['id']}/dismiss", headers=headers)
+    assert dismiss_response.status_code == 200
+    assert first_item["id"] not in [item["id"] for item in client.get("/api/v1/action-plans", headers=headers).json()["items"]]
+
+    reopen_response = client.post(f"/api/v1/action-plans/items/{first_item['id']}/reopen", headers=headers)
+    assert reopen_response.status_code == 200
+    assert first_item["id"] in [item["id"] for item in client.get("/api/v1/action-plans", headers=headers).json()["items"]]
+
+
+def test_authenticated_retirement_account_crud_drives_plan() -> None:
+    token = _signup_user(email="retirement-owner@example.com")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    create_response = client.post(
+        "/api/v1/retirement/accounts",
+        headers=headers,
+        json={
+            "account_type": "401(k)",
+            "provider_name": "Test employer plan",
+            "current_balance": 15000,
+            "contribution_percent": 6,
+            "employer_match_percent": 6,
+        },
+    )
+    created = create_response.json()
+
+    assert create_response.status_code == 200
+    assert created["current_balance"] == 15000
+
+    plan_response = client.get("/api/v1/retirement/plan", headers=headers)
+    assert plan_response.status_code == 200
+    assert plan_response.json()["current_retirement_balance"] == 15000
+    assert plan_response.json()["employer_match"]["has_match"] is True
+
+    update_response = client.put(
+        f"/api/v1/retirement/accounts/{created['id']}",
+        headers=headers,
+        json={"current_balance": 17500, "contribution_percent": 8},
+    )
+    assert update_response.status_code == 200
+    assert update_response.json()["contribution_percent"] == 8
+
+    delete_response = client.delete(f"/api/v1/retirement/accounts/{created['id']}", headers=headers)
+    assert delete_response.status_code == 200
+    assert client.get("/api/v1/retirement/plan", headers=headers).json()["accounts"] == []
+
+
+def test_authenticated_tax_lots_are_user_owned_and_feed_insights() -> None:
+    owner_token = _signup_user(email="tax-owner@example.com")
+    other_token = _signup_user(email="tax-other@example.com")
+    owner_headers = {"Authorization": f"Bearer {owner_token}"}
+    other_headers = {"Authorization": f"Bearer {other_token}"}
+
+    holding_response = client.post(
+        "/api/v1/portfolio/holdings",
+        headers=owner_headers,
+        json={
+            "symbol": "VTI",
+            "name": "Total Stock Market ETF",
+            "asset_type": "ETFs",
+            "quantity": 10,
+            "cost_basis": 1000,
+            "market_value": 900,
+        },
+    )
+    holding_id = holding_response.json()["id"]
+    lot_response = client.post(
+        "/api/v1/tax/lots",
+        headers=owner_headers,
+        json={
+            "holding_id": holding_id,
+            "acquired_date": "2025-01-15",
+            "quantity": 10,
+            "cost_basis": 1000,
+            "account_tax_type": "taxable",
+        },
+    )
+    lot = lot_response.json()
+
+    assert lot_response.status_code == 200
+    assert lot["unrealized_gain_loss"] == -100
+
+    insights_response = client.get("/api/v1/tax/insights", headers=owner_headers)
+    assert insights_response.status_code == 200
+    assert insights_response.json()["total_unrealized_loss"] == 100
+    assert insights_response.json()["harvesting_opportunities"]
+
+    other_delete_response = client.delete(f"/api/v1/tax/lots/{lot['id']}", headers=other_headers)
+    assert other_delete_response.status_code == 404
+
+    delete_response = client.delete(f"/api/v1/tax/lots/{lot['id']}", headers=owner_headers)
+    assert delete_response.status_code == 200
+
+
 def test_security_status_and_privacy_controls_are_available() -> None:
     security_response = client.get("/api/v1/security/status")
     security_body = security_response.json()
@@ -401,6 +611,60 @@ def test_security_status_and_privacy_controls_are_available() -> None:
 
     assert update_response.status_code == 200
     assert update_body["data_retention_days"] == 45
+
+
+def test_authenticated_privacy_settings_persist_and_export_counts_are_user_specific() -> None:
+    token = _signup_user(email="privacy-owner@example.com")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    update_response = client.put(
+        "/api/v1/privacy/settings",
+        headers=headers,
+        json={
+            "beginner_mode_enabled": False,
+            "store_assistant_history": False,
+            "allow_product_analytics": False,
+            "allow_external_integrations": False,
+            "data_retention_days": 30,
+        },
+    )
+    assert update_response.status_code == 200
+    assert update_response.json()["beginner_mode_enabled"] is False
+
+    settings_response = client.get("/api/v1/privacy/settings", headers=headers)
+    assert settings_response.status_code == 200
+    assert settings_response.json()["data_retention_days"] == 30
+
+    client.post(
+        "/api/v1/watchlist",
+        headers=headers,
+        json={
+            "symbol": "VTI",
+            "name": "Total market ETF",
+            "asset_type": "etf",
+            "why_watching": "I want to compare broad ETF exposure with my goals.",
+        },
+    )
+    client.post(
+        "/api/v1/journal/entries",
+        headers=headers,
+        json={
+            "decision_type": "watch",
+            "title": "Review broad ETF exposure",
+            "reason": "I want a written record before making any portfolio change.",
+            "expected_outcome": "Understand how this fits my allocation.",
+            "risk_considered": "Broad funds can still lose value during market declines.",
+            "review_date": "2026-09-01",
+        },
+    )
+
+    export_response = client.get("/api/v1/privacy/export", headers=headers)
+    counts = export_response.json()["record_counts"]
+
+    assert export_response.status_code == 200
+    assert counts["watchlist_items"] == 1
+    assert counts["journal_entries"] == 1
+    assert counts["assets"] == 0
 
 
 def test_export_and_delete_data_previews_do_not_claim_real_deletion() -> None:

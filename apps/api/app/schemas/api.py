@@ -351,6 +351,12 @@ class ActionPlanResponse(BaseModel):
     educational_disclaimer: str
 
 
+class ActionPlanStatusResponse(BaseModel):
+    item: ActionPlanItem
+    action: Literal["completed", "dismissed", "reopened"]
+    explanation: str
+
+
 class AssistantRequest(BaseModel):
     question: str = Field(min_length=3, max_length=500)
     beginner_mode: bool = True
@@ -626,6 +632,21 @@ class TaxOpportunityResponse(BaseModel):
     safe_next_steps: list[str]
 
 
+class TaxLotCreateRequest(BaseModel):
+    holding_id: str = Field(min_length=1, max_length=36)
+    acquired_date: str
+    quantity: float = Field(gt=0)
+    cost_basis: float = Field(ge=0)
+    account_tax_type: str = Field(default="taxable", min_length=3, max_length=60)
+
+
+class TaxLotUpdateRequest(BaseModel):
+    acquired_date: str | None = None
+    quantity: float | None = Field(default=None, gt=0)
+    cost_basis: float | None = Field(default=None, ge=0)
+    account_tax_type: str | None = Field(default=None, min_length=3, max_length=60)
+
+
 class TaxInsightResponse(BaseModel):
     headline: str
     beginner_summary: str
@@ -668,6 +689,22 @@ class RetirementScenarioResponse(BaseModel):
     assumptions: list[str]
 
 
+class RetirementAccountCreateRequest(BaseModel):
+    account_type: str = Field(min_length=2, max_length=60)
+    provider_name: str | None = Field(default=None, max_length=160)
+    current_balance: float = Field(ge=0)
+    contribution_percent: float | None = Field(default=None, ge=0, le=100)
+    employer_match_percent: float | None = Field(default=None, ge=0, le=100)
+
+
+class RetirementAccountUpdateRequest(BaseModel):
+    account_type: str | None = Field(default=None, min_length=2, max_length=60)
+    provider_name: str | None = Field(default=None, max_length=160)
+    current_balance: float | None = Field(default=None, ge=0)
+    contribution_percent: float | None = Field(default=None, ge=0, le=100)
+    employer_match_percent: float | None = Field(default=None, ge=0, le=100)
+
+
 class RetirementPlanResponse(BaseModel):
     headline: str
     progress_percent: int = Field(ge=0, le=100)
@@ -696,6 +733,8 @@ class DecisionJournalEntryResponse(BaseModel):
     created_at: str
     status: Literal["open", "reviewed"]
     feedback_summary: str
+    actual_outcome: str | None = None
+    reflection: str | None = None
 
 
 class DecisionJournalCreateRequest(BaseModel):
@@ -706,6 +745,17 @@ class DecisionJournalCreateRequest(BaseModel):
     expected_outcome: str = Field(min_length=10, max_length=500)
     risk_considered: str = Field(min_length=10, max_length=500)
     review_date: str
+
+
+class DecisionJournalUpdateRequest(BaseModel):
+    title: str | None = Field(default=None, min_length=3, max_length=120)
+    reason: str | None = Field(default=None, min_length=10, max_length=500)
+    expected_outcome: str | None = Field(default=None, min_length=10, max_length=500)
+    risk_considered: str | None = Field(default=None, min_length=10, max_length=500)
+    review_date: str | None = None
+    status: Literal["open", "reviewed"] | None = None
+    actual_outcome: str | None = Field(default=None, max_length=500)
+    reflection: str | None = Field(default=None, max_length=500)
 
 
 class DecisionJournalResponse(BaseModel):
@@ -737,6 +787,12 @@ class WatchlistCreateRequest(BaseModel):
     name: str = Field(min_length=2, max_length=120)
     asset_type: WatchlistAssetType
     why_watching: str = Field(min_length=10, max_length=500)
+
+
+class WatchlistUpdateRequest(BaseModel):
+    name: str | None = Field(default=None, min_length=2, max_length=120)
+    why_watching: str | None = Field(default=None, min_length=10, max_length=500)
+    notes: str | None = Field(default=None, max_length=500)
 
 
 class WatchlistResponse(BaseModel):

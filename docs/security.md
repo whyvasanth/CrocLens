@@ -143,7 +143,7 @@ Guardrails:
 
 ## Privacy Controls
 
-Phase 17 adds MVP privacy endpoints:
+Phase 17 adds MVP privacy endpoints, and Phase 23 persists authenticated privacy settings:
 
 ```http
 GET /api/v1/privacy/settings
@@ -152,13 +152,15 @@ GET /api/v1/privacy/export
 DELETE /api/v1/privacy/data
 ```
 
-Current limitation:
+Current behavior:
 
-- Settings, export, and delete are previews because the app still uses sample data.
+- Signed-in users have persisted privacy settings in `user_profiles`.
+- Signed-in users receive export record counts scoped to their own saved records.
+- Demo visitors still receive clearly labeled sample privacy settings and sample export counts.
+- Delete remains a preview because production deletion requires confirmation, audit logging, and background cleanup.
 
 Production requirement:
 
-- Persist settings per authenticated user.
 - Require confirmation for deletes.
 - Generate export archives asynchronously.
 - Track deletion jobs and audit logs without storing sensitive data unnecessarily.

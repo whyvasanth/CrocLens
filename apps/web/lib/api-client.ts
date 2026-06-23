@@ -3,6 +3,7 @@ import type {
   AccountLoginRequest,
   AccountUserResponse,
   ActionPlanResponse,
+  ActionPlanStatusResponse,
   AgentRegistryResponse,
   AssistantRequest,
   AssistantResponse,
@@ -15,6 +16,7 @@ import type {
   DecisionJournalCreateRequest,
   DecisionJournalEntryResponse,
   DecisionJournalResponse,
+  DecisionJournalUpdateRequest,
   DeleteRecordResponse,
   EvaluationMetricsResponse,
   HoldingCreateRequest,
@@ -35,10 +37,17 @@ import type {
   PrivacySettingsRequest,
   PrivacySettingsResponse,
   RetirementPlanResponse,
+  RetirementAccountCreateRequest,
+  RetirementAccountResponse,
+  RetirementAccountUpdateRequest,
   SecurityStatusResponse,
   TaxInsightResponse,
+  TaxLotCreateRequest,
+  TaxLotResponse,
+  TaxLotUpdateRequest,
   WatchlistCreateRequest,
   WatchlistItemResponse,
+  WatchlistUpdateRequest,
   WatchlistResponse
 } from "@/types/api";
 
@@ -144,6 +153,22 @@ export function getActionPlan(signal?: AbortSignal) {
   return requestJson<ActionPlanResponse>("/api/v1/action-plans", signal);
 }
 
+export function generateActionPlan(signal?: AbortSignal) {
+  return postJson<ActionPlanResponse, Record<string, never>>("/api/v1/action-plans/generate", {}, signal);
+}
+
+export function completeActionPlanItem(itemId: string, signal?: AbortSignal) {
+  return postJson<ActionPlanStatusResponse, Record<string, never>>(`/api/v1/action-plans/items/${itemId}/complete`, {}, signal);
+}
+
+export function dismissActionPlanItem(itemId: string, signal?: AbortSignal) {
+  return postJson<ActionPlanStatusResponse, Record<string, never>>(`/api/v1/action-plans/items/${itemId}/dismiss`, {}, signal);
+}
+
+export function reopenActionPlanItem(itemId: string, signal?: AbortSignal) {
+  return postJson<ActionPlanStatusResponse, Record<string, never>>(`/api/v1/action-plans/items/${itemId}/reopen`, {}, signal);
+}
+
 export function getOnboardingOptions(signal?: AbortSignal) {
   return requestJson<OnboardingOptionsResponse>("/api/v1/onboarding/options", signal);
 }
@@ -230,6 +255,18 @@ export function getRetirementPlan(signal?: AbortSignal) {
   return requestJson<RetirementPlanResponse>("/api/v1/retirement/plan", signal);
 }
 
+export function createRetirementAccount(request: RetirementAccountCreateRequest, signal?: AbortSignal) {
+  return postJson<RetirementAccountResponse, RetirementAccountCreateRequest>("/api/v1/retirement/accounts", request, signal);
+}
+
+export function updateRetirementAccount(accountId: string, request: RetirementAccountUpdateRequest, signal?: AbortSignal) {
+  return putJson<RetirementAccountResponse, RetirementAccountUpdateRequest>(`/api/v1/retirement/accounts/${accountId}`, request, signal);
+}
+
+export function deleteRetirementAccount(accountId: string, signal?: AbortSignal) {
+  return deleteJson<DeleteRecordResponse>(`/api/v1/retirement/accounts/${accountId}`, signal);
+}
+
 export function getDecisionJournal(signal?: AbortSignal) {
   return requestJson<DecisionJournalResponse>("/api/v1/journal/entries", signal);
 }
@@ -238,12 +275,40 @@ export function createDecisionJournalEntry(entry: DecisionJournalCreateRequest, 
   return postJson<DecisionJournalEntryResponse, DecisionJournalCreateRequest>("/api/v1/journal/entries", entry, signal);
 }
 
+export function updateDecisionJournalEntry(entryId: string, entry: DecisionJournalUpdateRequest, signal?: AbortSignal) {
+  return putJson<DecisionJournalEntryResponse, DecisionJournalUpdateRequest>(`/api/v1/journal/entries/${entryId}`, entry, signal);
+}
+
+export function deleteDecisionJournalEntry(entryId: string, signal?: AbortSignal) {
+  return deleteJson<DeleteRecordResponse>(`/api/v1/journal/entries/${entryId}`, signal);
+}
+
 export function getWatchlist(signal?: AbortSignal) {
   return requestJson<WatchlistResponse>("/api/v1/watchlist", signal);
 }
 
 export function createWatchlistItem(item: WatchlistCreateRequest, signal?: AbortSignal) {
   return postJson<WatchlistItemResponse, WatchlistCreateRequest>("/api/v1/watchlist", item, signal);
+}
+
+export function updateWatchlistItem(itemId: string, item: WatchlistUpdateRequest, signal?: AbortSignal) {
+  return putJson<WatchlistItemResponse, WatchlistUpdateRequest>(`/api/v1/watchlist/${itemId}`, item, signal);
+}
+
+export function deleteWatchlistItem(itemId: string, signal?: AbortSignal) {
+  return deleteJson<DeleteRecordResponse>(`/api/v1/watchlist/${itemId}`, signal);
+}
+
+export function createTaxLot(request: TaxLotCreateRequest, signal?: AbortSignal) {
+  return postJson<TaxLotResponse, TaxLotCreateRequest>("/api/v1/tax/lots", request, signal);
+}
+
+export function updateTaxLot(lotId: string, request: TaxLotUpdateRequest, signal?: AbortSignal) {
+  return putJson<TaxLotResponse, TaxLotUpdateRequest>(`/api/v1/tax/lots/${lotId}`, request, signal);
+}
+
+export function deleteTaxLot(lotId: string, signal?: AbortSignal) {
+  return deleteJson<DeleteRecordResponse>(`/api/v1/tax/lots/${lotId}`, signal);
 }
 
 export function getSecurityStatus(signal?: AbortSignal) {

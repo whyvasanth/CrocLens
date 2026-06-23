@@ -15,6 +15,8 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Added Phase 22 public landing page, explicit Demo Mode banner, grouped beginner navigation, endpoint-backed market snapshot card, and account-aware net-worth history chart behavior.
 - Moved evaluation metrics to `/internal/evaluation-metrics` so internal quality views are not part of beginner navigation.
 - Added signup password confirmation and friendlier account validation while preserving secure cookie sessions.
+- Added Phase 23 user-specific persistence for watchlist items, decision journal entries, action plans, retirement accounts, tax lots, and privacy settings.
+- Added authenticated CRUD endpoints, user ownership checks, frontend save/delete actions, and backend tests for persisted planning and research workflows.
 - Established Phase 0 product and system design foundation.
 - Added project README with product vision, MVP strategy, tech stack, safety principles, and Git workflow.
 - Added architecture, roadmap, data source, security, AI agent, database, API, AWS, evaluation, and learning documentation.

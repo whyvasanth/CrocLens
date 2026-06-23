@@ -132,14 +132,15 @@ Completed phases:
 - Phase 20: Free-only deployment plan
 - Phase 21A-21D: Market provider foundation, free provider adapters, persisted market observations, and live market/portfolio history APIs
 - Phase 22: Public landing page, demo mode, dashboard product polish, and real market snapshot wiring
+- Phase 23: User-specific persistence for planning and research workflows
 
 Current status:
 
-- MVP foundation complete through Phase 22
+- MVP foundation complete through Phase 23
 
 Next work:
 
-- Persist more user-specific workflows, then ground Croc Guide more deeply in the user's saved records and provider freshness metadata.
+- Ground Croc Guide more deeply in the user's saved records and provider freshness metadata.
 
 See [docs/roadmap.md](docs/roadmap.md) for the full plan.
 
@@ -194,6 +195,7 @@ Phase 19 adds an internal evaluation metrics dashboard for product quality, AI s
 Phase 20 adds local Docker deployment files and a free-only deployment plan that blocks AWS and paid cloud by default.
 Phase 21A-21D add free-first market provider contracts, live-capable yfinance/public provider adapters, persisted market observations, and portfolio history endpoints.
 Phase 22 adds a public landing page, explicit Demo Mode, grouped beginner navigation, endpoint-backed market snapshot data, account-aware net-worth history behavior, and friendlier signup validation.
+Phase 23 persists watchlist items, decision journal entries, action plans, retirement accounts, tax lots, and privacy settings for authenticated users while keeping demo/sample fallbacks clearly labeled.
 
 Install dependencies:
 
@@ -296,17 +298,30 @@ Current backend endpoints:
 - `GET /api/v1/ai/agents`
 - `GET /api/v1/action-plans`
 - `POST /api/v1/action-plans/generate`
+- `POST /api/v1/action-plans/items/{item_id}/complete`
+- `POST /api/v1/action-plans/items/{item_id}/dismiss`
+- `POST /api/v1/action-plans/items/{item_id}/reopen`
 - `POST /api/v1/ai/assistant`
 - `GET /api/v1/data-pipeline/providers`
 - `POST /api/v1/data-pipeline/market-data/sample-ingest`
 - `GET /api/v1/data-pipeline/market-data/latest`
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
+- `POST /api/v1/tax/lots`
+- `PUT /api/v1/tax/lots/{lot_id}`
+- `DELETE /api/v1/tax/lots/{lot_id}`
 - `GET /api/v1/retirement/plan`
+- `POST /api/v1/retirement/accounts`
+- `PUT /api/v1/retirement/accounts/{account_id}`
+- `DELETE /api/v1/retirement/accounts/{account_id}`
 - `GET /api/v1/journal/entries`
 - `POST /api/v1/journal/entries`
+- `PUT /api/v1/journal/entries/{entry_id}`
+- `DELETE /api/v1/journal/entries/{entry_id}`
 - `GET /api/v1/watchlist`
 - `POST /api/v1/watchlist`
+- `PUT /api/v1/watchlist/{item_id}`
+- `DELETE /api/v1/watchlist/{item_id}`
 - `GET /api/v1/security/status`
 - `GET /api/v1/privacy/settings`
 - `PUT /api/v1/privacy/settings`

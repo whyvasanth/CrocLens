@@ -509,3 +509,21 @@ Branch:
 Commit:
 
 - `feat(web): create polished beginner-first product experience`
+
+## Phase 23: User-Specific Feature Persistence
+
+Goal:
+
+- Convert planning and research workflows from preview/sample behavior into authenticated user-owned records.
+
+Status:
+
+- Implemented for watchlist items, decision journal entries, action plans, retirement accounts, tax lots, privacy settings, and export counts. Demo visitors still receive clearly labeled sample/preview responses, while signed-in users get persisted records with ownership checks.
+
+Branch:
+
+- `main`
+
+Commit:
+
+- `feat(product): persist user planning and research workflows`

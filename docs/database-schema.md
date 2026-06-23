@@ -11,6 +11,7 @@ Implemented files:
 - `apps/api/app/db/session.py`
 - `apps/api/alembic.ini`
 - `apps/api/alembic/versions/20260505_0001_initial_schema.py`
+- `apps/api/alembic/versions/20260622_0004_user_workflow_persistence.py`
 
 Local Docker now runs PostgreSQL for development. Backend tests may still use SQLite for speed, but Alembic migrations and Docker are the source of truth for runtime behavior.
 
@@ -48,6 +49,11 @@ Key fields later:
 ### user_profiles
 
 Stores beginner profile, goals, risk tolerance, and preferences.
+
+Current implementation:
+
+- Privacy settings are persisted per authenticated user.
+- Stored preferences include beginner mode, assistant history preference, product analytics preference, external integration preference, and data retention days.
 
 ### portfolios
 
@@ -102,13 +108,32 @@ Stores property-specific fields such as estimated value, mortgage balance, locat
 
 Stores 401(k), IRA, Roth IRA, pension, and similar account details.
 
+Current implementation:
+
+- Authenticated users can create, update, and delete retirement accounts.
+- The retirement plan endpoint builds educational scenarios from the user's saved accounts.
+- Projection copy is assumption-based and avoids guaranteed outcomes.
+
 ### decision_journal_entries
 
 Stores user decisions and later review outcomes.
 
+Current implementation:
+
+- Authenticated users can create, update, and delete journal entries.
+- Entries track decision type, optional asset symbol, reason, expected outcome, risk considered, review date, status, actual outcome, and reflection.
+- Ownership is enforced through `decision_journal_entries.user_id`.
+
 ### action_plans
 
 Stores generated or user-approved educational action plans.
+
+Current implementation:
+
+- Authenticated users receive user-specific generated action items.
+- Users can complete, dismiss, and reopen action items.
+- Plans store confidence, data limitations, evidence, completion time, and dismissal time.
+- Wording remains educational rather than directive financial advice.
 
 ### agent_outputs
 
@@ -126,9 +151,21 @@ Stores news data used for impact analysis.
 
 Stores assets or markets the user wants to watch.
 
+Current implementation:
+
+- Authenticated users can create, update, and delete watchlist records.
+- Each record links `users` to `assets`.
+- A unique constraint prevents duplicate watchlist records for the same user and asset.
+
 ### tax_lots
 
 Stores purchase lots for tax-aware explanations.
+
+Current implementation:
+
+- Authenticated users can create, update, and delete tax lots tied to their own holdings.
+- Ownership is enforced through `tax_lots -> holdings -> portfolios -> users`.
+- Tax insights calculate unrealized gain/loss and holding period labels from saved lots.
 
 ### asset_scores
 

@@ -45,6 +45,10 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/onboarding/options`
 - `POST /api/v1/onboarding/profile`
 - `GET /api/v1/action-plans`
+- `POST /api/v1/action-plans/generate`
+- `POST /api/v1/action-plans/items/{item_id}/complete`
+- `POST /api/v1/action-plans/items/{item_id}/dismiss`
+- `POST /api/v1/action-plans/items/{item_id}/reopen`
 - `POST /api/v1/ai/assistant`
 - `GET /api/v1/ai/agents`
 - `GET /api/v1/data-providers/status`
@@ -53,11 +57,21 @@ Phase 5 frontend integration currently uses:
 - `GET /api/v1/data-pipeline/market-data/latest`
 - `GET /api/v1/market-news/impact-summary`
 - `GET /api/v1/tax/insights`
+- `POST /api/v1/tax/lots`
+- `PUT /api/v1/tax/lots/{lot_id}`
+- `DELETE /api/v1/tax/lots/{lot_id}`
 - `GET /api/v1/retirement/plan`
+- `POST /api/v1/retirement/accounts`
+- `PUT /api/v1/retirement/accounts/{account_id}`
+- `DELETE /api/v1/retirement/accounts/{account_id}`
 - `GET /api/v1/journal/entries`
 - `POST /api/v1/journal/entries`
+- `PUT /api/v1/journal/entries/{entry_id}`
+- `DELETE /api/v1/journal/entries/{entry_id}`
 - `GET /api/v1/watchlist`
 - `POST /api/v1/watchlist`
+- `PUT /api/v1/watchlist/{item_id}`
+- `DELETE /api/v1/watchlist/{item_id}`
 - `GET /api/v1/security/status`
 - `GET /api/v1/privacy/settings`
 - `PUT /api/v1/privacy/settings`
@@ -381,24 +395,33 @@ Purpose:
 
 ```http
 GET /api/v1/tax/insights
+POST /api/v1/tax/lots
+PUT /api/v1/tax/lots/{lot_id}
+DELETE /api/v1/tax/lots/{lot_id}
 ```
 
 Purpose:
 
-- Return sample tax lots.
+- Return sample tax lots for demo visitors or saved user tax lots for authenticated users.
+- Let authenticated users create, update, and delete tax lots tied to their own holdings.
 - Explain unrealized gains/losses and holding periods.
 - Show educational tax-loss harvesting opportunities.
 - Include wash-sale warning language and tax-advice limitations.
+- Enforce ownership through the holding's portfolio owner.
 
 ### Retirement Plan
 
 ```http
 GET /api/v1/retirement/plan
+POST /api/v1/retirement/accounts
+PUT /api/v1/retirement/accounts/{account_id}
+DELETE /api/v1/retirement/accounts/{account_id}
 ```
 
 Purpose:
 
-- Return sample retirement accounts.
+- Return sample retirement accounts for demo visitors or saved retirement accounts for authenticated users.
+- Let authenticated users create, update, and delete retirement accounts.
 - Explain employer 401(k) match.
 - Compare contribution scenarios.
 - Include projection assumptions and limitations.
@@ -408,26 +431,49 @@ Purpose:
 ```http
 GET /api/v1/journal/entries
 POST /api/v1/journal/entries
+PUT /api/v1/journal/entries/{entry_id}
+DELETE /api/v1/journal/entries/{entry_id}
 ```
 
 Purpose:
 
-- Return sample decision journal entries.
-- Accept a new decision entry preview.
+- Return sample decision journal entries for demo visitors or saved entries for authenticated users.
+- Accept, update, and delete authenticated decision entries.
 - Return rule-based process feedback.
+- Track review status, actual outcome, and reflection fields for a learning loop.
 
 ### Watchlist
 
 ```http
 GET /api/v1/watchlist
 POST /api/v1/watchlist
+PUT /api/v1/watchlist/{item_id}
+DELETE /api/v1/watchlist/{item_id}
 ```
 
 Purpose:
 
-- Return sample watchlist intelligence.
-- Accept a new watchlist item preview.
+- Return sample watchlist intelligence for demo visitors or saved watchlist records for authenticated users.
+- Accept, update, and delete authenticated watchlist items.
 - Explain risk and opportunity notes without presenting the watchlist as a buy list.
+- Prevent duplicate watchlist records per user and asset.
+
+### Action Plans
+
+```http
+GET /api/v1/action-plans
+POST /api/v1/action-plans/generate
+POST /api/v1/action-plans/items/{item_id}/complete
+POST /api/v1/action-plans/items/{item_id}/dismiss
+POST /api/v1/action-plans/items/{item_id}/reopen
+```
+
+Purpose:
+
+- Generate educational action plans from the authenticated user's saved portfolio, liabilities, and account context.
+- Let users complete, dismiss, and reopen action items.
+- Preserve safe wording, confidence, evidence, freshness, and limitations.
+- Return sample action plans for demo visitors.
 
 ### Security And Privacy
 
@@ -442,9 +488,10 @@ DELETE /api/v1/privacy/data
 Purpose:
 
 - Show current MVP security controls.
-- Preview user privacy preferences.
-- Preview data export and delete workflows.
-- Support Settings page controls before persistent auth and storage are added.
+- Persist privacy settings for authenticated users.
+- Return user-specific export counts for authenticated users.
+- Keep delete as a preview until production confirmation, audit logging, and background cleanup are added.
+- Return sample privacy settings and export counts for demo visitors.
 
 ### Evaluation Metrics
 
@@ -467,29 +514,7 @@ Metric categories:
 
 ## Planned Later Endpoints
 
-### Watchlist
-
-```http
-GET /watchlist
-POST /watchlist
-```
-
-Purpose:
-
-- Track assets or markets the user wants to monitor.
-
-### Decision Journal
-
-```http
-GET /journal
-POST /journal
-```
-
-Purpose:
-
-- Store user decisions and review notes.
-
-### Liabilities
+### Liability Detail Pages
 
 ```http
 GET /api/v1/liabilities

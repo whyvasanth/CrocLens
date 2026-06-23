@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Index, JSON, Numeric, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Index, Integer, JSON, Numeric, String, Text, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -33,6 +33,10 @@ class User(TimestampMixin, Base):
         back_populates="user",
         cascade="all, delete-orphan",
     )
+    watchlist_items: Mapped[list["WatchlistItem"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
 
 class LocalAuthSession(TimestampMixin, Base):
@@ -61,6 +65,10 @@ class UserProfile(TimestampMixin, Base):
     time_horizon: Mapped[str | None] = mapped_column(String(80))
     primary_goal: Mapped[str | None] = mapped_column(String(160))
     household_income_range: Mapped[str | None] = mapped_column(String(80))
+    store_assistant_history: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    allow_product_analytics: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    allow_external_integrations: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    data_retention_days: Mapped[int] = mapped_column(Integer, default=30, nullable=False)
 
     user: Mapped["User"] = relationship(back_populates="profile")
 
@@ -92,6 +100,7 @@ class Asset(TimestampMixin, Base):
     data_source: Mapped[str | None] = mapped_column(String(120))
 
     holdings: Mapped[list["Holding"]] = relationship(back_populates="asset")
+    watchlist_items: Mapped[list["WatchlistItem"]] = relationship(back_populates="asset")
 
 
 class Holding(TimestampMixin, Base):
@@ -109,6 +118,7 @@ class Holding(TimestampMixin, Base):
 
     portfolio: Mapped["Portfolio"] = relationship(back_populates="holdings")
     asset: Mapped["Asset"] = relationship(back_populates="holdings")
+    tax_lots: Mapped[list["TaxLot"]] = relationship(back_populates="holding", cascade="all, delete-orphan")
 
 
 class Liability(TimestampMixin, Base):
@@ -158,10 +168,14 @@ class DecisionJournalEntry(TimestampMixin, Base):
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
     decision_type: Mapped[str] = mapped_column(String(60), nullable=False)
     title: Mapped[str] = mapped_column(String(180), nullable=False)
+    asset_symbol: Mapped[str | None] = mapped_column(String(40))
     reason: Mapped[str] = mapped_column(Text, nullable=False)
     expected_outcome: Mapped[str | None] = mapped_column(Text)
     risk_considered: Mapped[str | None] = mapped_column(Text)
     review_date: Mapped[date | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(40), default="open", nullable=False)
+    actual_outcome: Mapped[str | None] = mapped_column(Text)
+    reflection: Mapped[str | None] = mapped_column(Text)
 
 
 class ActionPlan(TimestampMixin, Base):
@@ -175,6 +189,9 @@ class ActionPlan(TimestampMixin, Base):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     confidence: Mapped[str] = mapped_column(String(40), default="medium", nullable=False)
     data_limitations: Mapped[dict] = mapped_column(JSON_TYPE, default=list, nullable=False)
+    evidence: Mapped[dict] = mapped_column(JSON_TYPE, default=list, nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    dismissed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class AgentOutput(TimestampMixin, Base):
@@ -298,6 +315,9 @@ class WatchlistItem(TimestampMixin, Base):
     reason: Mapped[str | None] = mapped_column(Text)
     notes: Mapped[str | None] = mapped_column(Text)
 
+    user: Mapped["User"] = relationship(back_populates="watchlist_items")
+    asset: Mapped["Asset"] = relationship(back_populates="watchlist_items")
+
 
 class TaxLot(TimestampMixin, Base):
     __tablename__ = "tax_lots"
@@ -309,6 +329,8 @@ class TaxLot(TimestampMixin, Base):
     quantity: Mapped[Decimal] = mapped_column(Numeric(20, 8), nullable=False)
     cost_basis: Mapped[Decimal] = mapped_column(Numeric(18, 2), nullable=False)
     account_tax_type: Mapped[str] = mapped_column(String(60), default="taxable", nullable=False)
+
+    holding: Mapped["Holding"] = relationship(back_populates="tax_lots")
 
 
 class AssetScore(TimestampMixin, Base):

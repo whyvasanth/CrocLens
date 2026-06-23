@@ -237,6 +237,12 @@ export interface ActionPlanResponse {
   educational_disclaimer: string;
 }
 
+export interface ActionPlanStatusResponse {
+  item: ActionPlanItemResponse;
+  action: "completed" | "dismissed" | "reopened";
+  explanation: string;
+}
+
 export interface ManualAssetEntry {
   asset_class: string;
   label: string;
@@ -568,6 +574,8 @@ export interface DecisionJournalEntryResponse {
   created_at: string;
   status: "open" | "reviewed";
   feedback_summary: string;
+  actual_outcome: string | null;
+  reflection: string | null;
 }
 
 export interface DecisionJournalCreateRequest {
@@ -578,6 +586,17 @@ export interface DecisionJournalCreateRequest {
   expected_outcome: string;
   risk_considered: string;
   review_date: string;
+}
+
+export interface DecisionJournalUpdateRequest {
+  title?: string | null;
+  reason?: string | null;
+  expected_outcome?: string | null;
+  risk_considered?: string | null;
+  review_date?: string | null;
+  status?: "open" | "reviewed" | null;
+  actual_outcome?: string | null;
+  reflection?: string | null;
 }
 
 export interface DecisionJournalResponse {
@@ -611,6 +630,43 @@ export interface WatchlistCreateRequest {
   name: string;
   asset_type: WatchlistAssetType;
   why_watching: string;
+}
+
+export interface WatchlistUpdateRequest {
+  name?: string | null;
+  why_watching?: string | null;
+  notes?: string | null;
+}
+
+export interface RetirementAccountCreateRequest {
+  account_type: string;
+  provider_name: string | null;
+  current_balance: number;
+  contribution_percent: number | null;
+  employer_match_percent: number | null;
+}
+
+export interface RetirementAccountUpdateRequest {
+  account_type?: string | null;
+  provider_name?: string | null;
+  current_balance?: number | null;
+  contribution_percent?: number | null;
+  employer_match_percent?: number | null;
+}
+
+export interface TaxLotCreateRequest {
+  holding_id: string;
+  acquired_date: string;
+  quantity: number;
+  cost_basis: number;
+  account_tax_type: string;
+}
+
+export interface TaxLotUpdateRequest {
+  acquired_date?: string | null;
+  quantity?: number | null;
+  cost_basis?: number | null;
+  account_tax_type?: string | null;
 }
 
 export interface WatchlistResponse {

@@ -105,7 +105,7 @@ User question
 
 The data layer is responsible for getting external data into a useful, traceable format.
 
-Phase 11 starts this layer with a local sample JSON pipeline, provider registry, freshness report, and quality checks. No paid or ambiguous freemium market data provider is connected in the MVP.
+Phase 11 starts this layer with a local sample JSON pipeline, provider registry, freshness report, and quality checks. Phase 21 adds free-first provider adapters, provider status, persisted market observations, stale handling, and portfolio history APIs. No paid or ambiguous freemium market data provider is required for the MVP.
 
 It should eventually handle:
 
@@ -156,6 +156,17 @@ UI card
 ```
 
 This prevents disconnected UI mockups, isolated backend endpoints, or database tables that no feature uses.
+
+Phase 23 extends this principle to planning workflows:
+
+```text
+Watchlist or journal UI
+  -> authenticated CRUD endpoint
+  -> service-level ownership check
+  -> user-owned database row
+  -> tests for persistence and isolation
+  -> docs explaining the user/demo split
+```
 
 ## MVP Scope
 

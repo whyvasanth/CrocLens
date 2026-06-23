@@ -1,7 +1,5 @@
-import { PlaceholderPage } from "@/components/dashboard/placeholder-page";
-import { productPages } from "@/lib/page-config";
+import { ActionPlansPage } from "@/components/features/action-plans-page";
 
-export default function ActionPlansPage() {
-  return <PlaceholderPage config={productPages.actionPlans} />;
+export default function ActionPlansRoute() {
+  return <ActionPlansPage />;
 }
-

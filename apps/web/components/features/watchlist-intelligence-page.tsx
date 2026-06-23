@@ -1,11 +1,11 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Bell, RefreshCw, ShieldAlert, Sparkles } from "lucide-react";
+import { Bell, RefreshCw, ShieldAlert, Sparkles, Trash2 } from "lucide-react";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Card, Pill, SectionTitle } from "@/components/dashboard/ui";
-import { createWatchlistItem, getWatchlist } from "@/lib/api-client";
+import { createWatchlistItem, deleteWatchlistItem, getWatchlist } from "@/lib/api-client";
 import type { WatchlistAssetType, WatchlistCreateRequest, WatchlistItemResponse, WatchlistResponse } from "@/types/api";
 
 const initialForm: WatchlistCreateRequest = {
@@ -21,6 +21,7 @@ export function WatchlistIntelligencePage() {
   const [form, setForm] = useState<WatchlistCreateRequest>(initialForm);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   async function loadWatchlist(signal?: AbortSignal) {
     setIsLoading(true);
@@ -44,10 +45,30 @@ export function WatchlistIntelligencePage() {
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setIsSaving(true);
     try {
-      setPreviewItem(await createWatchlistItem(form));
+      const created = await createWatchlistItem(form);
+      if (data?.sources[0]?.name === "CrocLens watchlist records") {
+        setPreviewItem(null);
+        setForm(initialForm);
+        await loadWatchlist();
+      } else {
+        setPreviewItem(created);
+      }
     } catch {
       setError("Add a symbol, name, and a clear reason you are watching it.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function onDelete(itemId: string) {
+    setError(null);
+    try {
+      await deleteWatchlistItem(itemId);
+      await loadWatchlist();
+    } catch {
+      setError("CrocLens could not remove that watchlist item.");
     }
   }
 
@@ -55,7 +76,7 @@ export function WatchlistIntelligencePage() {
 
   return (
     <AppShell>
-      {({ openGuide, openSidebar }) => (
+      {({ account, openGuide, openSidebar }) => (
         <div className="mx-auto max-w-[1180px] space-y-5">
           <DashboardHeader
             description="Track assets, markets, and research reasons without treating the list as a buy signal."
@@ -69,7 +90,7 @@ export function WatchlistIntelligencePage() {
               <SectionTitle
                 eyebrow="Research queue"
                 title={isLoading ? "Loading watchlist" : "Items you are watching"}
-                action={<Pill tone="green">Research only</Pill>}
+                action={<Pill tone={account ? "green" : "gold"}>{account ? "Saved records" : "Demo preview"}</Pill>}
               />
               <p className="text-sm leading-6 text-stone-600">{data?.beginner_summary}</p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -80,7 +101,20 @@ export function WatchlistIntelligencePage() {
                         <p className="text-lg font-bold text-croc-ink">{item.symbol}</p>
                         <p className="text-sm text-stone-600">{item.name}</p>
                       </div>
-                      <Pill tone="blue">{item.asset_type.replaceAll("_", " ")}</Pill>
+                      <div className="flex items-center gap-2">
+                        <Pill tone="blue">{item.asset_type.replaceAll("_", " ")}</Pill>
+                        {account ? (
+                          <button
+                            aria-label={`Remove ${item.symbol} from watchlist`}
+                            className="grid h-9 w-9 place-items-center rounded-lg border border-emerald-900/10 text-stone-500 hover:text-rose-700"
+                            onClick={() => void onDelete(item.id)}
+                            suppressHydrationWarning
+                            type="button"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        ) : null}
+                      </div>
                     </div>
                     <p className="mt-3 text-sm font-semibold text-croc-moss">{item.why_watching}</p>
                     <p className="mt-2 text-sm leading-6 text-stone-600">{item.ai_summary}</p>
@@ -134,7 +168,7 @@ export function WatchlistIntelligencePage() {
                     type="submit"
                   >
                     <Bell className="h-4 w-4" />
-                    Preview watch note
+                    {isSaving ? "Saving..." : account ? "Save watch item" : "Preview watch note"}
                   </button>
                   {error ? (
                     <button

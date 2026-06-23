@@ -1,7 +1,11 @@
 from datetime import UTC, datetime
 from uuid import uuid4
 
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
 from app.core.config import settings
+from app.models import ActionPlan, DecisionJournalEntry, Holding, Liability, Portfolio, User, WatchlistItem
 from app.schemas.api import (
     DataExportResponse,
     DeleteDataResponse,
@@ -50,15 +54,36 @@ def get_security_status() -> SecurityStatusResponse:
     )
 
 
-def get_privacy_settings() -> PrivacySettingsResponse:
-    return _privacy_response(DEFAULT_PRIVACY_SETTINGS)
+def get_privacy_settings(user: User | None = None) -> PrivacySettingsResponse:
+    if user is None or user.profile is None:
+        return _privacy_response(DEFAULT_PRIVACY_SETTINGS)
+
+    return PrivacySettingsResponse(
+        profile_id=user.profile.id,
+        beginner_mode_enabled=user.profile.beginner_mode,
+        store_assistant_history=user.profile.store_assistant_history,
+        allow_product_analytics=user.profile.allow_product_analytics,
+        allow_external_integrations=user.profile.allow_external_integrations,
+        data_retention_days=user.profile.data_retention_days,
+        explanation="These privacy settings are saved to your CrocLens profile.",
+        updated_at=datetime.now(tz=UTC).isoformat(),
+    )
 
 
-def update_privacy_settings(request: PrivacySettingsRequest) -> PrivacySettingsResponse:
-    return _privacy_response(request)
+def update_privacy_settings(request: PrivacySettingsRequest, user: User | None = None) -> PrivacySettingsResponse:
+    if user is None or user.profile is None:
+        return _privacy_response(request)
+
+    user.profile.beginner_mode = request.beginner_mode_enabled
+    user.profile.store_assistant_history = request.store_assistant_history
+    user.profile.allow_product_analytics = request.allow_product_analytics
+    user.profile.allow_external_integrations = request.allow_external_integrations
+    user.profile.data_retention_days = request.data_retention_days
+    return get_privacy_settings(user)
 
 
-def build_data_export() -> DataExportResponse:
+def build_data_export(db: Session | None = None, user: User | None = None) -> DataExportResponse:
+    counts = _sample_record_counts() if db is None or user is None else _user_record_counts(db, user)
     return DataExportResponse(
         export_id=f"export_{uuid4().hex[:12]}",
         generated_at=datetime.now(tz=UTC).isoformat(),
@@ -70,19 +95,11 @@ def build_data_export() -> DataExportResponse:
             "watchlist_items",
             "privacy_settings",
         ],
-        record_counts={
-            "profile": 1,
-            "portfolio_summary": 1,
-            "assets": 6,
-            "journal_entries": 2,
-            "watchlist_items": 2,
-            "privacy_settings": 1,
-        },
+        record_counts=counts,
         delivery_note="MVP preview only. Production should generate a downloadable JSON or CSV archive.",
         data_limitations=[
-            "No real user database is connected yet.",
-            "Export contains sample record counts, not real financial data.",
-            "Production exports should require authentication and user confirmation.",
+            "Export is a preview count, not a downloadable archive yet.",
+            "Production exports should require confirmation and background archive generation.",
         ],
         sources=[SECURITY_SOURCE],
     )
@@ -123,3 +140,34 @@ def _privacy_response(settings_request: PrivacySettingsRequest) -> PrivacySettin
         ),
         updated_at=datetime.now(tz=UTC).isoformat(),
     )
+
+
+def _sample_record_counts() -> dict[str, int]:
+    return {
+        "profile": 1,
+        "portfolio_summary": 1,
+        "assets": 6,
+        "journal_entries": 2,
+        "watchlist_items": 2,
+        "privacy_settings": 1,
+    }
+
+
+def _user_record_counts(db: Session, user: User) -> dict[str, int]:
+    portfolio_ids = select(Portfolio.id).where(Portfolio.user_id == user.id)
+    holding_count = _count(db, select(func.count(Holding.id)).where(Holding.portfolio_id.in_(portfolio_ids)))
+    return {
+        "profile": 1 if user.profile is not None else 0,
+        "portfolio_summary": 1,
+        "assets": holding_count,
+        "holdings": holding_count,
+        "liabilities": _count(db, select(func.count(Liability.id)).where(Liability.user_id == user.id)),
+        "journal_entries": _count(db, select(func.count(DecisionJournalEntry.id)).where(DecisionJournalEntry.user_id == user.id)),
+        "watchlist_items": _count(db, select(func.count(WatchlistItem.id)).where(WatchlistItem.user_id == user.id)),
+        "action_plans": _count(db, select(func.count(ActionPlan.id)).where(ActionPlan.user_id == user.id)),
+        "privacy_settings": 1,
+    }
+
+
+def _count(db: Session, statement) -> int:
+    return int(db.scalar(statement) or 0)

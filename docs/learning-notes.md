@@ -657,3 +657,24 @@ Key terms:
 Practice idea:
 
 - Add a small "data details" popover to the market snapshot card that shows provider, retrieved time, and limitations for each row.
+
+## Phase 23: User-Specific Feature Persistence
+
+What we learned:
+
+- A feature is not production-shaped until reads and writes are scoped to the authenticated user.
+- Sample/demo behavior can coexist with real persistence, but the API must be explicit about which mode returned the data.
+- CRUD routes need ownership checks on update and delete paths, not only on read paths.
+- Action plans should store lifecycle state such as completed, dismissed, and reopened so the UI reflects user intent.
+- Tax and retirement features need conservative educational language because the product is not a financial or tax advisor.
+
+Key terms:
+
+- Ownership check: verifying that a row belongs to the current user before returning or mutating it.
+- Lifecycle state: a record's product status over time, such as open, reviewed, completed, dismissed, or reopened.
+- Persistence boundary: the point where a preview/demo action becomes a saved user record.
+- Duplicate prevention: a database or service rule that blocks repeated records such as the same watchlist asset for one user.
+
+Practice idea:
+
+- Add an edit flow for watchlist notes in the frontend, then verify another user cannot update that item through the API.
