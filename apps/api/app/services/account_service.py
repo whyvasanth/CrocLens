@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
@@ -39,89 +39,104 @@ SECURITY_NOTE = (
     "secure cookies, email verification, password reset, and session expiration."
 )
 
+LOCAL_AUTH_DATABASE_NOT_READY_DETAIL = (
+    "CrocLens account storage is not ready. Run database migrations, make sure PostgreSQL is running, "
+    "then seed or create the local test user."
+)
+
 
 def create_account(request: AccountCreateRequest, db: Session) -> AccountSessionResponse:
-    _require_local_auth()
-    email = _normalize_email(request.email)
-    display_name = request.display_name.strip()
-
-    if _get_user_by_email(db, email) is not None:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="An account with this email already exists.",
-        )
-
-    onboarding_profile = create_onboarding_profile(request.onboarding_profile)
-    user = User(
-        id=str(uuid4()),
-        email=email,
-        full_name=display_name,
-        status="active",
-        auth_provider="local",
-        password_hash=hash_password(request.password),
-    )
-    user.profile = UserProfile(
-        id=str(uuid4()),
-        beginner_mode=True,
-        risk_tolerance=request.onboarding_profile.risk_tolerance,
-        time_horizon=request.onboarding_profile.time_horizon,
-        primary_goal=request.onboarding_profile.primary_goal,
-        household_income_range=request.onboarding_profile.income_range,
-    )
-    user.portfolios.append(
-        Portfolio(
-            id=str(uuid4()),
-            name="My CrocLens Portfolio",
-            base_currency="USD",
-        )
-    )
-
-    db.add(user)
     try:
-        db.flush()
-    except IntegrityError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="An account with this email already exists.",
-        ) from exc
+        _require_local_auth()
+        email = _normalize_email(request.email)
+        display_name = request.display_name.strip()
 
-    create_manual_asset_holdings_for_user(db, user, request.onboarding_profile.manual_assets)
+        if _get_user_by_email(db, email) is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="An account with this email already exists.",
+            )
 
-    return _build_session_response(
-        db=db,
-        user=user,
-        onboarding_profile=onboarding_profile,
-        confidence="high",
-        data_limitations=[
-            "Local auth persists users and hashed passwords for development.",
-            "Production still needs Cognito authorization-code flow with PKCE and server-managed secure cookies.",
-            "Manual assets from signup are stored as user-owned portfolio holdings.",
-        ],
-    )
+        onboarding_profile = create_onboarding_profile(request.onboarding_profile)
+        user = User(
+            id=str(uuid4()),
+            email=email,
+            full_name=display_name,
+            status="active",
+            auth_provider="local",
+            password_hash=hash_password(request.password),
+        )
+        user.profile = UserProfile(
+            id=str(uuid4()),
+            beginner_mode=True,
+            risk_tolerance=request.onboarding_profile.risk_tolerance,
+            time_horizon=request.onboarding_profile.time_horizon,
+            primary_goal=request.onboarding_profile.primary_goal,
+            household_income_range=request.onboarding_profile.income_range,
+        )
+        user.portfolios.append(
+            Portfolio(
+                id=str(uuid4()),
+                name="My CrocLens Portfolio",
+                base_currency="USD",
+            )
+        )
+
+        db.add(user)
+        try:
+            db.flush()
+        except IntegrityError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="An account with this email already exists.",
+            ) from exc
+
+        create_manual_asset_holdings_for_user(db, user, request.onboarding_profile.manual_assets)
+
+        return _build_session_response(
+            db=db,
+            user=user,
+            onboarding_profile=onboarding_profile,
+            confidence="high",
+            data_limitations=[
+                "Local auth persists users and hashed passwords for development.",
+                "Production still needs Cognito authorization-code flow with PKCE and server-managed secure cookies.",
+                "Manual assets from signup are stored as user-owned portfolio holdings.",
+            ],
+        )
+    except HTTPException:
+        raise
+    except SQLAlchemyError as exc:
+        raise _local_auth_database_not_ready() from exc
 
 
 def login_account(request: AccountLoginRequest, db: Session) -> AccountSessionResponse:
-    _require_local_auth()
-    email = _normalize_email(request.email)
-    user = _get_user_by_email(db, email)
+    try:
+        _require_local_auth()
+        email = _normalize_email(request.email)
+        user = _get_user_by_email(db, email)
 
-    if user is None or user.status != "active" or not verify_password(request.password, user.password_hash):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password.",
+        if user is None or user.status != "active" or not verify_password(request.password, user.password_hash):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password.",
+            )
+
+        return _build_session_response(
+            db=db,
+            user=user,
+            onboarding_profile=None,
+            confidence="high",
+            data_limitations=[
+                "Password verification uses bcrypt for local development.",
+                "This session is persisted locally and expires automatically.",
+                "Production should replace this local session token with a Cognito-backed secure cookie flow.",
+            ],
         )
-
-    return _build_session_response(
-        db=db,
-        user=user,
-        onboarding_profile=None,
-        confidence="high",
-        data_limitations=[
-            "Password verification uses bcrypt for local development.",
-            "This session is persisted locally and expires automatically.",
-            "Production should replace this local session token with a Cognito-backed secure cookie flow.",
-        ],
-    )
+    except HTTPException:
+        raise
+    except SQLAlchemyError as exc:
+        raise _local_auth_database_not_ready() from exc
 
 
 def get_user_for_session_token(token: str, db: Session) -> User | None:
@@ -207,3 +222,10 @@ def _require_local_auth() -> None:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Local authentication is disabled for this environment.",
         )
+
+
+def _local_auth_database_not_ready() -> HTTPException:
+    return HTTPException(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        detail=LOCAL_AUTH_DATABASE_NOT_READY_DETAIL,
+    )

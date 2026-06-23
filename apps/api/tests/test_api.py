@@ -890,6 +890,27 @@ def test_login_rejects_invalid_password() -> None:
     assert response.status_code == 401
 
 
+def test_login_returns_setup_message_when_account_database_is_not_ready(monkeypatch) -> None:
+    from sqlalchemy.exc import SQLAlchemyError
+
+    import app.services.account_service as account_service
+
+    def unavailable_database(*_args, **_kwargs):
+        raise SQLAlchemyError("database is not ready")
+
+    monkeypatch.setattr(account_service, "_get_user_by_email", unavailable_database)
+
+    response = client.post(
+        "/api/v1/auth/login",
+        json={"email": "test@croclens.local", "password": "Test-user-123"},
+    )
+    body = response.json()
+
+    assert response.status_code == 503
+    assert "account storage is not ready" in body["detail"].lower()
+    assert "migrations" in body["detail"].lower()
+
+
 def test_duplicate_signup_returns_conflict() -> None:
     payload = {
         "display_name": "Alex Morgan",

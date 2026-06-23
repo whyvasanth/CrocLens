@@ -259,6 +259,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r apps/api/requirements.txt
+docker compose up -d postgres
 python -m alembic -c apps/api/alembic.ini upgrade head
 python -m uvicorn app.main:app --reload --app-dir apps/api --host 127.0.0.1 --port 8000
 ```
