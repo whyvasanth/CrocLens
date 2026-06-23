@@ -60,7 +60,7 @@ class Settings:
         "DATABASE_URL",
         "sqlite:///./croclens-local.db"
         if _getenv("APP_ENV", "local") == "test"
-        else "postgresql+psycopg://croclens:croclens@localhost:5432/croclens",
+        else "postgresql+psycopg://croclens:croclens@localhost:55432/croclens",
     )
     cors_origins: list[str] = field(
         default_factory=lambda: _getenv_list(

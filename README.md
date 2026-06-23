@@ -264,6 +264,8 @@ python -m alembic -c apps/api/alembic.ini upgrade head
 python -m uvicorn app.main:app --reload --app-dir apps/api --host 127.0.0.1 --port 8000
 ```
 
+Local PostgreSQL is published on host port `55432` to avoid conflicts with a system Postgres already using `5432`. Docker services still talk to the database internally on `postgres:5432`.
+
 Open:
 
 ```text
