@@ -11,7 +11,9 @@ export async function GET() {
   const backendResponse = await backendJson<AccountUserResponse, never>("/api/v1/auth/me", {
     token
   });
-  const payload = await backendResponse.json();
+  const payload = await backendResponse
+    .json()
+    .catch(() => ({ detail: "CrocLens API returned an unreadable account response." }));
 
   if (backendResponse.status === 401) {
     await clearSessionCookie();

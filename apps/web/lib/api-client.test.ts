@@ -69,4 +69,20 @@ describe("api-client BFF routing", () => {
       })
     );
   });
+
+  it("surfaces backend detail messages instead of generic status text", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          detail: "CrocLens API is unavailable while requesting /api/v1/auth/login."
+        }),
+        { headers: { "Content-Type": "application/json" }, status: 503 }
+      )
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(loginAccount({ email: "test@croclens.local", password: "Test-user-123" })).rejects.toThrow(
+      "CrocLens API is unavailable while requesting /api/v1/auth/login."
+    );
+  });
 });

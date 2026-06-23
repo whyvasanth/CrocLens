@@ -259,6 +259,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r apps/api/requirements.txt
+python -m alembic -c apps/api/alembic.ini upgrade head
 python -m uvicorn app.main:app --reload --app-dir apps/api --host 127.0.0.1 --port 8000
 ```
 
@@ -266,6 +267,20 @@ Open:
 
 ```text
 http://127.0.0.1:8000/docs
+```
+
+Seed the local test user after PostgreSQL and migrations are running:
+
+```bash
+$env:PYTHONPATH="apps/api"
+.venv\Scripts\python.exe -m app.scripts.seed_test_user
+```
+
+Default local test credentials:
+
+```text
+Email: test@croclens.local
+Password: Test-user-123
 ```
 
 Run both services with local Docker:
@@ -285,6 +300,12 @@ Stop Docker services:
 
 ```bash
 npm.cmd run docker:down
+```
+
+Seed the same test user in Docker:
+
+```bash
+docker compose exec api python -m app.scripts.seed_test_user
 ```
 
 Current backend endpoints:

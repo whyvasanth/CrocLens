@@ -77,7 +77,7 @@ async function requestJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+    throw new Error(await getApiErrorMessage(response, path));
   }
 
   return response.json() as Promise<T>;
@@ -95,10 +95,28 @@ async function postJson<TResponse, TRequest>(path: string, body: TRequest, signa
   });
 
   if (!response.ok) {
-    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+    throw new Error(await getApiErrorMessage(response, path));
   }
 
   return response.json() as Promise<TResponse>;
+}
+
+async function getApiErrorMessage(response: Response, path: string): Promise<string> {
+  const fallback = `CrocLens API returned ${response.status} for ${path}`;
+
+  try {
+    const payload = (await response.clone().json()) as { detail?: unknown; message?: unknown };
+    const detail = typeof payload.detail === "string" ? payload.detail : null;
+    const message = typeof payload.message === "string" ? payload.message : null;
+    return detail ?? message ?? fallback;
+  } catch {
+    try {
+      const text = await response.clone().text();
+      return text.trim() ? `${fallback}: ${text}` : fallback;
+    } catch {
+      return fallback;
+    }
+  }
 }
 
 export function getApiBaseUrl() {
@@ -213,7 +231,7 @@ async function putJson<TResponse, TRequest>(path: string, body: TRequest, signal
   });
 
   if (!response.ok) {
-    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+    throw new Error(await getApiErrorMessage(response, path));
   }
 
   return response.json() as Promise<TResponse>;
@@ -229,7 +247,7 @@ async function deleteJson<TResponse>(path: string, signal?: AbortSignal): Promis
   });
 
   if (!response.ok) {
-    throw new Error(`CrocLens API returned ${response.status} for ${path}`);
+    throw new Error(await getApiErrorMessage(response, path));
   }
 
   return response.json() as Promise<TResponse>;

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import type {
   AccountSessionResponse,
   BrowserAccountSessionResponse
@@ -71,16 +72,35 @@ export async function backendJson<TResponse, TRequest>(
     token?: string | null;
   } = {}
 ): Promise<Response> {
-  const response = await fetch(`${getBackendBaseUrl()}${path}`, {
-    body: init.body ? JSON.stringify(init.body) : undefined,
-    cache: "no-store",
-    headers: {
-      Accept: "application/json",
-      ...(init.body ? { "Content-Type": "application/json" } : {}),
-      ...(init.token ? { Authorization: `Bearer ${init.token}` } : {})
-    },
-    method: init.method ?? "GET"
-  });
+  try {
+    const response = await fetch(`${getBackendBaseUrl()}${path}`, {
+      body: init.body ? JSON.stringify(init.body) : undefined,
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+        ...(init.body ? { "Content-Type": "application/json" } : {}),
+        ...(init.token ? { Authorization: `Bearer ${init.token}` } : {})
+      },
+      method: init.method ?? "GET"
+    });
 
-  return response;
+    return response;
+  } catch {
+    return backendUnavailableResponse(path);
+  }
+}
+
+export function backendUnavailableResponse(path: string): Response {
+  return NextResponse.json(
+    {
+      detail: `CrocLens API is unavailable while requesting ${path}. Start FastAPI at ${getBackendBaseUrl()} and make sure the database migrations have run.`,
+      provider_status: "unavailable",
+      data_quality: "unavailable",
+      data_limitations: [
+        "The Next.js app could not connect to the FastAPI backend.",
+        "No login or account data was returned."
+      ]
+    },
+    { status: 503 }
+  );
 }

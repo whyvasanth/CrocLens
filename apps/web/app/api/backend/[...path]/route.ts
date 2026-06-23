@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBackendBaseUrl, getSessionToken } from "../../auth/_shared";
+import { backendUnavailableResponse, getBackendBaseUrl, getSessionToken } from "../../auth/_shared";
 
 const ALLOWED_METHODS = new Set(["GET", "POST", "PUT", "DELETE"]);
 
@@ -25,16 +25,21 @@ async function proxyBackend(request: NextRequest, context: RouteContext) {
   const query = request.nextUrl.search;
   const body = ["GET", "DELETE"].includes(request.method) ? undefined : await request.text();
 
-  const backendResponse = await fetch(`${getBackendBaseUrl()}${backendPath}${query}`, {
-    body: body || undefined,
-    cache: "no-store",
-    headers: {
-      Accept: "application/json",
-      ...(body ? { "Content-Type": request.headers.get("Content-Type") ?? "application/json" } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    },
-    method: request.method
-  });
+  let backendResponse: Response;
+  try {
+    backendResponse = await fetch(`${getBackendBaseUrl()}${backendPath}${query}`, {
+      body: body || undefined,
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+        ...(body ? { "Content-Type": request.headers.get("Content-Type") ?? "application/json" } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      method: request.method
+    });
+  } catch {
+    return backendUnavailableResponse(backendPath);
+  }
 
   const payload = await backendResponse.text();
   return new NextResponse(payload, {

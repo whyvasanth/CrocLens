@@ -8,7 +8,9 @@ export async function POST(request: NextRequest) {
     body,
     method: "POST"
   });
-  const payload = await backendResponse.json();
+  const payload = await backendResponse
+    .json()
+    .catch(() => ({ detail: "CrocLens API returned an unreadable login response." }));
 
   if (!backendResponse.ok) {
     return NextResponse.json(payload, { status: backendResponse.status });

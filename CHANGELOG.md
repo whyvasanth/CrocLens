@@ -21,6 +21,7 @@ This project follows a phase-based learning and build workflow. Each phase shoul
 - Expanded assistant responses with observations, why-it-matters, considerations, evidence, source freshness, sample/stale flags, and safer non-echoing safety categories.
 - Added Phase 25 frontend behavior tests with Vitest, React Testing Library, user-event, and Playwright smoke coverage.
 - Updated GitHub Actions to run on pull requests, pushes to `main`, and manual dispatch with backend tests, Alembic validation, frontend typecheck, tests, build, and browser smoke checks.
+- Improved Next.js BFF error handling so unavailable FastAPI/backend responses show friendly 503 detail messages instead of vague login 500 errors.
 - Established Phase 0 product and system design foundation.
 - Added project README with product vision, MVP strategy, tech stack, safety principles, and Git workflow.
 - Added architecture, roadmap, data source, security, AI agent, database, API, AWS, evaluation, and learning documentation.
