@@ -17,10 +17,6 @@ pnpm-debug.log*
 .api-dev*.log
 .web-dev*.log
 *.tsbuildinfo
-playwright-report/
-test-results/
-apps/web/playwright-report/
-apps/web/test-results/
 
 # Local databases
 *.db

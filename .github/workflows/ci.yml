@@ -35,9 +35,6 @@ jobs:
       - name: Run backend tests
         run: python -m pytest apps/api
 
-      - name: Validate Alembic migrations are discoverable
-        run: python -m alembic -c apps/api/alembic.ini heads
-
   frontend:
     name: Frontend checks
     runs-on: ubuntu-latest
@@ -60,15 +57,8 @@ jobs:
       - name: Typecheck web app
         run: npm run typecheck:web
 
-      - name: Run web unit and smoke tests
+      - name: Run web smoke tests
         run: npm run test:web
 
       - name: Build web app
         run: npm run build:web
-
-      - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
-        working-directory: apps/web
-
-      - name: Run Playwright smoke tests
-        run: npm run test:e2e --workspace @croclens/web

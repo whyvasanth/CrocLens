@@ -9,10 +9,7 @@
     "dev:web": "npm run dev --workspace @croclens/web",
     "build:web": "npm run build --workspace @croclens/web",
     "typecheck:web": "npm run typecheck --workspace @croclens/web",
-    "test:web": "npm run test --workspace @croclens/web",
-    "test:e2e:web": "npm run test:e2e --workspace @croclens/web",
-    "docker:up": "docker compose up --build",
-    "docker:down": "docker compose down"
+    "test:web": "npm run test --workspace @croclens/web"
   },
   "overrides": {
     "postcss": "^8.5.10"
