@@ -1,70 +1,68 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import (
-    action_plans,
-    assistant,
-    assets,
-    auth,
-    data_providers,
-    data_pipeline,
-    evaluation,
-    health,
-    journal,
-    market,
-    market_news,
-    onboarding,
-    portfolio,
-    retirement,
-    security,
-    tax,
-    watchlist,
+from app.config import settings
+from app.guide import explain_quote
+from app.market_data import InvalidSymbolError, MarketDataError, get_history, get_quote
+from app.portfolio import get_demo_portfolio
+from app.schemas import DemoPortfolioResponse, GuideResponse, MarketHistoryResponse, QuoteResponse
+
+
+app = FastAPI(
+    title="CrocLens API",
+    description="Small API for the CrocLens beginner investment dashboard.",
+    version="1.0.0",
 )
-from app.core.config import settings
-from app.core.logging import configure_logging
-from app.core.middleware import SecurityHeadersAndRateLimitMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=False,
+    allow_methods=["GET"],
+    allow_headers=["*"],
+)
 
 
-def create_app() -> FastAPI:
-    configure_logging(settings.log_level)
-
-    app = FastAPI(
-        title="CrocLens API",
-        description="REST API for the CrocLens beginner wealth intelligence platform.",
-        version=settings.api_version,
-    )
-
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.cors_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-    app.add_middleware(
-        SecurityHeadersAndRateLimitMiddleware,
-        rate_limit_per_minute=settings.rate_limit_per_minute,
-    )
-
-    app.include_router(health.router)
-    app.include_router(portfolio.router, prefix=settings.api_prefix)
-    app.include_router(assets.router, prefix=settings.api_prefix)
-    app.include_router(auth.router, prefix=settings.api_prefix)
-    app.include_router(data_providers.router, prefix=settings.api_prefix)
-    app.include_router(onboarding.router, prefix=settings.api_prefix)
-    app.include_router(action_plans.router, prefix=settings.api_prefix)
-    app.include_router(assistant.router, prefix=settings.api_prefix)
-    app.include_router(data_pipeline.router, prefix=settings.api_prefix)
-    app.include_router(market.router, prefix=settings.api_prefix)
-    app.include_router(evaluation.router, prefix=settings.api_prefix)
-    app.include_router(market_news.router, prefix=settings.api_prefix)
-    app.include_router(tax.router, prefix=settings.api_prefix)
-    app.include_router(retirement.router, prefix=settings.api_prefix)
-    app.include_router(journal.router, prefix=settings.api_prefix)
-    app.include_router(watchlist.router, prefix=settings.api_prefix)
-    app.include_router(security.router, prefix=settings.api_prefix)
-
-    return app
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok", "service": "croclens-api"}
 
 
-app = create_app()
+@app.get("/api/quote/{symbol}", response_model=QuoteResponse)
+async def quote(symbol: str) -> QuoteResponse:
+    try:
+        return await get_quote(symbol)
+    except InvalidSymbolError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except MarketDataError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.get("/api/history/{symbol}", response_model=MarketHistoryResponse)
+async def history(
+    symbol: str,
+    period: str = Query(default="6mo", pattern="^(1mo|3mo|6mo|1y|5y)$"),
+) -> MarketHistoryResponse:
+    try:
+        return await get_history(symbol, period)
+    except InvalidSymbolError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except MarketDataError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.get("/api/demo-portfolio", response_model=DemoPortfolioResponse)
+async def demo_portfolio() -> DemoPortfolioResponse:
+    return await get_demo_portfolio()
+
+
+@app.get("/api/guide/{symbol}", response_model=GuideResponse)
+async def guide(symbol: str) -> GuideResponse:
+    try:
+        quote_response = await get_quote(symbol)
+    except InvalidSymbolError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except MarketDataError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    return explain_quote(quote_response)
