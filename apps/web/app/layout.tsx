@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "CrocLens | See your money clearly",
-  description: "A beginner-friendly AI wealth dashboard for understanding your full financial life."
+  description: "A beginner-friendly stock and ETF dashboard with simple educational explanations."
 };
 
 export default function RootLayout({
@@ -23,4 +23,3 @@ export default function RootLayout({
     </html>
   );
 }
-
